@@ -1,16 +1,20 @@
-# This is a sample Python script.
+import streamlit as st
+import pandas as pd
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+st.set_page_config(page_title="Phân tích sinh viên TLU", layout="centered")
 
+st.title("📊 Phân tích kết quả học tập sinh viên TLU")
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+st.write("Ứng dụng phục vụ bài tập lớn môn Lập trình khoa học dữ liệu")
 
+# ======================
+# LOAD DATA
+# ======================
+try:
+    df = pd.read_csv("data.csv")
+    
+    st.subheader("📂 Dữ liệu khảo sát")
+    st.dataframe(df)
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+except:
+    st.error("❌ Không tìm thấy file data.csv")
