@@ -28,9 +28,9 @@ df.columns = df.columns.str.strip()
 
 # 2. Đổi tên cột cho dễ dùng
 df = df.rename(columns={
-    "Bạn đang học năm mấy?": "NamHoc",
-    "Một học kỳ bạn thường học bao nhiêu tín chỉ?": "TinChi",
-    "Bạn cảm thấy khối lượng học tập của mình:": "KhoiLuong"
+    "Bạn đang học năm mấy?": "NamHoc_text",
+    "Một học kỳ bạn thường học bao nhiêu tín chỉ?": "TinChi_text",
+    "Bạn cảm thấy khối lượng học tập của mình:": "KhoiLuong_text"
 })
 
 # 3. Mapping dữ liệu
