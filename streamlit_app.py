@@ -26,13 +26,6 @@ except:
 # 1. Xóa khoảng trắng trong tên cột
 df.columns = df.columns.str.strip()
 
-# 2. Đổi tên cột cho dễ dùng
-df = df.rename(columns={
-    "Bạn đang học năm mấy?": "NamHoc_text",
-    "Một học kỳ bạn thường học bao nhiêu tín chỉ?": "TinChi_text",
-    "Bạn cảm thấy khối lượng học tập của mình:": "KhoiLuong_text"
-})
-
 # 3. Mapping dữ liệu
 mapping_year = {
     "Năm 1": 1,
@@ -56,9 +49,9 @@ mapping_khoiluong = {
 }
 
 # 4. Áp dụng mapping
-df["NamHoc"] = df["NamHoc_text"].map(mapping_year)
-df["TinChi"] = df["TinChi_text"].map(mapping_credit)
-df["KhoiLuong"] = df["KhoiLuong_text"].map(mapping_khoiluong)
+df["NamHoc"] = df["Bạn đang học năm mấy?"].map(mapping_year)
+df["TinChi"] = df["Một học kỳ bạn thường học bao nhiêu tín chỉ?"].map(mapping_credit)
+df["KhoiLuong"] = df["Bạn cảm thấy khối lượng học tập của mình:"].map(mapping_khoiluong)
 
 # 5. Xóa dữ liệu lỗi (nếu có)
 df = df.dropna()
