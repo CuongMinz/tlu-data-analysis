@@ -28,9 +28,9 @@ df.columns = df.columns.str.strip()
 
 # 2. Đổi tên cột cho dễ dùng
 df = df.rename(columns={
-    "Bạn đang học năm mấy?": "NamHoc_text",
-    "Một học kỳ bạn thường học bao nhiêu tín chỉ?": "TinChi_text",
-    "Bạn cảm thấy khối lượng học tập của mình:": "KhoiLuong_text"
+    "Bạn đang học năm mấy?": "NamHoc",
+    "Một học kỳ bạn thường học bao nhiêu tín chỉ?": "TinChi",
+    "Bạn cảm thấy khối lượng học tập của mình:": "KhoiLuong"
 })
 
 # 3. Mapping dữ liệu
@@ -45,8 +45,7 @@ mapping_credit = {
     "Dưới 14": 12,
     "14–16": 15,
     "17–19": 18,
-    "20–22": 21,
-    "Trên 22": 23
+    "20–22": 21
 }
 
 mapping_khoiluong = {
