@@ -3,10 +3,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-st.set_page_config(page_title="Phân tích sinh viên TLU", layout="centered")
+# ======================
+# CONFIG
+# ======================
+st.set_page_config(page_title="Phân tích sinh viên TLU", layout="wide")
 
 st.title("📊 Phân tích kết quả học tập sinh viên TLU")
-
 st.write("Ứng dụng phục vụ bài tập lớn môn Lập trình khoa học dữ liệu")
 
 # ======================
@@ -14,21 +16,16 @@ st.write("Ứng dụng phục vụ bài tập lớn môn Lập trình khoa học
 # ======================
 try:
     df = pd.read_csv("data.csv")
-    
-    st.subheader("📂 Dữ liệu khảo sát")
-    st.dataframe(df)
-
+    df.columns = df.columns.str.strip()
 except:
     st.error("❌ Không tìm thấy file data.csv")
+    st.stop()
 
 # ======================
 # CLEAN & STANDARDIZE DATA
 # ======================
 
-# 1. Xóa khoảng trắng trong tên cột
-df.columns = df.columns.str.strip()
-
-# 3. Mapping dữ liệu
+# Mapping
 mapping_year = {
     "Năm 1": 1,
     "Năm 2": 2,
@@ -40,7 +37,8 @@ mapping_credit = {
     "Dưới 14": 12,
     "14–16": 15,
     "17–19": 18,
-    "20–22": 21
+    "20–22": 21,
+    "Trên 22": 23
 }
 
 mapping_khoiluong = {
@@ -50,76 +48,98 @@ mapping_khoiluong = {
     "Rất nặng": 4
 }
 
-# 4. Áp dụng mapping
+# Apply mapping (an toàn hơn với .get)
 df["NamHoc"] = df["Bạn đang học năm mấy?"].map(mapping_year)
 df["TinChi"] = df["Một học kỳ bạn thường học bao nhiêu tín chỉ?"].map(mapping_credit)
 df["KhoiLuong"] = df["Bạn cảm thấy khối lượng học tập của mình:"].map(mapping_khoiluong)
 
-# 5. Xóa dữ liệu lỗi (nếu có)
+# Drop NA
 df = df.dropna()
 
-# 6. Hiển thị dữ liệu sau khi clean
-st.subheader("📊 Dữ liệu sau khi chuẩn hóa")
-st.dataframe(df)
+# ======================
+# SIDEBAR FILTER
+# ======================
+st.sidebar.header("🔎 Bộ lọc")
+
+selected_year = st.sidebar.multiselect(
+    "Chọn năm học",
+    options=sorted(df["NamHoc"].unique()),
+    default=sorted(df["NamHoc"].unique())
+)
+
+df_filtered = df[df["NamHoc"].isin(selected_year)]
 
 # ======================
-# Trực quan hóa DL
+# KPI
 # ======================
+st.subheader("📌 Tổng quan")
 
+col1, col2, col3 = st.columns(3)
+
+col1.metric("👨‍🎓 Số SV", len(df_filtered))
+col2.metric("📚 Tín chỉ TB", round(df_filtered["TinChi"].mean(), 2))
+col3.metric("⚖️ Khối lượng TB", round(df_filtered["KhoiLuong"].mean(), 2))
+
+# ======================
+# HIỂN THỊ DATA
+# ======================
+st.subheader("📂 Dữ liệu sau khi chuẩn hóa")
+st.dataframe(df_filtered)
+
+# ======================
+# TRỰC QUAN HÓA
+# ======================
 st.subheader("📈 Trực quan hóa dữ liệu")
 
-# ======================
-# 1. Bar chart: Số SV theo năm học
-# ======================
-st.write("### 📊 Số sinh viên theo năm học")
+col1, col2 = st.columns(2)
 
-fig1, ax1 = plt.subplots()
-df["NamHoc"].value_counts().sort_index().plot(kind="bar", ax=ax1)
-ax1.set_xlabel("Năm học")
-ax1.set_ylabel("Số lượng")
-st.pyplot(fig1)
+# 1. Bar chart
+with col1:
+    st.write("### Số sinh viên theo năm học")
+    fig1, ax1 = plt.subplots()
+    df_filtered["NamHoc"].value_counts().sort_index().plot(kind="bar", ax=ax1)
+    ax1.set_xlabel("Năm học")
+    ax1.set_ylabel("Số lượng")
+    st.pyplot(fig1)
 
+# 2. Histogram
+with col2:
+    st.write("### Phân bố số tín chỉ")
+    fig2, ax2 = plt.subplots()
+    sns.histplot(df_filtered["TinChi"], bins=5, kde=True, ax=ax2)
+    st.pyplot(fig2)
 
-# ======================
-# 2. Histogram: Phân bố tín chỉ
-# ======================
-st.write("### 📊 Phân bố số tín chỉ")
+col3, col4 = st.columns(2)
 
-fig2, ax2 = plt.subplots()
-sns.histplot(df["TinChi"], bins=5, kde=True, ax=ax2)
-st.pyplot(fig2)
+# 3. Boxplot
+with col3:
+    st.write("### Boxplot khối lượng học tập")
+    fig3, ax3 = plt.subplots()
+    sns.boxplot(x=df_filtered["KhoiLuong"], ax=ax3)
+    st.pyplot(fig3)
 
-
-# ======================
-# 3. Boxplot: Khối lượng học tập
-# ======================
-st.write("### 📊 Boxplot khối lượng học tập")
-
-fig3, ax3 = plt.subplots()
-sns.boxplot(x=df["KhoiLuong"], ax=ax3)
-st.pyplot(fig3)
-
-
-# ======================
-# 4. Pie chart: Cảm nhận khối lượng
-# ======================
-st.write("### 📊 Tỉ lệ khối lượng học tập")
-
-khoiluong_counts = df["Bạn cảm thấy khối lượng học tập của mình:"].value_counts()
-
-fig4, ax4 = plt.subplots()
-khoiluong_counts.plot(kind="pie", autopct="%1.1f%%", ax=ax4)
-st.pyplot(fig4)
-
+# 4. Pie chart
+with col4:
+    st.write("### Tỉ lệ khối lượng học tập")
+    khoiluong_counts = df_filtered["Bạn cảm thấy khối lượng học tập của mình:"].value_counts()
+    fig4, ax4 = plt.subplots()
+    khoiluong_counts.plot(kind="pie", autopct="%1.1f%%", ax=ax4)
+    st.pyplot(fig4)
 
 # ======================
-# 5. Bar chart: Tín chỉ trung bình theo năm học
+# 5. Bar chart cuối
 # ======================
 st.write("### 📊 Tín chỉ trung bình theo năm học")
 
-avg_credit = df.groupby("NamHoc")["TinChi"].mean()
+avg_credit = df_filtered.groupby("NamHoc")["TinChi"].mean()
 
 fig5, ax5 = plt.subplots()
 avg_credit.plot(kind="bar", ax=ax5)
 ax5.set_ylabel("Tín chỉ trung bình")
 st.pyplot(fig5)
+
+# ======================
+# FOOTER
+# ======================
+st.markdown("---")
+st.markdown("👨‍💻 Sinh viên thực hiện: **[Tên của bạn]**")
