@@ -105,7 +105,7 @@ st.pyplot(fig3)
 # ======================
 st.write("### 📊 Tỉ lệ khối lượng học tập")
 
-khoiluong_counts = df["KhoiLuong_text"].value_counts()
+khoiluong_counts = df["Bạn cảm thấy khối lượng học tập của mình:"].value_counts()
 
 fig4, ax4 = plt.subplots()
 khoiluong_counts.plot(kind="pie", autopct="%1.1f%%", ax=ax4)
