@@ -52,18 +52,9 @@ df = df.rename(columns={
 mapping_year = {"Năm 1":1,"Năm 2":2,"Năm 3":3,"Năm 4":4}
 mapping_credit = {"Dưới 14":13,"14–16":15,"17–19":18,"20–22":21,"Trên 22":23}
 
-mapping_gpa = {
-    "Dưới 2.0":1.8,
-    "2.0 – 2.49":2.25,
-    "2.5 – 3.19":2.85,
-    "3.2 – 3.59":3.4,
-    "Trên 3.6":3.8
-}
-
 # Apply
 df["NamHoc"] = df["NamHoc"].map(mapping_year)
 df["TinChi"] = df["TinChi"].map(mapping_credit)
-df["GPA_num"] = df["GPA"].map(mapping_gpa)
 
 # Xóa NA
 df = df.dropna()
@@ -73,7 +64,6 @@ df = df.dropna()
 # ======================
 st.sidebar.header("🔎 Bộ lọc dữ liệu")
 
-# Reset
 if st.sidebar.button("🔄 Reset bộ lọc"):
     st.rerun()
 
@@ -91,15 +81,26 @@ credit_filter = st.sidebar.multiselect(
     default=sorted(df["TinChi"].unique())
 )
 
-# GPA
-gpa_filter = st.sidebar.slider(
-    "Khoảng GPA",
-    float(df["GPA_num"].min()),
-    float(df["GPA_num"].max()),
-    (float(df["GPA_num"].min()), float(df["GPA_num"].max()))
+# GPA (TEXT)
+gpa_filter = st.sidebar.multiselect(
+    "Mức GPA",
+    options=[
+        "Dưới 2.0",
+        "2.0 – 2.49",
+        "2.5 – 3.19",
+        "3.2 – 3.59",
+        "Trên 3.6"
+    ],
+    default=[
+        "Dưới 2.0",
+        "2.0 – 2.49",
+        "2.5 – 3.19",
+        "3.2 – 3.59",
+        "Trên 3.6"
+    ]
 )
 
-# Khối lượng (giữ text)
+# Khối lượng
 khoiluong_filter = st.sidebar.multiselect(
     "Khối lượng học tập",
     options=df["KhoiLuong"].unique(),
@@ -112,7 +113,7 @@ khoiluong_filter = st.sidebar.multiselect(
 df_filtered = df[
     (df["NamHoc"].isin(year_filter)) &
     (df["TinChi"].isin(credit_filter)) &
-    (df["GPA_num"].between(gpa_filter[0], gpa_filter[1])) &
+    (df["GPA"].isin(gpa_filter)) &
     (df["KhoiLuong"].isin(khoiluong_filter))
 ]
 
