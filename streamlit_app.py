@@ -95,6 +95,10 @@ year_filter = st.sidebar.multiselect(
     default=sorted(df["NamHoc"].dropna().unique())
 )
 
+df_filtered = df[
+    (df["NamHoc"].isin(year_filter))
+]
+
 
 # ======================
 # FOOTER
