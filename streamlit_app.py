@@ -215,7 +215,7 @@ tinchi_counts = df_filtered["TinChi"].value_counts()
 
 # Sắp xếp đúng thứ tự
 tinchi_counts = tinchi_counts.reindex(
-    ["Dưới 14", "14–16", "17–19", "20–22", "Trên 22"]
+    ["Dưới 14", "14–16", "17–19", "20–22"]
 ).fillna(0)
 
 # Vẽ biểu đồ
