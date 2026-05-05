@@ -171,7 +171,7 @@ st.pyplot(fig)
 
 
 # ======================
-NĂM HỌC vs TÍN CHỈ
+# NĂM HỌC vs TÍN CHỈ
 # ======================
 st.subheader("📊 Tỷ lệ đăng ký tín chỉ theo năm học")
 
