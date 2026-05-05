@@ -146,9 +146,19 @@ sns.countplot(
 
 ax.set_xlabel("Mức GPA")
 ax.set_ylabel("Số sinh viên")
-ax.set_title("Phân bố sinh viên theo mức GPA")
+
+# Hiển thị số trên cột
+for p in ax.patches:
+    ax.annotate(
+        str(int(p.get_height())),
+        (p.get_x() + p.get_width() / 2., p.get_height()),
+        ha='center',
+        va='bottom'
+    )
 
 st.pyplot(fig)
+
+
 # ======================
 # FOOTER
 # ======================
