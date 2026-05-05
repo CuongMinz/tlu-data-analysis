@@ -145,65 +145,168 @@ with col2:
     st.pyplot(fig2)
 
 # ======================
-# NĂM HỌC → TÍN CHỈ
+# NĂM HỌC vs TÍN CHỈ
 # ======================
-st.markdown("---")
-st.subheader("📊 Năm học → Tín chỉ")
+st.subheader("📊 Tỷ lệ đăng ký tín chỉ theo năm học")
 
+# 🔥 Tạo lại cross_tab (tránh lỗi NameError)
 cross_tab = pd.crosstab(df_filtered["NamHoc"], df_filtered["TinChi"])
-cross_tab = cross_tab.reindex(index=[1,2,3,4], columns=credit_options, fill_value=0)
 
+# Thứ tự chuẩn
+year_order = [1, 2, 3, 4]
+tinchi_order = ["Dưới 14", "14–16", "17–19", "20–22", "Trên 22"]
+
+cross_tab = cross_tab.reindex(index=year_order, columns=tinchi_order, fill_value=0)
+
+# 🔥 Chuyển sang %
 cross_tab_percent = cross_tab.div(cross_tab.sum(axis=1), axis=0)
 
-fig3, ax3 = plt.subplots(figsize=(8,5))
-cross_tab_percent.plot(kind="bar", stacked=True, ax=ax3)
+# Vẽ
+fig, ax = plt.subplots(figsize=(8,5))
 
-ax3.set_xticklabels(["Năm 1","Năm 2","Năm 3","Năm 4"], rotation=0)
-ax3.set_ylabel("Tỷ lệ")
-ax3.legend(title="Tín chỉ", bbox_to_anchor=(1.05,1))
+cross_tab_percent.plot(
+    kind="bar",
+    stacked=True,
+    ax=ax
+)
 
-st.pyplot(fig3)
+# Format
+ax.set_xlabel("Năm học")
+ax.set_ylabel("Tỷ lệ (%)")
+ax.set_title("Tỷ lệ số tín chỉ theo từng năm học")
+
+ax.set_xticklabels(["Năm 1", "Năm 2", "Năm 3", "Năm 4"], rotation=0)
+ax.legend(title="Tín chỉ", bbox_to_anchor=(1.05, 1), loc='upper left')
+
+# Hiển thị % trên cột
+for i in range(len(cross_tab_percent)):
+    cumulative = 0
+    for j in range(len(cross_tab_percent.columns)):
+        value = cross_tab_percent.iloc[i, j]
+        if value > 0:
+            ax.text(
+                i,
+                cumulative + value/2,
+                f"{value*100:.0f}%",
+                ha='center',
+                va='center',
+                fontsize=8
+            )
+            cumulative += value
+
+st.pyplot(fig)
+
 
 # ======================
-# TÍN CHỈ → KHỐI LƯỢNG
+# TÍN CHỈ vs KHỐI LƯỢNG (%)
 # ======================
-st.subheader("📊 Tín chỉ → Khối lượng")
+st.subheader("📊 Tỷ lệ cảm nhận khối lượng theo số tín chỉ")
 
+# Tạo bảng chéo
 cross_tab = pd.crosstab(df_filtered["TinChi"], df_filtered["KhoiLuong"])
-cross_tab = cross_tab.reindex(index=credit_options,
-                             columns=["Nhẹ","Vừa phải","Hơi nặng","Rất nặng"],
-                             fill_value=0)
 
+# Chuẩn hóa thứ tự
+tinchi_order = ["Dưới 14", "14–16", "17–19", "20–22", "Trên 22"]
+khoiluong_order = ["Nhẹ", "Vừa phải", "Hơi nặng", "Rất nặng"]
+
+cross_tab = cross_tab.reindex(
+    index=tinchi_order,
+    columns=khoiluong_order,
+    fill_value=0
+)
+
+# Chuyển sang %
 cross_tab_percent = cross_tab.div(cross_tab.sum(axis=1), axis=0)
 
-fig4, ax4 = plt.subplots(figsize=(8,5))
-cross_tab_percent.plot(kind="bar", stacked=True, ax=ax4)
+# Vẽ biểu đồ
+fig, ax = plt.subplots(figsize=(8,5))
 
-ax4.set_ylabel("Tỷ lệ")
-ax4.legend(title="Khối lượng", bbox_to_anchor=(1.05,1))
+cross_tab_percent.plot(
+    kind="bar",
+    stacked=True,
+    ax=ax
+)
 
-st.pyplot(fig4)
+# Format
+ax.set_xlabel("Số tín chỉ")
+ax.set_ylabel("Tỷ lệ (%)")
+ax.set_title("Ảnh hưởng của số tín chỉ đến cảm nhận khối lượng học tập")
+
+plt.xticks(rotation=0)
+ax.legend(title="Khối lượng", bbox_to_anchor=(1.05, 1), loc='upper left')
+
+# Hiển thị % trên cột
+for i in range(len(cross_tab_percent)):
+    cumulative = 0
+    for j in range(len(cross_tab_percent.columns)):
+        value = cross_tab_percent.iloc[i, j]
+        if value > 0:
+            ax.text(
+                i,
+                cumulative + value/2,
+                f"{value*100:.0f}%",
+                ha='center',
+                va='center',
+                fontsize=8,
+                color='black'
+            )
+            cumulative += value
+
+st.pyplot(fig)
+
 
 # ======================
-# TỰ HỌC → GPA
+# TỰ HỌC → GPA (% STACKED)
 # ======================
-st.subheader("📊 Tự học → GPA")
+st.subheader("📊 Ảnh hưởng của thời gian tự học đến GPA")
 
-tuhoc_order = ["Dưới 1 giờ","1–2 giờ","2–4 giờ","Trên 4 giờ"]
-gpa_order = ["Dưới 2.0","2.0 – 2.49","2.5 – 3.19","3.2 – 3.59"]
-
+# Tạo bảng chéo
 cross_tab = pd.crosstab(df_filtered["TuHoc"], df_filtered["GPA"])
+
+# Thứ tự chuẩn
+tuhoc_order = ["Dưới 1 giờ", "1–2 giờ", "2–4 giờ", "Trên 4 giờ"]
+gpa_order = ["Dưới 2.0", "2.0 – 2.49", "2.5 – 3.19", "3.2 – 3.59"]
+
 cross_tab = cross_tab.reindex(index=tuhoc_order, columns=gpa_order, fill_value=0)
 
+# Chuyển sang %
 cross_tab_percent = cross_tab.div(cross_tab.sum(axis=1), axis=0)
 
-fig5, ax5 = plt.subplots(figsize=(8,5))
-cross_tab_percent.plot(kind="bar", stacked=True, ax=ax5)
+# Vẽ biểu đồ
+fig, ax = plt.subplots(figsize=(8,5))
 
-ax5.set_ylabel("Tỷ lệ")
-ax5.legend(title="GPA", bbox_to_anchor=(1.05,1))
+cross_tab_percent.plot(
+    kind="bar",
+    stacked=True,
+    ax=ax
+)
 
-st.pyplot(fig5)
+# Format
+ax.set_xlabel("Thời gian tự học")
+ax.set_ylabel("Tỷ lệ (%)")
+ax.set_title("Tỷ lệ GPA theo thời gian tự học")
+
+plt.xticks(rotation=0)
+ax.legend(title="GPA", bbox_to_anchor=(1.05, 1), loc='upper left')
+
+# Hiển thị %
+for i in range(len(cross_tab_percent)):
+    cumulative = 0
+    for j in range(len(cross_tab_percent.columns)):
+        value = cross_tab_percent.iloc[i, j]
+        if value > 0:
+            ax.text(
+                i,
+                cumulative + value/2,
+                f"{value*100:.0f}%",
+                ha='center',
+                va='center',
+                fontsize=8
+            )
+            cumulative += value
+
+st.pyplot(fig)
+
 
 # ======================
 # FOOTER
