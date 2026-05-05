@@ -125,6 +125,25 @@ st.dataframe(df_filtered)
 
 
 # ======================
+# BIỂU ĐỒ PHÂN BỐ GPA
+# ======================
+st.subheader("📊 Phân bố điểm GPA học kỳ")
+
+fig, ax = plt.subplots()
+
+sns.histplot(
+    df_filtered["GPA_num"],
+    bins=5,
+    kde=True,
+    ax=ax
+)
+
+ax.set_xlabel("GPA")
+ax.set_ylabel("Số sinh viên")
+
+st.pyplot(fig)
+
+# ======================
 # FOOTER
 # ======================
 st.markdown("---")
