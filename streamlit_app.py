@@ -95,9 +95,51 @@ year_filter = st.sidebar.multiselect(
     default=sorted(df["NamHoc"].dropna().unique())
 )
 
+# Tín chỉ
+credit_filter = st.sidebar.multiselect(
+    "Tín chỉ",
+    options=sorted(df["TinChi"].dropna().unique()),
+    default=sorted(df["TinChi"].dropna().unique())
+)
+
+# GPA
+gpa_filter = st.sidebar.slider(
+    "Khoảng GPA",
+    float(df["GPA_num"].min()),
+    float(df["GPA_num"].max()),
+    (float(df["GPA_num"].min()), float(df["GPA_num"].max()))
+)
+
+# Tự học
+study_filter = st.sidebar.slider(
+    "Giờ tự học/ngày",
+    float(df["TuHoc_num"].min()) if "TuHoc_num" in df.columns else 0,
+    float(df["TuHoc_num"].max()) if "TuHoc_num" in df.columns else 5,
+    (float(df["TuHoc_num"].min()), float(df["TuHoc_num"].max())) if "TuHoc_num" in df.columns else (0,5)
+)
+
+# Khối lượng (GIỮ TEXT)
+khoiluong_filter = st.sidebar.multiselect(
+    "Khối lượng học tập",
+    options=df["KhoiLuong"].unique(),
+    default=df["KhoiLuong"].unique()
+)
+
+# ======================
+# APPLY FILTER
+# ======================
 df_filtered = df[
-    (df["NamHoc"].isin(year_filter))
+    (df["NamHoc"].isin(year_filter)) &
+    (df["TinChi"].isin(credit_filter)) &
+    (df["GPA_num"].between(gpa_filter[0], gpa_filter[1])) &
+    (df["KhoiLuong"].isin(khoiluong_filter))
 ]
+
+# Nếu có TuHoc_num thì lọc thêm
+if "TuHoc_num" in df.columns:
+    df_filtered = df_filtered[
+        df_filtered["TuHoc_num"].between(study_filter[0], study_filter[1])
+    ]
 
 
 # ======================
