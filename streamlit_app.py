@@ -79,15 +79,6 @@ df = df.dropna()
 st.subheader("📊 Dữ liệu sau khi làm sạch")
 st.dataframe(df)
 
-# ======================
-# SO SÁNH NHANH
-# ======================
-st.subheader("📌 So sánh trước và sau làm sạch")
-
-col1, col2 = st.columns(2)
-
-col1.metric("Số dòng ban đầu", len(df_raw))
-col2.metric("Số dòng sau clean", len(df))
 
 # ======================
 # FOOTER
