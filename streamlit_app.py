@@ -131,18 +131,23 @@ st.subheader("📊 Phân bố điểm GPA học kỳ")
 
 fig, ax = plt.subplots()
 
-sns.histplot(
-    df_filtered["GPA_num"],
-    bins=5,
-    kde=True,
+sns.countplot(
+    x=df_filtered["GPA"],
+    order=[
+        "Dưới 2.0",
+        "2.0 – 2.49",
+        "2.5 – 3.19",
+        "3.2 – 3.59",
+        "Trên 3.6"
+    ],
     ax=ax
 )
 
-ax.set_xlabel("GPA")
+ax.set_xlabel("Mức GPA")
 ax.set_ylabel("Số sinh viên")
+ax.set_title("Phân bố sinh viên theo mức GPA")
 
 st.pyplot(fig)
-
 # ======================
 # FOOTER
 # ======================
