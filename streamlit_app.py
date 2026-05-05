@@ -171,9 +171,9 @@ st.pyplot(fig)
 
 
 # ======================
-# NĂM HỌC vs TÍN CHỈ
+# NĂM HỌC VÀ TÍN CHỈ
 # ======================
-st.subheader("📊 Năm học vs Số tín chỉ đăng ký")
+st.subheader("📊 Năm học vs Số tín chỉ (Stacked Bar)")
 
 # Tạo bảng chéo
 cross_tab = pd.crosstab(df_filtered["NamHoc"], df_filtered["TinChi"])
@@ -181,6 +181,7 @@ cross_tab = pd.crosstab(df_filtered["NamHoc"], df_filtered["TinChi"])
 # Sắp xếp thứ tự tín chỉ
 cross_tab = cross_tab.reindex(
     columns=["Dưới 14", "14–16", "17–19", "20–22", "Trên 22"],
+    fill_value=0
 )
 
 # Sắp xếp năm học
@@ -189,11 +190,15 @@ cross_tab = cross_tab.sort_index()
 # Vẽ biểu đồ
 fig, ax = plt.subplots()
 
-cross_tab.plot(kind="bar", ax=ax)
+cross_tab.plot(
+    kind="bar",
+    stacked=True,
+    ax=ax
+)
 
 ax.set_xlabel("Năm học")
-ax.set_ylabel("Số tín chỉ")
-ax.set_title("Mối quan hệ giữa Năm học và Số tín chỉ")
+ax.set_ylabel("Số sinh viên")
+ax.set_title("Phân bố số tín chỉ theo từng năm học")
 
 plt.xticks(rotation=0)
 
