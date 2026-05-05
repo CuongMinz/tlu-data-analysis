@@ -72,17 +72,91 @@ mapping_khoiluong = {
     "Rất nặng": 4
 }
 
-# 4. Áp dụng mapping (ghi đè luôn cột)
+mapping_gpa = {
+    "Dưới 2.0": 1.8,
+    "2.0 – 2.49": 2.25,
+    "2.5 – 3.19": 2.85,
+    "3.2 – 3.59": 3.4,
+    "Trên 3.6": 3.8,
+    "3.6+": 3.8
+}
+
+mapping_tuhoc = {
+    "Dưới 1 giờ": 0.5,
+    "1–2 giờ": 1.5,
+    "2–4 giờ": 3,
+    "Trên 4 giờ": 5
+}
+
+# ======================
+# APPLY
+# ======================
+
 df["NamHoc"] = df["NamHoc"].map(mapping_year)
 df["TinChi"] = df["TinChi"].map(mapping_credit)
 df["KhoiLuong"] = df["KhoiLuong"].map(mapping_khoiluong)
 
-# 5. Xóa dữ liệu lỗi
+df["GPA_num"] = df["GPA"].map(mapping_gpa)
+df["TuHoc_num"] = df["TuHoc"].map(mapping_tuhoc)
+
+# Xóa dữ liệu lỗi
 df = df.dropna()
 
-# 6. Hiển thị
+# ======================
+# SIDEBAR FILTER
+# ======================
+st.sidebar.header("🔎 Bộ lọc")
+
+year_filter = st.sidebar.multiselect(
+    "Năm học",
+    options=sorted(df["NamHoc"].unique()),
+    default=sorted(df["NamHoc"].unique())
+)
+
+credit_filter = st.sidebar.multiselect(
+    "Tín chỉ",
+    options=sorted(df["TinChi"].unique()),
+    default=sorted(df["TinChi"].unique())
+)
+
+gpa_filter = st.sidebar.slider(
+    "GPA",
+    float(df["GPA_num"].min()),
+    float(df["GPA_num"].max()),
+    (float(df["GPA_num"].min()), float(df["GPA_num"].max()))
+)
+
+study_filter = st.sidebar.slider(
+    "Giờ tự học",
+    float(df["TuHoc_num"].min()),
+    float(df["TuHoc_num"].max()),
+    (float(df["TuHoc_num"].min()), float(df["TuHoc_num"].max()))
+)
+
+# Apply filter
+df_filtered = df[
+    (df["NamHoc"].isin(year_filter)) &
+    (df["TinChi"].isin(credit_filter)) &
+    (df["GPA_num"].between(gpa_filter[0], gpa_filter[1])) &
+    (df["TuHoc_num"].between(study_filter[0], study_filter[1]))
+]
+
+# ======================
+# KPI
+# ======================
+st.subheader("📌 Tổng quan")
+
+col1, col2, col3 = st.columns(3)
+
+col1.metric("👨‍🎓 Số SV", len(df_filtered))
+col2.metric("📚 Tín chỉ TB", round(df_filtered["TinChi"].mean(), 2))
+col3.metric("🎯 GPA TB", round(df_filtered["GPA_num"].mean(), 2))
+
+# ======================
+# HIỂN THỊ DATA
+# ======================
 st.subheader("📂 Dữ liệu sau khi làm sạch")
-st.dataframe(df)
+st.dataframe(df_filtered)
 
 
 # ======================
