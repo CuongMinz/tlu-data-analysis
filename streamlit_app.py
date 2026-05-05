@@ -21,12 +21,6 @@ except:
     st.stop()
 
 # ======================
-# HIỂN THỊ DỮ LIỆU GỐC
-# ======================
-st.subheader("📂 Dữ liệu gốc (chưa làm sạch)")
-st.dataframe(df_raw)
-
-# ======================
 # CLEAN DATA
 # ======================
 df = df_raw.copy()
