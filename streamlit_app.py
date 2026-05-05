@@ -15,20 +15,26 @@ st.write("Ứng dụng phục vụ bài tập lớn môn Lập trình khoa học
 # LOAD DATA
 # ======================
 try:
-    df = pd.read_csv("data.csv")
-    df.columns = df.columns.str.strip()
+    df_raw = pd.read_csv("data.csv")
 except:
     st.error("❌ Không tìm thấy file data.csv")
     st.stop()
 
 # ======================
-# CLEAN & STANDARDIZE DATA
+# HIỂN THỊ DỮ LIỆU GỐC
 # ======================
+st.subheader("📂 Dữ liệu gốc (chưa làm sạch)")
+st.dataframe(df_raw)
 
-# 1. Xóa khoảng trắng tên cột
+# ======================
+# CLEAN DATA
+# ======================
+df = df_raw.copy()
+
+# 1. Xóa khoảng trắng
 df.columns = df.columns.str.strip()
 
-# 2. Xóa cột "Dấu thời gian" nếu tồn tại
+# 2. Xóa cột không cần
 if "Dấu thời gian" in df.columns:
     df = df.drop(columns=["Dấu thời gian"])
 
@@ -36,7 +42,7 @@ if "Dấu thời gian" in df.columns:
 df = df.rename(columns={
     "Bạn đang học năm mấy?": "NamHoc",
     "Một học kỳ bạn thường học bao nhiêu tín chỉ?": "TinChi",
-    "Một kì bạn thường học bao nhiêu tín chỉ?": "TinChi",  # phòng trường hợp khác dấu
+    "Một kì bạn thường học bao nhiêu tín chỉ?": "TinChi",
     "Bạn cảm thấy khối lượng học tập của mình:": "KhoiLuong",
     "GPA học kỳ gần nhất của bạn khoảng:": "GPA",
     "GPA học kì gần nhất của bạn khoảng:": "GPA",
@@ -49,115 +55,42 @@ df = df.rename(columns={
 # ======================
 # MAPPING
 # ======================
-
-mapping_year = {
-    "Năm 1": 1,
-    "Năm 2": 2,
-    "Năm 3": 3,
-    "Năm 4": 4
-}
-
-mapping_credit = {
-    "Dưới 14": 13,
-    "14–16": 15,
-    "17–19": 18,
-    "20–22": 21,
-    "Trên 22": 23
-}
-
-mapping_khoiluong = {
-    "Nhẹ": 1,
-    "Vừa phải": 2,
-    "Hơi nặng": 3,
-    "Rất nặng": 4
-}
-
+mapping_year = {"Năm 1":1,"Năm 2":2,"Năm 3":3,"Năm 4":4}
+mapping_credit = {"Dưới 14":13,"14–16":15,"17–19":18,"20–22":21,"Trên 22":23}
+mapping_khoiluong = {"Nhẹ":1,"Vừa phải":2,"Hơi nặng":3,"Rất nặng":4}
 mapping_gpa = {
-    "Dưới 2.0": 1.8,
-    "2.0 – 2.49": 2.25,
-    "2.5 – 3.19": 2.85,
-    "3.2 – 3.59": 3.4,
-    "Trên 3.6": 3.8,
-    "3.6+": 3.8
+    "Dưới 2.0":1.8,
+    "2.0 – 2.49":2.25,
+    "2.5 – 3.19":2.85,
+    "3.2 – 3.59":3.4,
+    "Trên 3.6":3.8,
+    "3.6+":3.8
 }
 
-mapping_tuhoc = {
-    "Dưới 1 giờ": 0.5,
-    "1–2 giờ": 1.5,
-    "2–4 giờ": 3,
-    "Trên 4 giờ": 5
-}
-
-# ======================
-# APPLY
-# ======================
-
+# Apply
 df["NamHoc"] = df["NamHoc"].map(mapping_year)
 df["TinChi"] = df["TinChi"].map(mapping_credit)
 df["KhoiLuong"] = df["KhoiLuong"].map(mapping_khoiluong)
-
 df["GPA_num"] = df["GPA"].map(mapping_gpa)
-df["TuHoc_num"] = df["TuHoc"].map(mapping_tuhoc)
 
-# Xóa dữ liệu lỗi
+# Xóa NA
 df = df.dropna()
 
 # ======================
-# SIDEBAR FILTER
+# HIỂN THỊ SAU CLEAN
 # ======================
-st.sidebar.header("🔎 Bộ lọc")
-
-year_filter = st.sidebar.multiselect(
-    "Năm học",
-    options=sorted(df["NamHoc"].unique()),
-    default=sorted(df["NamHoc"].unique())
-)
-
-credit_filter = st.sidebar.multiselect(
-    "Tín chỉ",
-    options=sorted(df["TinChi"].unique()),
-    default=sorted(df["TinChi"].unique())
-)
-
-gpa_filter = st.sidebar.slider(
-    "GPA",
-    float(df["GPA_num"].min()),
-    float(df["GPA_num"].max()),
-    (float(df["GPA_num"].min()), float(df["GPA_num"].max()))
-)
-
-study_filter = st.sidebar.slider(
-    "Giờ tự học",
-    float(df["TuHoc_num"].min()),
-    float(df["TuHoc_num"].max()),
-    (float(df["TuHoc_num"].min()), float(df["TuHoc_num"].max()))
-)
-
-# Apply filter
-df_filtered = df[
-    (df["NamHoc"].isin(year_filter)) &
-    (df["TinChi"].isin(credit_filter)) &
-    (df["GPA_num"].between(gpa_filter[0], gpa_filter[1])) &
-    (df["TuHoc_num"].between(study_filter[0], study_filter[1]))
-]
+st.subheader("📊 Dữ liệu sau khi làm sạch")
+st.dataframe(df)
 
 # ======================
-# KPI
+# SO SÁNH NHANH
 # ======================
-st.subheader("📌 Tổng quan")
+st.subheader("📌 So sánh trước và sau làm sạch")
 
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
-col1.metric("👨‍🎓 Số SV", len(df_filtered))
-col2.metric("📚 Tín chỉ TB", round(df_filtered["TinChi"].mean(), 2))
-col3.metric("🎯 GPA TB", round(df_filtered["GPA_num"].mean(), 2))
-
-# ======================
-# HIỂN THỊ DATA
-# ======================
-st.subheader("📂 Dữ liệu sau khi làm sạch")
-st.dataframe(df_filtered)
-
+col1.metric("Số dòng ban đầu", len(df_raw))
+col2.metric("Số dòng sau clean", len(df))
 
 # ======================
 # FOOTER
