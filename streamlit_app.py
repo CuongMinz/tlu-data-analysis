@@ -236,47 +236,59 @@ st.pyplot(fig)
 # ======================
 # TÍN CHỈ vs KHỐI LƯỢNG (%)
 # ======================
-st.subheader("📊 Tỷ lệ khối lượng theo tín chỉ (%)")
+st.subheader("📊 Tỷ lệ cảm nhận khối lượng theo số tín chỉ")
 
-# Tính %
+# Tạo bảng chéo
+cross_tab = pd.crosstab(df_filtered["TinChi"], df_filtered["KhoiLuong"])
+
+# Chuẩn hóa thứ tự
+tinchi_order = ["Dưới 14", "14–16", "17–19", "20–22", "Trên 22"]
+khoiluong_order = ["Nhẹ", "Vừa phải", "Hơi nặng", "Rất nặng"]
+
+cross_tab = cross_tab.reindex(
+    index=tinchi_order,
+    columns=khoiluong_order,
+    fill_value=0
+)
+
+# Chuyển sang %
 cross_tab_percent = cross_tab.div(cross_tab.sum(axis=1), axis=0)
 
 # Vẽ biểu đồ
-fig2, ax2 = plt.subplots()
+fig, ax = plt.subplots(figsize=(8,5))
 
 cross_tab_percent.plot(
     kind="bar",
     stacked=True,
-    ax=ax2
+    ax=ax
 )
 
-ax2.set_xlabel("Số tín chỉ")
-ax2.set_ylabel("Tỷ lệ")
-ax2.set_title("Tỷ lệ cảm nhận khối lượng theo tín chỉ")
+# Format
+ax.set_xlabel("Số tín chỉ")
+ax.set_ylabel("Tỷ lệ (%)")
+ax.set_title("Ảnh hưởng của số tín chỉ đến cảm nhận khối lượng học tập")
 
 plt.xticks(rotation=0)
-ax2.legend(title="Khối lượng")
+ax.legend(title="Khối lượng", bbox_to_anchor=(1.05, 1), loc='upper left')
 
-# Hiển thị %
+# Hiển thị % trên cột
 for i in range(len(cross_tab_percent)):
     cumulative = 0
     for j in range(len(cross_tab_percent.columns)):
         value = cross_tab_percent.iloc[i, j]
         if value > 0:
-            ax2.text(
+            ax.text(
                 i,
-                cumulative + value / 2,
+                cumulative + value/2,
                 f"{value*100:.0f}%",
                 ha='center',
                 va='center',
-                fontsize=8
+                fontsize=8,
+                color='black'
             )
             cumulative += value
 
-st.pyplot(fig2)
-
-
-
+st.pyplot(fig)
 
 # ======================
 # CROSSTAB GPA vs TỰ HỌC
