@@ -165,8 +165,14 @@ st.pyplot(fig)
 # ======================
 st.subheader("📊 Phân bố GPA theo thời gian tự học")
 
+
 # Tạo bảng chéo
 cross_tab = pd.crosstab(df_filtered["GPA"], df_filtered["TuHoc"])
+
+# Sắp xếp lại thứ tự cột
+cross_tab = cross_tab.reindex(
+    columns=["Dưới 1 giờ", "1–2 giờ", "2–4 giờ", "Trên 4 giờ"]
+)
 
 # Vẽ biểu đồ
 fig, ax = plt.subplots()
