@@ -233,6 +233,49 @@ ax.set_title("Tỷ lệ số tín chỉ sinh viên đăng ký")
 st.pyplot(fig)
 
 
+# ======================
+# TÍN CHỈ vs KHỐI LƯỢNG (%)
+# ======================
+st.subheader("📊 Tỷ lệ khối lượng theo tín chỉ (%)")
+
+# Tính %
+cross_tab_percent = cross_tab.div(cross_tab.sum(axis=1), axis=0)
+
+# Vẽ biểu đồ
+fig2, ax2 = plt.subplots()
+
+cross_tab_percent.plot(
+    kind="bar",
+    stacked=True,
+    ax=ax2
+)
+
+ax2.set_xlabel("Số tín chỉ")
+ax2.set_ylabel("Tỷ lệ")
+ax2.set_title("Tỷ lệ cảm nhận khối lượng theo tín chỉ")
+
+plt.xticks(rotation=0)
+ax2.legend(title="Khối lượng")
+
+# Hiển thị %
+for i in range(len(cross_tab_percent)):
+    cumulative = 0
+    for j in range(len(cross_tab_percent.columns)):
+        value = cross_tab_percent.iloc[i, j]
+        if value > 0:
+            ax2.text(
+                i,
+                cumulative + value / 2,
+                f"{value*100:.0f}%",
+                ha='center',
+                va='center',
+                fontsize=8
+            )
+            cumulative += value
+
+st.pyplot(fig2)
+
+
 
 
 # ======================
