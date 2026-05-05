@@ -57,20 +57,17 @@ df = df.rename(columns={
 # ======================
 mapping_year = {"Năm 1":1,"Năm 2":2,"Năm 3":3,"Năm 4":4}
 mapping_credit = {"Dưới 14":13,"14–16":15,"17–19":18,"20–22":21,"Trên 22":23}
-mapping_khoiluong = {"Nhẹ":1,"Vừa phải":2,"Hơi nặng":3,"Rất nặng":4}
 mapping_gpa = {
     "Dưới 2.0":1.8,
     "2.0 – 2.49":2.25,
     "2.5 – 3.19":2.85,
     "3.2 – 3.59":3.4,
-    "Trên 3.6":3.8,
-    "3.6+":3.8
+    "Trên 3.6":3.8
 }
 
 # Apply
 df["NamHoc"] = df["NamHoc"].map(mapping_year)
 df["TinChi"] = df["TinChi"].map(mapping_credit)
-df["KhoiLuong"] = df["KhoiLuong"].map(mapping_khoiluong)
 df["GPA_num"] = df["GPA"].map(mapping_gpa)
 
 # Xóa NA
