@@ -158,9 +158,22 @@ for p in ax.patches:
 
 st.pyplot(fig)
 
+
 # ======================
-# BIỂU ĐỒ NHẬN XÉT 1
+# PHÂN NHÓM GPA
 # ======================
+df["GPA_Group"] = df["GPA"].apply(
+    lambda x: "Dưới trung bình" if x in ["Dưới 2.0", "2.0 – 2.49"] else "Trên trung bình"
+)
+
+# ======================
+# PHÂN NHÓM TỰ HỌC
+# ======================
+df["TuHoc_Group"] = df["TuHoc"].apply(
+    lambda x: "Ít" if x in ["Dưới 1 giờ", "1–2 giờ"] else "Nhiều"
+)
+cross_tab = pd.crosstab(df_filtered["TuHoc_Group"], df_filtered["GPA_Group"])
+
 st.subheader("📊 Mối quan hệ giữa GPA và thời gian tự học")
 
 fig, ax = plt.subplots()
