@@ -308,32 +308,56 @@ for i in range(len(cross_tab_percent)):
 st.pyplot(fig)
 
 # ======================
-# CROSSTAB GPA vs TỰ HỌC
+# TỰ HỌC → GPA (% STACKED)
 # ======================
-st.subheader("📊 Phân bố GPA theo thời gian tự học")
-
+st.subheader("📊 Ảnh hưởng của thời gian tự học đến GPA")
 
 # Tạo bảng chéo
-cross_tab = pd.crosstab(df_filtered["GPA"], df_filtered["TuHoc"])
+cross_tab = pd.crosstab(df_filtered["TuHoc"], df_filtered["GPA"])
 
-# Sắp xếp lại thứ tự cột
-cross_tab = cross_tab.reindex(
-    columns=["Dưới 1 giờ", "1–2 giờ", "2–4 giờ", "Trên 4 giờ"]
-)
+# Thứ tự chuẩn
+tuhoc_order = ["Dưới 1 giờ", "1–2 giờ", "2–4 giờ", "Trên 4 giờ"]
+gpa_order = ["Dưới 2.0", "2.0 – 2.49", "2.5 – 3.19", "3.2 – 3.59"]
+
+cross_tab = cross_tab.reindex(index=tuhoc_order, columns=gpa_order, fill_value=0)
+
+# Chuyển sang %
+cross_tab_percent = cross_tab.div(cross_tab.sum(axis=1), axis=0)
 
 # Vẽ biểu đồ
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(8,5))
 
-cross_tab.plot(kind='bar', ax=ax)
+cross_tab_percent.plot(
+    kind="bar",
+    stacked=True,
+    ax=ax
+)
 
-ax.set_title("Phân bố GPA theo thời gian tự học")
-ax.set_xlabel("Mức GPA")
-ax.set_ylabel("Số sinh viên")
+# Format
+ax.set_xlabel("Thời gian tự học")
+ax.set_ylabel("Tỷ lệ (%)")
+ax.set_title("Tỷ lệ GPA theo thời gian tự học")
 
-plt.xticks(rotation=45)
+plt.xticks(rotation=0)
+ax.legend(title="GPA", bbox_to_anchor=(1.05, 1), loc='upper left')
+
+# Hiển thị %
+for i in range(len(cross_tab_percent)):
+    cumulative = 0
+    for j in range(len(cross_tab_percent.columns)):
+        value = cross_tab_percent.iloc[i, j]
+        if value > 0:
+            ax.text(
+                i,
+                cumulative + value/2,
+                f"{value*100:.0f}%",
+                ha='center',
+                va='center',
+                fontsize=8
+            )
+            cumulative += value
 
 st.pyplot(fig)
-
 
 # ======================
 # FOOTER
