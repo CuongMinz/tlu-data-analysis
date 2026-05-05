@@ -204,6 +204,37 @@ plt.xticks(rotation=0)
 
 st.pyplot(fig)
 
+
+# ======================
+# PIE CHART TÍN CHỈ
+# ======================
+st.subheader("📊 Phân bố số tín chỉ")
+
+# Đếm số lượng
+tinchi_counts = df_filtered["TinChi"].value_counts()
+
+# Sắp xếp đúng thứ tự
+tinchi_counts = tinchi_counts.reindex(
+    ["Dưới 14", "14–16", "17–19", "20–22", "Trên 22"]
+).fillna(0)
+
+# Vẽ biểu đồ
+fig, ax = plt.subplots()
+
+ax.pie(
+    tinchi_counts,
+    labels=tinchi_counts.index,
+    autopct='%1.1f%%',
+    startangle=90
+)
+
+ax.set_title("Tỷ lệ số tín chỉ sinh viên đăng ký")
+
+st.pyplot(fig)
+
+
+
+
 # ======================
 # CROSSTAB GPA vs TỰ HỌC
 # ======================
