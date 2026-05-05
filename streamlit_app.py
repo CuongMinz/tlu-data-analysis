@@ -73,20 +73,20 @@ year_filter = st.sidebar.multiselect(
 )
 
 # Tín chỉ
-gpa_filter = st.sidebar.multiselect(
-    "Mức GPA",
+credit_filter = st.sidebar.multiselect(
+    "Tín chỉ",
     options=[
         "Dưới 14",
-        "14 - 16",
-        "17 - 19",
-        "20 - 22",
+        "14–16",
+        "17–19",
+        "20–22",
         "Trên 22"
     ],
     default=[
         "Dưới 14",
-        "14 - 16",
-        "17 - 19",
-        "20 - 22",
+        "14–16",
+        "17–19",
+        "20–22",
         "Trên 22"
     ]
 )
