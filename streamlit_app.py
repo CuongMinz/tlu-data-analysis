@@ -171,6 +171,35 @@ st.pyplot(fig)
 
 
 # ======================
+# NĂM HỌC vs TÍN CHỈ
+# ======================
+st.subheader("📊 Năm học vs Số tín chỉ đăng ký")
+
+# Tạo bảng chéo
+cross_tab = pd.crosstab(df_filtered["NamHoc"], df_filtered["TinChi"])
+
+# Sắp xếp thứ tự tín chỉ
+cross_tab = cross_tab.reindex(
+    columns=["Dưới 14", "14–16", "17–19", "20–22", "Trên 22"],
+)
+
+# Sắp xếp năm học
+cross_tab = cross_tab.sort_index()
+
+# Vẽ biểu đồ
+fig, ax = plt.subplots()
+
+cross_tab.plot(kind="bar", ax=ax)
+
+ax.set_xlabel("Năm học")
+ax.set_ylabel("Số tín chỉ")
+ax.set_title("Mối quan hệ giữa Năm học và Số tín chỉ")
+
+plt.xticks(rotation=0)
+
+st.pyplot(fig)
+
+# ======================
 # CROSSTAB GPA vs TỰ HỌC
 # ======================
 st.subheader("📊 Phân bố GPA theo thời gian tự học")
