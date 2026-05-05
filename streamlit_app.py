@@ -109,21 +109,6 @@ khoiluong_filter = st.sidebar.multiselect(
 
 
 # ======================
-# PHÂN NHÓM GPA
-# ======================
-df["GPA_Group"] = df["GPA"].apply(
-    lambda x: "Dưới trung bình" if x in ["Dưới 2.0", "2.0 – 2.49"] else "Trên trung bình"
-)
-
-# ======================
-# PHÂN NHÓM TỰ HỌC
-# ======================
-df["TuHoc_Group"] = df["TuHoc"].apply(
-    lambda x: "Ít" if x in ["Dưới 1 giờ", "1–2 giờ"] else "Nhiều"
-)
-
-
-# ======================
 # APPLY FILTER
 # ======================
 df_filtered = df[
@@ -175,17 +160,24 @@ for p in ax.patches:
 st.pyplot(fig)
 
 
-cross_tab = pd.crosstab(df_filtered["TuHoc_Group"], df_filtered["GPA_Group"])
+# ======================
+# CROSSTAB GPA vs TỰ HỌC
+# ======================
+st.subheader("📊 Phân bố GPA theo thời gian tự học")
 
-st.subheader("📊 Mối quan hệ giữa GPA và thời gian tự học")
+# Tạo bảng chéo
+cross_tab = pd.crosstab(df_filtered["GPA"], df_filtered["TuHoc"])
 
+# Vẽ biểu đồ
 fig, ax = plt.subplots()
 
-cross_tab.plot(kind="bar", ax=ax)
+cross_tab.plot(kind='bar', ax=ax)
 
-ax.set_xlabel("Thời gian tự học")
+ax.set_title("Phân bố GPA theo thời gian tự học")
+ax.set_xlabel("Mức GPA")
 ax.set_ylabel("Số sinh viên")
-ax.set_title("Ảnh hưởng của tự học đến kết quả học tập")
+
+plt.xticks(rotation=45)
 
 st.pyplot(fig)
 
