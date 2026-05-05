@@ -173,36 +173,44 @@ st.pyplot(fig)
 # ======================
 # NĂM HỌC VÀ TÍN CHỈ
 # ======================
-st.subheader("📊 Năm học vs Số tín chỉ (Stacked Bar)")
+st.subheader("📊 Tỷ lệ tín chỉ theo năm học")
 
-# Tạo bảng chéo
-cross_tab = pd.crosstab(df_filtered["NamHoc"], df_filtered["TinChi"])
+# Tính %
+cross_tab_percent = cross_tab.div(cross_tab.sum(axis=1), axis=0)
 
-# Sắp xếp thứ tự tín chỉ
-cross_tab = cross_tab.reindex(
-    columns=["Dưới 14", "14–16", "17–19", "20–22", "Trên 22"],
-    fill_value=0
-)
+fig2, ax2 = plt.subplots(figsize=(8,5))
 
-# Sắp xếp năm học
-cross_tab = cross_tab.sort_index()
-
-# Vẽ biểu đồ
-fig, ax = plt.subplots()
-
-cross_tab.plot(
+cross_tab_percent.plot(
     kind="bar",
     stacked=True,
-    ax=ax
+    ax=ax2
 )
 
-ax.set_xlabel("Năm học")
-ax.set_ylabel("Số sinh viên")
-ax.set_title("Phân bố số tín chỉ theo từng năm học")
+# Format
+ax2.set_xlabel("Năm học")
+ax2.set_ylabel("Tỷ lệ (%)")
+ax2.set_title("Tỷ lệ đăng ký tín chỉ theo năm học")
 
-plt.xticks(rotation=0)
+ax2.set_xticklabels(["Năm 1", "Năm 2", "Năm 3", "Năm 4"], rotation=0)
+ax2.legend(title="Tín chỉ", bbox_to_anchor=(1.05, 1), loc='upper left')
 
-st.pyplot(fig)
+# Hiển thị %
+for i in range(len(cross_tab_percent)):
+    cumulative = 0
+    for j in range(len(cross_tab_percent.columns)):
+        value = cross_tab_percent.iloc[i, j]
+        if value > 0:
+            ax2.text(
+                i,
+                cumulative + value/2,
+                f"{value*100:.0f}%",
+                ha='center',
+                va='center',
+                fontsize=8
+            )
+            cumulative += value
+
+st.pyplot(fig2)
 
 
 # ======================
