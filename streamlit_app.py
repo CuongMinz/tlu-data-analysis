@@ -50,11 +50,9 @@ df = df.rename(columns={
 # MAPPING
 # ======================
 mapping_year = {"Năm 1":1,"Năm 2":2,"Năm 3":3,"Năm 4":4}
-mapping_credit = {"Dưới 14":13,"14–16":15,"17–19":18,"20–22":21,"Trên 22":23}
 
 # Apply
 df["NamHoc"] = df["NamHoc"].map(mapping_year)
-df["TinChi"] = df["TinChi"].map(mapping_credit)
 
 # Xóa NA
 df = df.dropna()
@@ -75,13 +73,25 @@ year_filter = st.sidebar.multiselect(
 )
 
 # Tín chỉ
-credit_filter = st.sidebar.multiselect(
-    "Tín chỉ",
-    options=sorted(df["TinChi"].unique()),
-    default=sorted(df["TinChi"].unique())
+gpa_filter = st.sidebar.multiselect(
+    "Mức GPA",
+    options=[
+        "Dưới 14",
+        "14 - 16",
+        "17 - 19",
+        "20 - 22",
+        "Trên 22"
+    ],
+    default=[
+        "Dưới 14",
+        "14 - 16",
+        "17 - 19",
+        "20 - 22",
+        "Trên 22"
+    ]
 )
 
-# GPA (TEXT)
+# GPA 
 gpa_filter = st.sidebar.multiselect(
     "Mức GPA",
     options=[
