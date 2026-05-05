@@ -4,12 +4,28 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # ======================
-# CONFIG
+# CONFIG + STYLE
 # ======================
-st.set_page_config(page_title="Phân tích sinh viên TLU", layout="wide")
+st.set_page_config(page_title="TLU Data Analysis", layout="wide")
 
-st.title("📊 Phân tích kết quả học tập sinh viên TLU")
-st.write("Ứng dụng phục vụ bài tập lớn môn Lập trình khoa học dữ liệu")
+st.markdown("""
+<style>
+.main-title {
+    font-size:32px;
+    font-weight:bold;
+    text-align:center;
+    color:#2c3e50;
+}
+.sub-title {
+    text-align:center;
+    color:gray;
+    margin-bottom:20px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown('<div class="main-title">📊 Dashboard phân tích kết quả học tập SV TLU</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">Môn: Lập trình khoa học dữ liệu</div>', unsafe_allow_html=True)
 
 # ======================
 # LOAD DATA
@@ -25,14 +41,11 @@ except:
 # ======================
 df = df_raw.copy()
 
-# 1. Xóa khoảng trắng
 df.columns = df.columns.str.strip()
 
-# 2. Xóa cột không cần
 if "Dấu thời gian" in df.columns:
     df = df.drop(columns=["Dấu thời gian"])
 
-# 3. Đổi tên cột
 df = df.rename(columns={
     "Bạn đang học năm mấy?": "NamHoc",
     "Một học kỳ bạn thường học bao nhiêu tín chỉ?": "TinChi",
@@ -46,81 +59,38 @@ df = df.rename(columns={
     "Bạn đánh giá mức độ khó của học kỳ vừa rồi:": "DoKho"
 })
 
-# ======================
-# MAPPING
-# ======================
 mapping_year = {"Năm 1":1,"Năm 2":2,"Năm 3":3,"Năm 4":4}
-
-# Apply
 df["NamHoc"] = df["NamHoc"].map(mapping_year)
 
-# Xóa NA
 df = df.dropna()
 
 # ======================
 # SIDEBAR FILTER
 # ======================
-st.sidebar.header("🔎 Bộ lọc dữ liệu")
+st.sidebar.title("⚙️ Bộ lọc")
+st.sidebar.markdown("---")
 
-if st.sidebar.button("🔄 Reset bộ lọc"):
+if st.sidebar.button("🔄 Reset"):
     st.rerun()
 
-# Năm học
 year_filter = st.sidebar.multiselect(
     "Năm học",
-    options=sorted(df["NamHoc"].unique()),
+    sorted(df["NamHoc"].unique()),
     default=sorted(df["NamHoc"].unique())
 )
 
-# Tín chỉ
-credit_filter = st.sidebar.multiselect(
-    "Tín chỉ",
-    options=[
-        "Dưới 14",
-        "14–16",
-        "17–19",
-        "20–22",
-        "Trên 22"
-    ],
-    default=[
-        "Dưới 14",
-        "14–16",
-        "17–19",
-        "20–22",
-        "Trên 22"
-    ]
-)
+credit_options = ["Dưới 14","14–16","17–19","20–22","Trên 22"]
+credit_filter = st.sidebar.multiselect("Tín chỉ", credit_options, default=credit_options)
 
-# GPA 
-gpa_filter = st.sidebar.multiselect(
-    "Mức GPA",
-    options=[
-        "Dưới 2.0",
-        "2.0 – 2.49",
-        "2.5 – 3.19",
-        "3.2 – 3.59",
-        "Trên 3.6"
-    ],
-    default=[
-        "Dưới 2.0",
-        "2.0 – 2.49",
-        "2.5 – 3.19",
-        "3.2 – 3.59",
-        "Trên 3.6"
-    ]
-)
+gpa_options = ["Dưới 2.0","2.0 – 2.49","2.5 – 3.19","3.2 – 3.59","Trên 3.6"]
+gpa_filter = st.sidebar.multiselect("GPA", gpa_options, default=gpa_options)
 
-# Khối lượng
 khoiluong_filter = st.sidebar.multiselect(
-    "Khối lượng học tập",
-    options=df["KhoiLuong"].unique(),
+    "Khối lượng",
+    df["KhoiLuong"].unique(),
     default=df["KhoiLuong"].unique()
 )
 
-
-# ======================
-# APPLY FILTER
-# ======================
 df_filtered = df[
     (df["NamHoc"].isin(year_filter)) &
     (df["TinChi"].isin(credit_filter)) &
@@ -129,238 +99,114 @@ df_filtered = df[
 ]
 
 # ======================
-# HIỂN THỊ
+# KPI
 # ======================
-st.subheader("📊 Dữ liệu sau khi lọc")
-st.write(f"🔍 Số sinh viên: {len(df_filtered)}")
-st.dataframe(df_filtered)
+st.subheader("📌 Tổng quan")
 
+col1, col2, col3 = st.columns(3)
+
+col1.metric("👨‍🎓 Số SV", len(df_filtered))
+col2.metric("📊 GPA phổ biến", df_filtered["GPA"].mode()[0])
+col3.metric("⏱️ Tự học phổ biến", df_filtered["TuHoc"].mode()[0])
 
 # ======================
-# BIỂU ĐỒ PHÂN BỐ GPA
+# DATA
 # ======================
-st.subheader("📊 Phân bố điểm GPA học kỳ")
+with st.expander("📂 Xem dữ liệu"):
+    st.dataframe(df_filtered)
 
-fig, ax = plt.subplots()
+# ======================
+# GPA + PIE
+# ======================
+col1, col2 = st.columns(2)
 
-sns.countplot(
-    x=df_filtered["GPA"],
-    order=[
-        "Dưới 2.0",
-        "2.0 – 2.49",
-        "2.5 – 3.19",
-        "3.2 – 3.59",
-        "Trên 3.6"
-    ],
-    ax=ax
-)
-
-ax.set_xlabel("Mức GPA")
-ax.set_ylabel("Số sinh viên")
-
-# Hiển thị số trên cột
-for p in ax.patches:
-    ax.annotate(
-        str(int(p.get_height())),
-        (p.get_x() + p.get_width() / 2., p.get_height()),
-        ha='center',
-        va='bottom'
+with col1:
+    st.subheader("📊 Phân bố GPA")
+    fig1, ax1 = plt.subplots()
+    sns.countplot(
+        x=df_filtered["GPA"],
+        order=gpa_options,
+        ax=ax1
     )
+    for p in ax1.patches:
+        ax1.annotate(int(p.get_height()),
+                     (p.get_x()+p.get_width()/2, p.get_height()),
+                     ha='center', va='bottom')
+    plt.xticks(rotation=20)
+    st.pyplot(fig1)
 
-st.pyplot(fig)
-
+with col2:
+    st.subheader("📊 Phân bố tín chỉ")
+    fig2, ax2 = plt.subplots()
+    df_filtered["TinChi"].value_counts().reindex(credit_options).plot(
+        kind="pie", autopct="%1.1f%%", ax=ax2
+    )
+    ax2.set_ylabel("")
+    st.pyplot(fig2)
 
 # ======================
-# NĂM HỌC vs TÍN CHỈ
+# NĂM HỌC → TÍN CHỈ
 # ======================
-st.subheader("📊 Tỷ lệ đăng ký tín chỉ theo năm học")
+st.markdown("---")
+st.subheader("📊 Năm học → Tín chỉ")
 
-# 🔥 Tạo lại cross_tab (tránh lỗi NameError)
 cross_tab = pd.crosstab(df_filtered["NamHoc"], df_filtered["TinChi"])
+cross_tab = cross_tab.reindex(index=[1,2,3,4], columns=credit_options, fill_value=0)
 
-# Thứ tự chuẩn
-year_order = [1, 2, 3, 4]
-tinchi_order = ["Dưới 14", "14–16", "17–19", "20–22", "Trên 22"]
-
-cross_tab = cross_tab.reindex(index=year_order, columns=tinchi_order, fill_value=0)
-
-# 🔥 Chuyển sang %
 cross_tab_percent = cross_tab.div(cross_tab.sum(axis=1), axis=0)
 
-# Vẽ
-fig, ax = plt.subplots(figsize=(8,5))
+fig3, ax3 = plt.subplots(figsize=(8,5))
+cross_tab_percent.plot(kind="bar", stacked=True, ax=ax3)
 
-cross_tab_percent.plot(
-    kind="bar",
-    stacked=True,
-    ax=ax
-)
+ax3.set_xticklabels(["Năm 1","Năm 2","Năm 3","Năm 4"], rotation=0)
+ax3.set_ylabel("Tỷ lệ")
+ax3.legend(title="Tín chỉ", bbox_to_anchor=(1.05,1))
 
-# Format
-ax.set_xlabel("Năm học")
-ax.set_ylabel("Tỷ lệ (%)")
-ax.set_title("Tỷ lệ số tín chỉ theo từng năm học")
-
-ax.set_xticklabels(["Năm 1", "Năm 2", "Năm 3", "Năm 4"], rotation=0)
-ax.legend(title="Tín chỉ", bbox_to_anchor=(1.05, 1), loc='upper left')
-
-# Hiển thị % trên cột
-for i in range(len(cross_tab_percent)):
-    cumulative = 0
-    for j in range(len(cross_tab_percent.columns)):
-        value = cross_tab_percent.iloc[i, j]
-        if value > 0:
-            ax.text(
-                i,
-                cumulative + value/2,
-                f"{value*100:.0f}%",
-                ha='center',
-                va='center',
-                fontsize=8
-            )
-            cumulative += value
-
-st.pyplot(fig)
+st.pyplot(fig3)
 
 # ======================
-# PIE CHART TÍN CHỈ
+# TÍN CHỈ → KHỐI LƯỢNG
 # ======================
-st.subheader("📊 Phân bố số tín chỉ")
+st.subheader("📊 Tín chỉ → Khối lượng")
 
-# Đếm số lượng
-tinchi_counts = df_filtered["TinChi"].value_counts()
-
-# Sắp xếp đúng thứ tự
-tinchi_counts = tinchi_counts.reindex(
-    ["Dưới 14", "14–16", "17–19", "20–22"]
-).fillna(0)
-
-# Vẽ biểu đồ
-fig, ax = plt.subplots()
-
-ax.pie(
-    tinchi_counts,
-    labels=tinchi_counts.index,
-    autopct='%1.1f%%',
-    startangle=90
-)
-
-ax.set_title("Tỷ lệ số tín chỉ sinh viên đăng ký")
-
-st.pyplot(fig)
-
-
-# ======================
-# TÍN CHỈ vs KHỐI LƯỢNG (%)
-# ======================
-st.subheader("📊 Tỷ lệ cảm nhận khối lượng theo số tín chỉ")
-
-# Tạo bảng chéo
 cross_tab = pd.crosstab(df_filtered["TinChi"], df_filtered["KhoiLuong"])
+cross_tab = cross_tab.reindex(index=credit_options,
+                             columns=["Nhẹ","Vừa phải","Hơi nặng","Rất nặng"],
+                             fill_value=0)
 
-# Chuẩn hóa thứ tự
-tinchi_order = ["Dưới 14", "14–16", "17–19", "20–22", "Trên 22"]
-khoiluong_order = ["Nhẹ", "Vừa phải", "Hơi nặng", "Rất nặng"]
-
-cross_tab = cross_tab.reindex(
-    index=tinchi_order,
-    columns=khoiluong_order,
-    fill_value=0
-)
-
-# Chuyển sang %
 cross_tab_percent = cross_tab.div(cross_tab.sum(axis=1), axis=0)
 
-# Vẽ biểu đồ
-fig, ax = plt.subplots(figsize=(8,5))
+fig4, ax4 = plt.subplots(figsize=(8,5))
+cross_tab_percent.plot(kind="bar", stacked=True, ax=ax4)
 
-cross_tab_percent.plot(
-    kind="bar",
-    stacked=True,
-    ax=ax
-)
+ax4.set_ylabel("Tỷ lệ")
+ax4.legend(title="Khối lượng", bbox_to_anchor=(1.05,1))
 
-# Format
-ax.set_xlabel("Số tín chỉ")
-ax.set_ylabel("Tỷ lệ (%)")
-ax.set_title("Ảnh hưởng của số tín chỉ đến cảm nhận khối lượng học tập")
-
-plt.xticks(rotation=0)
-ax.legend(title="Khối lượng", bbox_to_anchor=(1.05, 1), loc='upper left')
-
-# Hiển thị % trên cột
-for i in range(len(cross_tab_percent)):
-    cumulative = 0
-    for j in range(len(cross_tab_percent.columns)):
-        value = cross_tab_percent.iloc[i, j]
-        if value > 0:
-            ax.text(
-                i,
-                cumulative + value/2,
-                f"{value*100:.0f}%",
-                ha='center',
-                va='center',
-                fontsize=8,
-                color='black'
-            )
-            cumulative += value
-
-st.pyplot(fig)
+st.pyplot(fig4)
 
 # ======================
-# TỰ HỌC → GPA (% STACKED)
+# TỰ HỌC → GPA
 # ======================
-st.subheader("📊 Ảnh hưởng của thời gian tự học đến GPA")
+st.subheader("📊 Tự học → GPA")
 
-# Tạo bảng chéo
+tuhoc_order = ["Dưới 1 giờ","1–2 giờ","2–4 giờ","Trên 4 giờ"]
+gpa_order = ["Dưới 2.0","2.0 – 2.49","2.5 – 3.19","3.2 – 3.59"]
+
 cross_tab = pd.crosstab(df_filtered["TuHoc"], df_filtered["GPA"])
-
-# Thứ tự chuẩn
-tuhoc_order = ["Dưới 1 giờ", "1–2 giờ", "2–4 giờ", "Trên 4 giờ"]
-gpa_order = ["Dưới 2.0", "2.0 – 2.49", "2.5 – 3.19", "3.2 – 3.59"]
-
 cross_tab = cross_tab.reindex(index=tuhoc_order, columns=gpa_order, fill_value=0)
 
-# Chuyển sang %
 cross_tab_percent = cross_tab.div(cross_tab.sum(axis=1), axis=0)
 
-# Vẽ biểu đồ
-fig, ax = plt.subplots(figsize=(8,5))
+fig5, ax5 = plt.subplots(figsize=(8,5))
+cross_tab_percent.plot(kind="bar", stacked=True, ax=ax5)
 
-cross_tab_percent.plot(
-    kind="bar",
-    stacked=True,
-    ax=ax
-)
+ax5.set_ylabel("Tỷ lệ")
+ax5.legend(title="GPA", bbox_to_anchor=(1.05,1))
 
-# Format
-ax.set_xlabel("Thời gian tự học")
-ax.set_ylabel("Tỷ lệ (%)")
-ax.set_title("Tỷ lệ GPA theo thời gian tự học")
-
-plt.xticks(rotation=0)
-ax.legend(title="GPA", bbox_to_anchor=(1.05, 1), loc='upper left')
-
-# Hiển thị %
-for i in range(len(cross_tab_percent)):
-    cumulative = 0
-    for j in range(len(cross_tab_percent.columns)):
-        value = cross_tab_percent.iloc[i, j]
-        if value > 0:
-            ax.text(
-                i,
-                cumulative + value/2,
-                f"{value*100:.0f}%",
-                ha='center',
-                va='center',
-                fontsize=8
-            )
-            cumulative += value
-
-st.pyplot(fig)
+st.pyplot(fig5)
 
 # ======================
 # FOOTER
 # ======================
 st.markdown("---")
-st.markdown("👨‍💻 Sinh viên thực hiện: **[Tên của bạn]**")
+st.markdown("<center>👨‍💻 Sinh viên thực hiện: <b>Tên của bạn</b></center>", unsafe_allow_html=True)
