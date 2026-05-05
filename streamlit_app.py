@@ -51,6 +51,7 @@ df = df.rename(columns={
 # ======================
 mapping_year = {"Năm 1":1,"Năm 2":2,"Năm 3":3,"Năm 4":4}
 mapping_credit = {"Dưới 14":13,"14–16":15,"17–19":18,"20–22":21,"Trên 22":23}
+
 mapping_gpa = {
     "Dưới 2.0":1.8,
     "2.0 – 2.49":2.25,
@@ -68,32 +69,26 @@ df["GPA_num"] = df["GPA"].map(mapping_gpa)
 df = df.dropna()
 
 # ======================
-# HIỂN THỊ SAU CLEAN
-# ======================
-st.subheader("📊 Dữ liệu sau khi làm sạch")
-st.dataframe(df)
-
-# ======================
 # SIDEBAR FILTER
 # ======================
 st.sidebar.header("🔎 Bộ lọc dữ liệu")
 
-# Reset button
+# Reset
 if st.sidebar.button("🔄 Reset bộ lọc"):
-    st.experimental_rerun()
+    st.rerun()
 
 # Năm học
 year_filter = st.sidebar.multiselect(
     "Năm học",
-    options=sorted(df["NamHoc"].dropna().unique()),
-    default=sorted(df["NamHoc"].dropna().unique())
+    options=sorted(df["NamHoc"].unique()),
+    default=sorted(df["NamHoc"].unique())
 )
 
 # Tín chỉ
 credit_filter = st.sidebar.multiselect(
     "Tín chỉ",
-    options=sorted(df["TinChi"].dropna().unique()),
-    default=sorted(df["TinChi"].dropna().unique())
+    options=sorted(df["TinChi"].unique()),
+    default=sorted(df["TinChi"].unique())
 )
 
 # GPA
@@ -104,15 +99,7 @@ gpa_filter = st.sidebar.slider(
     (float(df["GPA_num"].min()), float(df["GPA_num"].max()))
 )
 
-# Tự học
-study_filter = st.sidebar.slider(
-    "Giờ tự học/ngày",
-    float(df["TuHoc_num"].min()) if "TuHoc_num" in df.columns else 0,
-    float(df["TuHoc_num"].max()) if "TuHoc_num" in df.columns else 5,
-    (float(df["TuHoc_num"].min()), float(df["TuHoc_num"].max())) if "TuHoc_num" in df.columns else (0,5)
-)
-
-# Khối lượng (GIỮ TEXT)
+# Khối lượng (giữ text)
 khoiluong_filter = st.sidebar.multiselect(
     "Khối lượng học tập",
     options=df["KhoiLuong"].unique(),
@@ -129,11 +116,12 @@ df_filtered = df[
     (df["KhoiLuong"].isin(khoiluong_filter))
 ]
 
-# Nếu có TuHoc_num thì lọc thêm
-if "TuHoc_num" in df.columns:
-    df_filtered = df_filtered[
-        df_filtered["TuHoc_num"].between(study_filter[0], study_filter[1])
-    ]
+# ======================
+# HIỂN THỊ
+# ======================
+st.subheader("📊 Dữ liệu sau khi lọc")
+st.write(f"🔍 Số sinh viên: {len(df_filtered)}")
+st.dataframe(df_filtered)
 
 
 # ======================
