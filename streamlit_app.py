@@ -158,6 +158,21 @@ for p in ax.patches:
 
 st.pyplot(fig)
 
+# ======================
+# BIỂU ĐỒ NHẬN XÉT 1
+# ======================
+st.subheader("📊 Mối quan hệ giữa GPA và thời gian tự học")
+
+fig, ax = plt.subplots()
+
+cross_tab.plot(kind="bar", ax=ax)
+
+ax.set_xlabel("Thời gian tự học")
+ax.set_ylabel("Số sinh viên")
+ax.set_title("Ảnh hưởng của tự học đến kết quả học tập")
+
+st.pyplot(fig)
+
 
 # ======================
 # FOOTER
