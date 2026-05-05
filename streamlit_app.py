@@ -25,7 +25,31 @@ except:
 # CLEAN & STANDARDIZE DATA
 # ======================
 
-# Mapping
+# 1. Xóa khoảng trắng tên cột
+df.columns = df.columns.str.strip()
+
+# 2. Xóa cột "Dấu thời gian" nếu tồn tại
+if "Dấu thời gian" in df.columns:
+    df = df.drop(columns=["Dấu thời gian"])
+
+# 3. Đổi tên cột
+df = df.rename(columns={
+    "Bạn đang học năm mấy?": "NamHoc",
+    "Một học kỳ bạn thường học bao nhiêu tín chỉ?": "TinChi",
+    "Một kì bạn thường học bao nhiêu tín chỉ?": "TinChi",  # phòng trường hợp khác dấu
+    "Bạn cảm thấy khối lượng học tập của mình:": "KhoiLuong",
+    "GPA học kỳ gần nhất của bạn khoảng:": "GPA",
+    "GPA học kì gần nhất của bạn khoảng:": "GPA",
+    "Bạn đã từng học lại môn nào chưa?": "HocLai",
+    "Khi học nhiều môn cùng lúc, kết quả của bạn:": "AnhHuong",
+    "Trung bình mỗi ngày bạn dành bao nhiêu thời gian tự học?": "TuHoc",
+    "Bạn đánh giá mức độ khó của học kỳ vừa rồi:": "DoKho"
+})
+
+# ======================
+# MAPPING
+# ======================
+
 mapping_year = {
     "Năm 1": 1,
     "Năm 2": 2,
@@ -48,95 +72,18 @@ mapping_khoiluong = {
     "Rất nặng": 4
 }
 
-# Apply mapping (an toàn hơn với .get)
-df["NamHoc"] = df["Bạn đang học năm mấy?"].map(mapping_year)
-df["TinChi"] = df["Một học kỳ bạn thường học bao nhiêu tín chỉ?"].map(mapping_credit)
-df["KhoiLuong"] = df["Bạn cảm thấy khối lượng học tập của mình:"].map(mapping_khoiluong)
+# 4. Áp dụng mapping (ghi đè luôn cột)
+df["NamHoc"] = df["NamHoc"].map(mapping_year)
+df["TinChi"] = df["TinChi"].map(mapping_credit)
+df["KhoiLuong"] = df["KhoiLuong"].map(mapping_khoiluong)
 
-# Drop NA
+# 5. Xóa dữ liệu lỗi
 df = df.dropna()
 
-# ======================
-# SIDEBAR FILTER
-# ======================
-st.sidebar.header("🔎 Bộ lọc")
+# 6. Hiển thị
+st.subheader("📂 Dữ liệu sau khi làm sạch")
+st.dataframe(df)
 
-selected_year = st.sidebar.multiselect(
-    "Chọn năm học",
-    options=sorted(df["NamHoc"].unique()),
-    default=sorted(df["NamHoc"].unique())
-)
-
-df_filtered = df[df["NamHoc"].isin(selected_year)]
-
-# ======================
-# KPI
-# ======================
-st.subheader("📌 Tổng quan")
-
-col1, col2, col3 = st.columns(3)
-
-col1.metric("👨‍🎓 Số SV", len(df_filtered))
-col2.metric("📚 Tín chỉ TB", round(df_filtered["TinChi"].mean(), 2))
-col3.metric("⚖️ Khối lượng TB", round(df_filtered["KhoiLuong"].mean(), 2))
-
-# ======================
-# HIỂN THỊ DATA
-# ======================
-st.subheader("📂 Dữ liệu sau khi chuẩn hóa")
-st.dataframe(df_filtered)
-
-# ======================
-# TRỰC QUAN HÓA
-# ======================
-st.subheader("📈 Trực quan hóa dữ liệu")
-
-col1, col2 = st.columns(2)
-
-# 1. Bar chart
-with col1:
-    st.write("### Số sinh viên theo năm học")
-    fig1, ax1 = plt.subplots()
-    df_filtered["NamHoc"].value_counts().sort_index().plot(kind="bar", ax=ax1)
-    ax1.set_xlabel("Năm học")
-    ax1.set_ylabel("Số lượng")
-    st.pyplot(fig1)
-
-# 2. Histogram
-with col2:
-    st.write("### Phân bố số tín chỉ")
-    fig2, ax2 = plt.subplots()
-    sns.histplot(df_filtered["TinChi"], bins=5, kde=True, ax=ax2)
-    st.pyplot(fig2)
-
-col3, col4 = st.columns(2)
-
-# 3. Boxplot
-with col3:
-    st.write("### Boxplot khối lượng học tập")
-    fig3, ax3 = plt.subplots()
-    sns.boxplot(x=df_filtered["KhoiLuong"], ax=ax3)
-    st.pyplot(fig3)
-
-# 4. Pie chart
-with col4:
-    st.write("### Tỉ lệ khối lượng học tập")
-    khoiluong_counts = df_filtered["Bạn cảm thấy khối lượng học tập của mình:"].value_counts()
-    fig4, ax4 = plt.subplots()
-    khoiluong_counts.plot(kind="pie", autopct="%1.1f%%", ax=ax4)
-    st.pyplot(fig4)
-
-# ======================
-# 5. Bar chart cuối
-# ======================
-st.write("### 📊 Tín chỉ trung bình theo năm học")
-
-avg_credit = df_filtered.groupby("NamHoc")["TinChi"].mean()
-
-fig5, ax5 = plt.subplots()
-avg_credit.plot(kind="bar", ax=ax5)
-ax5.set_ylabel("Tín chỉ trung bình")
-st.pyplot(fig5)
 
 # ======================
 # FOOTER
