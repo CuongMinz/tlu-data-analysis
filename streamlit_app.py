@@ -79,6 +79,22 @@ df = df.dropna()
 st.subheader("📊 Dữ liệu sau khi làm sạch")
 st.dataframe(df)
 
+# ======================
+# SIDEBAR FILTER
+# ======================
+st.sidebar.header("🔎 Bộ lọc dữ liệu")
+
+# Reset button
+if st.sidebar.button("🔄 Reset bộ lọc"):
+    st.experimental_rerun()
+
+# Năm học
+year_filter = st.sidebar.multiselect(
+    "Năm học",
+    options=sorted(df["NamHoc"].dropna().unique()),
+    default=sorted(df["NamHoc"].dropna().unique())
+)
+
 
 # ======================
 # FOOTER
