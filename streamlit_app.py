@@ -100,23 +100,18 @@ df_filtered = df[
 
 
 # ======================
-# 🔧 CRUD MODULE
+# 🛠️ CRUD FULL DASHBOARD VERSION
 # ======================
-st.subheader("🛠️ CRUD dữ liệu sinh viên")
+st.subheader("🛠️ CRUD dữ liệu (toàn dashboard)")
 
-# copy dữ liệu làm việc để tránh lỗi
-crud_df = df_filtered.copy()
-
-# lưu session state
-if "crud_df" not in st.session_state:
-    st.session_state.crud_df = crud_df
+df_work = st.session_state.session_df
 
 # ======================
-# CREATE - THÊM DỮ LIỆU
+# CREATE
 # ======================
-st.markdown("### ➕ Thêm dữ liệu mới")
-
 with st.form("add_form"):
+    st.markdown("### ➕ Thêm dữ liệu")
+
     namhoc = st.selectbox("Năm học", [1,2,3,4])
     tinchi = st.selectbox("Tín chỉ", credit_options)
     gpa = st.selectbox("GPA", gpa_options)
@@ -136,47 +131,47 @@ with st.form("add_form"):
             "DoKho": do_kho
         }])
 
-        st.session_state.crud_df = pd.concat(
-            [st.session_state.crud_df, new_row],
+        st.session_state.session_df = pd.concat(
+            [df_work, new_row],
             ignore_index=True
         )
 
-        st.success("✔ Đã thêm dữ liệu mới")
+        st.success("✔ Đã thêm dữ liệu")
 
 # ======================
-# UPDATE - SỬA DỮ LIỆU
+# UPDATE (EDIT TABLE)
 # ======================
 st.markdown("### ✏️ Chỉnh sửa dữ liệu")
 
 edited_df = st.data_editor(
-    st.session_state.crud_df,
+    st.session_state.session_df,
     num_rows="dynamic",
     use_container_width=True
 )
 
-st.session_state.crud_df = edited_df
+st.session_state.session_df = edited_df
 
 # ======================
-# DELETE - XOÁ DỮ LIỆU
+# DELETE
 # ======================
 st.markdown("### 🗑️ Xoá dữ liệu")
 
-row_to_delete = st.number_input(
-    "Chọn index dòng muốn xoá",
+idx = st.number_input(
+    "Index dòng cần xoá",
     min_value=0,
-    max_value=len(st.session_state.crud_df)-1 if len(st.session_state.crud_df)>0 else 0
+    max_value=len(st.session_state.session_df)-1 if len(st.session_state.session_df)>0 else 0
 )
 
-if st.button("🗑️ Xoá dòng"):
-    st.session_state.crud_df = st.session_state.crud_df.drop(row_to_delete).reset_index(drop=True)
-    st.success("✔ Đã xoá dữ liệu")
+if st.button("🗑️ Xoá"):
+    st.session_state.session_df = st.session_state.session_df.drop(idx).reset_index(drop=True)
+    st.success("✔ Đã xoá")
 
 # ======================
-# HIỂN THỊ SAU CRUD
+# VIEW FINAL DATA
 # ======================
-st.markdown("### 📂 Dữ liệu sau CRUD")
+st.markdown("### 📂 Dữ liệu toàn hệ thống")
 
-st.dataframe(st.session_state.crud_df)
+st.dataframe(st.session_state.session_df)
 
 
 
