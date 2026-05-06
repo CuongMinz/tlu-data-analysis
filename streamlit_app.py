@@ -100,6 +100,13 @@ df_filtered = df[
 
 
 # ======================
+# INIT SESSION DATA (QUAN TRỌNG)
+# ======================
+if "session_df" not in st.session_state:
+    st.session_state.session_df = df_filtered.copy()
+
+
+# ======================
 # 🛠️ CRUD FULL DASHBOARD VERSION
 # ======================
 st.subheader("🛠️ CRUD dữ liệu (toàn dashboard)")
