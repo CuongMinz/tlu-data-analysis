@@ -164,8 +164,44 @@ if st.button("🗑️ Xoá"):
 st.markdown("### 📂 Dữ liệu toàn hệ thống")
 st.dataframe(st.session_state.session_df)
 
+
 # ======================
-# KPI (FIXED)
+# 🔍 SEARCH DATA
+# ======================
+st.subheader("🔍 Tìm kiếm dữ liệu")
+
+keyword = st.text_input("Nhập từ khóa (năm, GPA, tín chỉ, tự học...)")
+
+search_df = st.session_state.session_df.copy()
+
+if keyword:
+    search_df = search_df[
+        search_df.astype(str).apply(
+            lambda row: row.str.contains(keyword, case=False).any(),
+            axis=1
+        )
+    ]
+
+st.dataframe(search_df)
+
+
+# ======================
+# 📤 EXPORT DATA
+# ======================
+st.subheader("📤 Xuất dữ liệu")
+
+csv_data = st.session_state.session_df.to_csv(index=False).encode("utf-8")
+
+st.download_button(
+    label="📥 Tải file CSV",
+    data=csv_data,
+    file_name="tlu_dashboard_data.csv",
+    mime="text/csv"
+)
+
+
+# ======================
+# KPI 
 # ======================
 st.subheader("📌 Tổng quan")
 
