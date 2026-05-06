@@ -369,7 +369,6 @@ for i in range(len(cross_tab_percent)):
 st.pyplot(fig)
 
 
-
 # ======================
 # FOOTER
 # ======================
