@@ -98,6 +98,88 @@ df_filtered = df[
     (df["KhoiLuong"].isin(khoiluong_filter))
 ]
 
+
+# ======================
+# 🔧 CRUD MODULE
+# ======================
+st.subheader("🛠️ CRUD dữ liệu sinh viên")
+
+# copy dữ liệu làm việc để tránh lỗi
+crud_df = df_filtered.copy()
+
+# lưu session state
+if "crud_df" not in st.session_state:
+    st.session_state.crud_df = crud_df
+
+# ======================
+# CREATE - THÊM DỮ LIỆU
+# ======================
+st.markdown("### ➕ Thêm dữ liệu mới")
+
+with st.form("add_form"):
+    namhoc = st.selectbox("Năm học", [1,2,3,4])
+    tinchi = st.selectbox("Tín chỉ", credit_options)
+    gpa = st.selectbox("GPA", gpa_options)
+    khoiluong = st.selectbox("Khối lượng", df["KhoiLuong"].unique())
+    tuhoc = st.selectbox("Thời gian tự học", df["TuHoc"].unique())
+    do_kho = st.selectbox("Độ khó", df["DoKho"].unique())
+
+    submit = st.form_submit_button("➕ Thêm")
+
+    if submit:
+        new_row = pd.DataFrame([{
+            "NamHoc": namhoc,
+            "TinChi": tinchi,
+            "GPA": gpa,
+            "KhoiLuong": khoiluong,
+            "TuHoc": tuhoc,
+            "DoKho": do_kho
+        }])
+
+        st.session_state.crud_df = pd.concat(
+            [st.session_state.crud_df, new_row],
+            ignore_index=True
+        )
+
+        st.success("✔ Đã thêm dữ liệu mới")
+
+# ======================
+# UPDATE - SỬA DỮ LIỆU
+# ======================
+st.markdown("### ✏️ Chỉnh sửa dữ liệu")
+
+edited_df = st.data_editor(
+    st.session_state.crud_df,
+    num_rows="dynamic",
+    use_container_width=True
+)
+
+st.session_state.crud_df = edited_df
+
+# ======================
+# DELETE - XOÁ DỮ LIỆU
+# ======================
+st.markdown("### 🗑️ Xoá dữ liệu")
+
+row_to_delete = st.number_input(
+    "Chọn index dòng muốn xoá",
+    min_value=0,
+    max_value=len(st.session_state.crud_df)-1 if len(st.session_state.crud_df)>0 else 0
+)
+
+if st.button("🗑️ Xoá dòng"):
+    st.session_state.crud_df = st.session_state.crud_df.drop(row_to_delete).reset_index(drop=True)
+    st.success("✔ Đã xoá dữ liệu")
+
+# ======================
+# HIỂN THỊ SAU CRUD
+# ======================
+st.markdown("### 📂 Dữ liệu sau CRUD")
+
+st.dataframe(st.session_state.crud_df)
+
+
+
 # ======================
 # KPI
 # ======================
