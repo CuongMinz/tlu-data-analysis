@@ -595,10 +595,9 @@ st.markdown("### 📋 Bảng thống kê học lực")
 summary_df = pd.DataFrame({
     "Học lực": grade_counts.index,
     "Số lượng sinh viên": grade_counts.values,
-    "Tỷ lệ (%)": round(
-        grade_counts.values / grade_counts.sum() * 100,
-        1
-    )
+    "Tỷ lệ (%)": (
+        grade_counts.values / grade_counts.sum() * 100
+    ).round(1)
 })
 
 st.dataframe(
