@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import statsmodels.api as sm
 
 # ======================
 # CONFIG + STYLE
@@ -366,6 +367,80 @@ for i in range(len(cross_tab_percent)):
             cumulative += value
 
 st.pyplot(fig)
+
+
+# ======================
+# HỒI QUY TUYẾN TÍNH OLS
+# ======================
+st.subheader("📈 Mô hình hồi quy tuyến tính OLS")
+
+# Copy dữ liệu
+df_ols = df_filtered.copy()
+
+# ======================
+# MAPPING
+# ======================
+
+mapping_gpa = {
+    "Dưới 2.0": 1.8,
+    "2.0 – 2.49": 2.25,
+    "2.5 – 3.19": 2.85,
+    "3.2 – 3.59": 3.4,
+    "Trên 3.6": 3.8
+}
+
+mapping_tuhoc = {
+    "Dưới 1 giờ": 0.5,
+    "1–2 giờ": 1.5,
+    "2–4 giờ": 3,
+    "Trên 4 giờ": 5
+}
+
+mapping_tinchi = {
+    "Dưới 14": 13,
+    "14–16": 15,
+    "17–19": 18,
+    "20–22": 21,
+    "Trên 22": 23
+}
+
+mapping_khoiluong = {
+    "Nhẹ": 1,
+    "Vừa phải": 2,
+    "Hơi nặng": 3,
+    "Rất nặng": 4
+}
+
+# Apply mapping
+df_ols["GPA_num"] = df_ols["GPA"].map(mapping_gpa)
+df_ols["TuHoc_num"] = df_ols["TuHoc"].map(mapping_tuhoc)
+df_ols["TinChi_num"] = df_ols["TinChi"].map(mapping_tinchi)
+df_ols["KhoiLuong_num"] = df_ols["KhoiLuong"].map(mapping_khoiluong)
+
+# ======================
+# X và Y
+# ======================
+
+X = df_ols[[
+    "TuHoc_num",
+    "TinChi_num",
+    "KhoiLuong_num",
+    "NamHoc"
+]]
+
+Y = df_ols["GPA_num"]
+
+# Thêm hằng số
+X = sm.add_constant(X)
+
+# Train model
+model = sm.OLS(Y, X).fit()
+
+# ======================
+# KẾT QUẢ
+# ======================
+
+st.text(model.summary())
 
 
 # ======================
