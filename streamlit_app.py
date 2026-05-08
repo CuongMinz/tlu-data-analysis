@@ -992,11 +992,17 @@ st.info("""
 📖 Nhận xét:
 
 • Regression plot cho thấy GPA có xu hướng tăng khi thời gian tự học tăng.
+
 • Đường hồi quy đi lên cho thấy tồn tại mối quan hệ tích cực giữa Study Time và GPA.
+
 • GPA trung bình tăng dần theo từng nhóm thời gian học:
+
     - 0–5 giờ: 1.69
+    
     - 5–10 giờ: 1.85
+    
     - 10–15 giờ: 2.00
+    
     - 15–20 giờ: 2.11
     
 • Nhóm học dưới 5 giờ mỗi tuần có GPA thấp nhất, trong khi nhóm học nhiều nhất đạt GPA cao nhất.
@@ -1235,7 +1241,9 @@ st.info("""
 • Correlation âm mạnh cho thấy Absences là một trong những yếu tố ảnh hưởng lớn đến kết quả học tập.
 
 • GPA trung bình giảm dần theo từng nhóm nghỉ học:
+
     - Nhóm nghỉ ít buổi có GPA cao hơn rõ rệt
+    
     - Nhóm nghỉ nhiều buổi thường có GPA thấp hơn
 
 • Điều này cho thấy tính chuyên cần đóng vai trò rất quan trọng trong việc duy trì kết quả học tập ổn định.
