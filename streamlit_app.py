@@ -1058,73 +1058,81 @@ col3.metric(
 )
 
 # ======================
+# SCATTER + REGRESSION
+# ======================
+
+col1, col2 = st.columns(2)
+
+# ----------------------
 # SCATTER PLOT
-# ======================
+# ----------------------
+with col1:
 
-st.markdown("### 📉 Scatter Plot: Absences vs GPA")
+    st.markdown("### 📉 Scatter Plot: Absences vs GPA")
 
-fig, ax = plt.subplots(figsize=(9,5))
+    fig, ax = plt.subplots(figsize=(6,4))
 
-sns.scatterplot(
-    data=data,
-    x="Absences",
-    y="GPA",
-    alpha=0.6,
-    ax=ax
-)
+    sns.scatterplot(
+        data=data,
+        x="Absences",
+        y="GPA",
+        alpha=0.6,
+        ax=ax
+    )
 
-ax.set_title(
-    "Relationship Between Absences and GPA",
-    fontsize=16,
-    fontweight='bold'
-)
+    ax.set_title(
+        "Absences vs GPA",
+        fontsize=14,
+        fontweight='bold'
+    )
 
-ax.set_xlabel("Number of Absences")
-ax.set_ylabel("GPA")
+    ax.set_xlabel("Number of Absences")
+    ax.set_ylabel("GPA")
 
-ax.grid(
-    alpha=0.3,
-    linestyle="--"
-)
+    ax.grid(
+        alpha=0.3,
+        linestyle="--"
+    )
 
-st.pyplot(fig)
+    st.pyplot(fig)
 
-# ======================
-# REGRESSION LINE
-# ======================
+# ----------------------
+# REGRESSION PLOT
+# ----------------------
+with col2:
 
-st.markdown("### 📈 Regression Trend")
+    st.markdown("### 📈 Regression Trend")
 
-fig, ax = plt.subplots(figsize=(9,5))
+    fig, ax = plt.subplots(figsize=(6,4))
 
-sns.regplot(
-    data=data,
-    x="Absences",
-    y="GPA",
-    scatter_kws={
-        "alpha":0.4
-    },
-    line_kws={
-        "color":"red"
-    },
-    ax=ax
-)
+    sns.regplot(
+        data=data,
+        x="Absences",
+        y="GPA",
+        scatter_kws={
+            "alpha":0.4
+        },
+        line_kws={
+            "color":"red"
+        },
+        ax=ax
+    )
 
-ax.set_title(
-    "Regression Between Absences and GPA",
-    fontsize=15,
-    fontweight='bold'
-)
+    ax.set_title(
+        "Regression Between Absences and GPA",
+        fontsize=14,
+        fontweight='bold'
+    )
 
-ax.set_xlabel("Absences")
-ax.set_ylabel("GPA")
+    ax.set_xlabel("Absences")
+    ax.set_ylabel("GPA")
 
-ax.grid(
-    alpha=0.3,
-    linestyle="--"
-)
+    ax.grid(
+        alpha=0.3,
+        linestyle="--"
+    )
 
-st.pyplot(fig)
+    st.pyplot(fig)
 
 # ======================
 # GROUP ANALYSIS
@@ -1214,13 +1222,19 @@ st.dataframe(
 st.info("""
 📖 Nhận xét:
 • Scatter plot cho thấy GPA có xu hướng giảm khi số buổi nghỉ học tăng lên.
+
 • Đường hồi quy đi xuống thể hiện mối quan hệ âm giữa Absences và GPA.
+
 • Sinh viên nghỉ học ít thường đạt GPA cao hơn so với nhóm nghỉ học nhiều.
+
 • Correlation âm mạnh cho thấy Absences là một trong những yếu tố ảnh hưởng lớn đến kết quả học tập.
 • GPA trung bình giảm dần theo từng nhóm nghỉ học:
     - Nhóm nghỉ ít buổi có GPA cao hơn rõ rệt
     - Nhóm nghỉ nhiều buổi thường có GPA thấp hơn
 
 • Điều này cho thấy tính chuyên cần đóng vai trò rất quan trọng trong việc duy trì kết quả học tập ổn định.
+
 • Kết quả cũng phù hợp với Heatmap ở bước trước khi Absences có tương quan âm mạnh nhất với GPA.
 """)
+
+
