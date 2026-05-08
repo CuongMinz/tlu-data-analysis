@@ -314,6 +314,51 @@ st.pyplot(fig)
 
 
 # ======================
+# LINE CHART: NĂM HỌC → GPA
+# ======================
+st.subheader("📈 GPA trung bình theo năm học")
+
+# Mapping GPA sang số
+mapping_gpa = {
+    "Dưới 2.0": 1.8,
+    "2.0 – 2.49": 2.25,
+    "2.5 – 3.19": 2.85,
+    "3.2 – 3.59": 3.4,
+    "Trên 3.6": 3.8
+}
+
+df_line = df_filtered.copy()
+
+df_line["GPA_num"] = df_line["GPA"].map(mapping_gpa)
+
+# Tính GPA trung bình theo năm
+avg_gpa = df_line.groupby("NamHoc")["GPA_num"].mean()
+
+# Vẽ
+fig, ax = plt.subplots(figsize=(8,5))
+
+ax.plot(
+    avg_gpa.index,
+    avg_gpa.values,
+    marker='o',
+    linewidth=2
+)
+
+# Format
+ax.set_xticks([1,2,3,4])
+ax.set_xticklabels(["Năm 1","Năm 2","Năm 3","Năm 4"])
+
+ax.set_xlabel("Năm học")
+ax.set_ylabel("GPA trung bình")
+ax.set_title("Xu hướng GPA trung bình theo năm học")
+
+# Hiển thị số
+for x, y in zip(avg_gpa.index, avg_gpa.values):
+    ax.text(x, y+0.03, f"{y:.2f}", ha='center')
+
+st.pyplot(fig)
+
+# ======================
 # TỰ HỌC vs GPA 
 # ======================
 st.subheader("📊 Ảnh hưởng của thời gian tự học đến GPA")
