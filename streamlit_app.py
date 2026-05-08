@@ -638,9 +638,8 @@ col4.metric(
 st.info("""
 📖 Nhận xét:
 
-- Biểu đồ cho thấy sự phân bố học lực của sinh viên trong dữ liệu khảo sát.
-- Nhóm học lực chiếm tỷ lệ cao nhất phản ánh mặt bằng học tập chung của sinh viên.
-- Nếu nhóm Khá và Giỏi chiếm đa số, kết quả học tập nhìn chung khá tích cực.
-- Nếu tỷ lệ Yếu và Trung bình cao, sinh viên có thể đang gặp khó khăn trong việc học tập hoặc quản lý thời gian.
-- Mức độ phân hóa giữa các nhóm học lực cho thấy sự khác biệt về khả năng học tập và thói quen học của sinh viên.
+- Nhóm sinh viên có học lực Yếu chiếm tỷ lệ cao nhất với 53.3%, cho thấy phần lớn sinh viên trong tập dữ liệu đang gặp khó khăn trong học tập.
+- Tỷ lệ sinh viên đạt mức Khá và Giỏi còn khá thấp, lần lượt là 20.7% và 8.8%.
+- Điều này phản ánh sự chênh lệch rõ rệt về kết quả học tập giữa các nhóm sinh viên.
+- Kết quả trên cho thấy cần phân tích sâu hơn các yếu tố như thời gian tự học, số buổi nghỉ học và hoạt động ngoại khóa để tìm ra nguyên nhân ảnh hưởng đến GPA.
 """)
