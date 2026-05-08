@@ -1739,15 +1739,25 @@ GPA của sinh viên có xu hướng tăng theo.
 st.info("""
 📖 Nhận xét:
 
-• GPA có xu hướng tăng khi mức hỗ trợ từ gia đình cao hơn.
+• GPA trung bình tăng dần theo mức độ hỗ trợ từ gia đình.
 
-• Sinh viên nhận được sự hỗ trợ tích cực từ phụ huynh thường có kết quả học tập tốt hơn.
+• Sinh viên có mức hỗ trợ “Very High” đạt GPA trung bình khoảng 2.19,
+cao hơn rõ rệt so với nhóm “Very Low” chỉ khoảng 1.54.
 
-• Điều này cho thấy môi trường gia đình có thể ảnh hưởng đến tinh thần học tập, động lực và khả năng duy trì việc học của sinh viên.
+• Biểu đồ đường cho thấy xu hướng tăng khá đều giữa Parental Support và GPA,
+chứng tỏ sự hỗ trợ từ gia đình có ảnh hưởng tích cực đến kết quả học tập.
 
-• Tuy nhiên, mức chênh lệch GPA giữa các nhóm không quá lớn, cho thấy GPA còn phụ thuộc vào nhiều yếu tố khác như thời gian học, mức độ chuyên cần và hoạt động cá nhân.
+• Hệ số tương quan khoảng 0.19 cho thấy mối quan hệ dương nhưng không quá mạnh.
+Điều này nghĩa là hỗ trợ từ gia đình có tác động nhất định,
+tuy nhiên GPA vẫn còn phụ thuộc vào nhiều yếu tố khác như:
+thời gian học, ý thức cá nhân, hoạt động ngoại khóa và mức độ chuyên cần.
 
-• Xu hướng tăng của biểu đồ đường cho thấy mối quan hệ tích cực giữa Parental Support và GPA.
+• Khoảng cách GPA giữa các nhóm khá rõ ràng,
+đặc biệt từ mức “Medium” trở lên,
+cho thấy sinh viên nhận được sự quan tâm và động viên nhiều hơn
+thường có động lực học tập tốt hơn.
 
-• Dù vậy, hệ số tương quan không quá mạnh nên đây không phải yếu tố quyết định duy nhất đến thành tích học tập.
+• Kết quả cho thấy môi trường gia đình đóng vai trò hỗ trợ quan trọng
+trong việc cải thiện kết quả học tập của sinh viên,
+dù không phải yếu tố quyết định duy nhất.
 """)
