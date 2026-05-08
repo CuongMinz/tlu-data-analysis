@@ -363,21 +363,51 @@ st.pyplot(fig)
 # ======================
 st.subheader("📊 Ảnh hưởng của thời gian tự học đến GPA")
 
-tuhoc_order = ["Dưới 1 giờ","1–2 giờ","2–4 giờ","Trên 4 giờ"]
-gpa_order = ["Dưới 2.0","2.0 – 2.49","2.5 – 3.19","3.2 – 3.59"]
-
 cross_tab = pd.crosstab(df_filtered["TuHoc"], df_filtered["GPA"])
+
+# Thứ tự chuẩn
+tuhoc_order = ["Dưới 1 giờ", "1–2 giờ", "2–4 giờ", "Trên 4 giờ"]
+gpa_order = ["Dưới 2.0", "2.0 – 2.49", "2.5 – 3.19", "3.2 – 3.59"]
+
 cross_tab = cross_tab.reindex(index=tuhoc_order, columns=gpa_order, fill_value=0)
 
+# Chuyển sang %
 cross_tab_percent = cross_tab.div(cross_tab.sum(axis=1), axis=0)
 
-fig5, ax5 = plt.subplots(figsize=(8,5))
-cross_tab_percent.plot(kind="bar", stacked=True, ax=ax5)
+# Vẽ biểu đồ
+fig, ax = plt.subplots(figsize=(8,5))
 
-ax5.set_ylabel("Tỷ lệ")
-ax5.legend(title="GPA", bbox_to_anchor=(1.05,1))
+cross_tab_percent.plot(
+    kind="bar",
+    stacked=True,
+    ax=ax
+)
 
-st.pyplot(fig5)
+# Format
+ax.set_xlabel("Thời gian tự học")
+ax.set_ylabel("Tỷ lệ (%)")
+ax.set_title("Tỷ lệ GPA theo thời gian tự học")
+
+plt.xticks(rotation=0)
+ax.legend(title="GPA", bbox_to_anchor=(1.05, 1), loc='upper left')
+
+# Hiển thị %
+for i in range(len(cross_tab_percent)):
+    cumulative = 0
+    for j in range(len(cross_tab_percent.columns)):
+        value = cross_tab_percent.iloc[i, j]
+        if value > 0:
+            ax.text(
+                i,
+                cumulative + value/2,
+                f"{value*100:.0f}%",
+                ha='center',
+                va='center',
+                fontsize=8
+            )
+            cumulative += value
+
+st.pyplot(fig)
 
 
 # ======================
