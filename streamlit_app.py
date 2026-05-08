@@ -412,3 +412,91 @@ with col4:
         "❌ Avg Absences",
         round(data["Absences"].mean(), 2)
     )
+
+
+# ======================
+# STEP 1 - GPA OVERVIEW
+# ======================
+
+st.markdown(
+    '<p class="section-title">📊 Step 1: GPA Distribution Overview</p>',
+    unsafe_allow_html=True
+)
+
+st.write("""
+Biểu đồ Histogram giúp quan sát phân bố GPA của sinh viên.
+Từ đó có thể đánh giá:
+- GPA tập trung ở mức nào
+- Dữ liệu có lệch hay không
+- Sinh viên đạt GPA cao hay thấp chiếm đa số
+""")
+
+# ======================
+# HISTOGRAM GPA
+# ======================
+
+fig, ax = plt.subplots(figsize=(10, 5))
+
+sns.histplot(
+    data=st.session_state.session_df,
+    x="GPA",
+    bins=15,
+    kde=True,
+    ax=ax
+)
+
+# Format
+ax.set_title("Distribution of Student GPA", fontsize=16)
+ax.set_xlabel("GPA")
+ax.set_ylabel("Number of Students")
+
+# Grid
+ax.grid(
+    alpha=0.3,
+    linestyle="--"
+)
+
+st.pyplot(fig)
+
+# ======================
+# GPA SUMMARY
+# ======================
+
+st.markdown("### 📌 GPA Statistics")
+
+gpa_data = st.session_state.session_df["GPA"]
+
+col1, col2, col3, col4 = st.columns(4)
+
+col1.metric(
+    "Average GPA",
+    round(gpa_data.mean(), 2)
+)
+
+col2.metric(
+    "Highest GPA",
+    round(gpa_data.max(), 2)
+)
+
+col3.metric(
+    "Lowest GPA",
+    round(gpa_data.min(), 2)
+)
+
+col4.metric(
+    "Median GPA",
+    round(gpa_data.median(), 2)
+)
+
+# ======================
+# INTERPRETATION
+# ======================
+
+st.info("""
+📖 Interpretation:
+
+- Histogram shows the distribution of student GPA.
+- The KDE curve helps identify the overall trend.
+- If the graph peaks around high GPA values, most students perform well.
+- If the distribution is skewed left/right, it indicates imbalance in academic performance.
+""")
