@@ -945,3 +945,33 @@ st.info("""
 - Tuy nhiên, dữ liệu vẫn có sự phân tán khá lớn, cho thấy GPA không chỉ phụ thuộc vào thời gian học mà còn chịu ảnh hưởng từ nhiều yếu tố khác như nghỉ học, hoạt động ngoại khóa và mức độ hỗ trợ từ gia đình.
 - Kết quả này cho thấy việc duy trì thời gian tự học hợp lý có thể góp phần cải thiện kết quả học tập của sinh viên.
 """)
+
+
+# ======================
+# MINI CORRELATION
+# ======================
+
+st.markdown("### 🔥 Mini Correlation Heatmap")
+
+corr_cols = [
+    "GPA",
+    "StudyTimeWeekly",
+    "Absences",
+    "ParentalSupport"
+]
+
+corr_matrix = data[corr_cols].corr()
+
+fig, ax = plt.subplots(figsize=(6,4))
+
+sns.heatmap(
+    corr_matrix,
+    annot=True,
+    cmap="Blues",
+    fmt=".2f",
+    ax=ax
+)
+
+ax.set_title("Correlation Between Study Factors")
+
+st.pyplot(fig)
