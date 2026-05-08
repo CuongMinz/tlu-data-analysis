@@ -513,76 +513,123 @@ st.markdown(
 )
 
 st.write("""
-Biểu đồ tròn giúp quan sát tỷ lệ học lực của sinh viên trong toàn bộ dữ liệu.
-Từ đó có thể đánh giá nhóm học lực nào chiếm đa số.
+Biểu đồ tròn giúp thể hiện tỷ lệ học lực của sinh viên trong tập dữ liệu.
+Qua đó có thể đánh giá nhóm học lực nào chiếm đa số và mức độ phân hóa kết quả học tập.
 """)
 
 # ======================
-# CREATE GPA CATEGORY
+# CREATE GRADE CATEGORY
 # ======================
 
-grade_labels = []
+grade_df = st.session_state.session_df.copy()
 
-for gpa in st.session_state.session_df["GPA"]:
+def classify_gpa(gpa):
 
     if gpa < 2.0:
-        grade_labels.append("Yếu")
+        return "Yếu"
 
     elif gpa < 2.5:
-        grade_labels.append("Trung bình")
+        return "Trung bình"
 
     elif gpa < 3.2:
-        grade_labels.append("Khá")
+        return "Khá"
 
     else:
-        grade_labels.append("Giỏi")
+        return "Giỏi"
 
-# Tạo cột mới
-grade_df = st.session_state.session_df.copy()
-grade_df["HocLuc"] = grade_labels
+grade_df["HocLuc"] = grade_df["GPA"].apply(classify_gpa)
 
 # ======================
 # COUNT DATA
 # ======================
 
-grade_counts = grade_df["HocLuc"].value_counts()
-
-# Sắp xếp đúng thứ tự
-grade_counts = grade_counts.reindex(
-    ["Yếu", "Trung bình", "Khá", "Giỏi"]
+grade_counts = (
+    grade_df["HocLuc"]
+    .value_counts()
+    .reindex(["Yếu", "Trung bình", "Khá", "Giỏi"])
 )
 
 # ======================
 # PIE CHART
 # ======================
 
-fig, ax = plt.subplots(figsize=(7,7))
+st.markdown("### 🥧 Tỷ lệ học lực sinh viên")
+
+fig, ax = plt.subplots(figsize=(8,8))
+
+# Tách từng phần nhẹ để đẹp hơn
+explode = [0.03, 0.05, 0.08, 0.12]
+
+colors = [
+    "#e74c3c",   # đỏ
+    "#f39c12",   # cam
+    "#3498db",   # xanh dương
+    "#2ecc71"    # xanh lá
+]
 
 ax.pie(
     grade_counts,
     labels=grade_counts.index,
-    autopct='%1.1f%%',
-    startangle=90
+    autopct='%.1f%%',
+    explode=explode,
+    shadow=True,
+    startangle=90,
+    colors=colors
 )
 
-ax.set_title("Tỷ lệ học lực sinh viên")
+ax.set_title(
+    "Tỷ lệ học lực của sinh viên",
+    fontsize=16,
+    color="#2c3e50",
+    fontweight="bold"
+)
 
 st.pyplot(fig)
 
 # ======================
-# TABLE SUMMARY
+# SUMMARY TABLE
 # ======================
 
 st.markdown("### 📋 Bảng thống kê học lực")
 
 summary_df = pd.DataFrame({
     "Học lực": grade_counts.index,
-    "Số lượng": grade_counts.values
+    "Số lượng sinh viên": grade_counts.values,
+    "Tỷ lệ (%)": round(
+        grade_counts.values / grade_counts.sum() * 100,
+        1
+    )
 })
 
 st.dataframe(
     summary_df,
     use_container_width=True
+)
+
+# ======================
+# KPI
+# ======================
+
+col1, col2, col3, col4 = st.columns(4)
+
+col1.metric(
+    "Yếu",
+    int(grade_counts["Yếu"])
+)
+
+col2.metric(
+    "Trung bình",
+    int(grade_counts["Trung bình"])
+)
+
+col3.metric(
+    "Khá",
+    int(grade_counts["Khá"])
+)
+
+col4.metric(
+    "Giỏi",
+    int(grade_counts["Giỏi"])
 )
 
 # ======================
@@ -592,8 +639,9 @@ st.dataframe(
 st.info("""
 📖 Nhận xét:
 
-- Biểu đồ cho thấy tỷ lệ học lực của sinh viên trong dữ liệu khảo sát.
+- Biểu đồ cho thấy sự phân bố học lực của sinh viên trong dữ liệu khảo sát.
 - Nhóm học lực chiếm tỷ lệ cao nhất phản ánh mặt bằng học tập chung của sinh viên.
-- Nếu nhóm Khá/Giỏi chiếm đa số, kết quả học tập nhìn chung khá tích cực.
-- Nếu nhóm Yếu/Trung bình nhiều, có thể sinh viên đang gặp khó khăn trong học tập.
+- Nếu nhóm Khá và Giỏi chiếm đa số, kết quả học tập nhìn chung khá tích cực.
+- Nếu tỷ lệ Yếu và Trung bình cao, sinh viên có thể đang gặp khó khăn trong việc học tập hoặc quản lý thời gian.
+- Mức độ phân hóa giữa các nhóm học lực cho thấy sự khác biệt về khả năng học tập và thói quen học của sinh viên.
 """)
