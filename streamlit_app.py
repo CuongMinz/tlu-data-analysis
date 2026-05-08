@@ -1508,3 +1508,239 @@ st.info("""
 
 • Tuy nhiên, mức chênh lệch GPA giữa các nhóm không quá lớn, nên hoạt động ngoại khóa không phải yếu tố quyết định duy nhất đến thành tích học tập.
 """)
+
+
+# ======================
+# STEP 7 - PARENTAL SUPPORT → GPA
+# ======================
+
+st.markdown(
+    '<p class="section-title">👨‍👩‍👧 Step 7: Parental Support and GPA</p>',
+    unsafe_allow_html=True
+)
+
+st.write("""
+Bước này phân tích ảnh hưởng của mức độ hỗ trợ từ gia đình đến GPA của sinh viên.
+
+Mục tiêu:
+- So sánh GPA trung bình theo từng mức hỗ trợ của phụ huynh
+- Kiểm tra liệu sự quan tâm từ gia đình có ảnh hưởng đến kết quả học tập hay không
+- Tìm xu hướng giữa Parental Support và GPA
+""")
+
+# ======================
+# DATA
+# ======================
+
+data = st.session_state.session_df.copy()
+
+# ======================
+# MAP LABEL
+# ======================
+
+support_labels = {
+    0: "Very Low",
+    1: "Low",
+    2: "Medium",
+    3: "High",
+    4: "Very High"
+}
+
+data["SupportLabel"] = (
+    data["ParentalSupport"]
+    .map(support_labels)
+)
+
+# ======================
+# CALCULATE GPA
+# ======================
+
+support_gpa = (
+    data.groupby("SupportLabel")["GPA"]
+    .mean()
+    .reindex([
+        "Very Low",
+        "Low",
+        "Medium",
+        "High",
+        "Very High"
+    ])
+    .reset_index()
+)
+
+support_gpa["GPA"] = (
+    support_gpa["GPA"]
+    .round(2)
+)
+
+# ======================
+# KPI
+# ======================
+
+st.markdown("### 📌 Overview")
+
+highest_support = support_gpa.loc[
+    support_gpa["GPA"].idxmax()
+]
+
+lowest_support = support_gpa.loc[
+    support_gpa["GPA"].idxmin()
+]
+
+col1, col2, col3 = st.columns(3)
+
+col1.metric(
+    "Highest GPA Group",
+    highest_support["SupportLabel"]
+)
+
+col2.metric(
+    "Highest GPA",
+    highest_support["GPA"]
+)
+
+col3.metric(
+    "Lowest GPA",
+    lowest_support["GPA"]
+)
+
+# ======================
+# TABLE
+# ======================
+
+st.markdown("### 📋 GPA by Parental Support")
+
+st.dataframe(
+    support_gpa,
+    use_container_width=True
+)
+
+# ======================
+# BAR CHART
+# ======================
+
+st.markdown("### 📊 Average GPA by Parental Support")
+
+fig, ax = plt.subplots(figsize=(8,5))
+
+sns.barplot(
+    data=support_gpa,
+    x="SupportLabel",
+    y="GPA",
+    ax=ax
+)
+
+ax.set_title(
+    "Average GPA by Parental Support",
+    fontsize=16,
+    fontweight='bold'
+)
+
+ax.set_xlabel("Parental Support Level")
+ax.set_ylabel("Average GPA")
+
+ax.grid(
+    alpha=0.2,
+    linestyle="--"
+)
+
+# Hiển thị giá trị
+for p in ax.patches:
+
+    height = p.get_height()
+
+    if height > 0.05:
+
+        ax.annotate(
+            f"{height:.2f}",
+            (
+                p.get_x() + p.get_width()/2,
+                height
+            ),
+            ha='center',
+            va='bottom',
+            fontsize=9
+        )
+
+st.pyplot(fig)
+
+# ======================
+# LINE CHART
+# ======================
+
+st.markdown("### 📈 GPA Trend by Support Level")
+
+fig, ax = plt.subplots(figsize=(8,5))
+
+sns.lineplot(
+    data=support_gpa,
+    x="SupportLabel",
+    y="GPA",
+    marker="o",
+    linewidth=3,
+    ax=ax
+)
+
+ax.set_title(
+    "Trend Between Parental Support and GPA",
+    fontsize=16,
+    fontweight='bold'
+)
+
+ax.set_xlabel("Parental Support")
+ax.set_ylabel("Average GPA")
+
+ax.grid(
+    alpha=0.2,
+    linestyle="--"
+)
+
+# Hiển thị giá trị
+for i, row in support_gpa.iterrows():
+
+    ax.text(
+        i,
+        row["GPA"] + 0.02,
+        f"{row['GPA']:.2f}",
+        ha='center',
+        fontsize=9
+    )
+
+st.pyplot(fig)
+
+# ======================
+# CORRELATION
+# ======================
+
+correlation = round(
+    data["ParentalSupport"]
+    .corr(data["GPA"]),
+    2
+)
+
+st.success(f"""
+📌 Correlation between Parental Support and GPA: {correlation}
+
+Giá trị dương cho thấy khi mức hỗ trợ từ gia đình tăng,
+GPA của sinh viên có xu hướng tăng theo.
+""")
+
+# ======================
+# INTERPRETATION
+# ======================
+
+st.info("""
+📖 Nhận xét:
+
+• GPA có xu hướng tăng khi mức hỗ trợ từ gia đình cao hơn.
+
+• Sinh viên nhận được sự hỗ trợ tích cực từ phụ huynh thường có kết quả học tập tốt hơn.
+
+• Điều này cho thấy môi trường gia đình có thể ảnh hưởng đến tinh thần học tập, động lực và khả năng duy trì việc học của sinh viên.
+
+• Tuy nhiên, mức chênh lệch GPA giữa các nhóm không quá lớn, cho thấy GPA còn phụ thuộc vào nhiều yếu tố khác như thời gian học, mức độ chuyên cần và hoạt động cá nhân.
+
+• Xu hướng tăng của biểu đồ đường cho thấy mối quan hệ tích cực giữa Parental Support và GPA.
+
+• Dù vậy, hệ số tương quan không quá mạnh nên đây không phải yếu tố quyết định duy nhất đến thành tích học tập.
+""")
