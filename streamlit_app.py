@@ -995,12 +995,7 @@ st.info("""
 
 • Đường hồi quy đi lên cho thấy tồn tại mối quan hệ tích cực giữa Study Time và GPA.
 
-• GPA trung bình tăng dần theo từng nhóm thời gian học:
-
-    - 0–5 giờ: 1.69
-    - 5–10 giờ: 1.85
-    - 10–15 giờ: 2.00
-    - 15–20 giờ: 2.11
+• GPA trung bình tăng dần theo từng nhóm thời gian học.
     
 • Nhóm học dưới 5 giờ mỗi tuần có GPA thấp nhất, trong khi nhóm học nhiều nhất đạt GPA cao nhất.
 
