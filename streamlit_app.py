@@ -755,9 +755,10 @@ st.dataframe(
 st.info("""
 📖 Nhận xét:
 
-- Phần lớn sinh viên dành mức thời gian tự học ở mức trung bình mỗi tuần.
-- Một số sinh viên có thời gian học rất thấp, điều này có thể ảnh hưởng tiêu cực đến GPA.
-- Số buổi nghỉ học của sinh viên có sự chênh lệch khá lớn.
-- Một bộ phận sinh viên nghỉ học nhiều hơn mức trung bình, có thể làm giảm hiệu quả học tập.
-- Các yếu tố như thời gian tự học và nghỉ học sẽ được phân tích sâu hơn ở các bước tiếp theo để đánh giá mức độ ảnh hưởng đến GPA.
+- Trung bình mỗi sinh viên dành khoảng 9.77 giờ tự học mỗi tuần, cho thấy phần lớn sinh viên có đầu tư thời gian cho việc học ngoài giờ lên lớp.
+- Tuy nhiên, vẫn tồn tại những sinh viên gần như không tự học (0 giờ), phản ánh sự khác biệt lớn về thói quen học tập.
+- Một số sinh viên có thời gian tự học rất cao, lên tới gần 20 giờ mỗi tuần, cho thấy mức độ tập trung học tập cao hơn đáng kể so với mặt bằng chung.
+- Số buổi nghỉ học trung bình là 14.54 buổi, tương đối cao và có thể ảnh hưởng tiêu cực đến kết quả học tập.
+- Có sinh viên nghỉ học tới 29 buổi, cho thấy tình trạng vắng học diễn ra khá nghiêm trọng ở một bộ phận sinh viên.
+- Nhìn chung, dữ liệu cho thấy sự chênh lệch rõ rệt về ý thức học tập và mức độ tham gia học tập giữa các sinh viên.
 """)
