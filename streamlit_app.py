@@ -1616,97 +1616,104 @@ st.dataframe(
 )
 
 # ======================
+# VẼ BIỂU ĐỒ
+# ======================
+col1, col2 = st.columns(2)
+
+# ----------------------
 # BAR CHART
-# ======================
+# ----------------------
+with col1:
 
-st.markdown("### 📊 Average GPA by Parental Support")
+    st.markdown("### 📊 Average GPA by Parental Support")
 
-fig, ax = plt.subplots(figsize=(8,5))
+    fig, ax = plt.subplots(figsize=(6,4))
 
-sns.barplot(
-    data=support_gpa,
-    x="SupportLabel",
-    y="GPA",
-    ax=ax
-)
-
-ax.set_title(
-    "Average GPA by Parental Support",
-    fontsize=16,
-    fontweight='bold'
-)
-
-ax.set_xlabel("Parental Support Level")
-ax.set_ylabel("Average GPA")
-
-ax.grid(
-    alpha=0.2,
-    linestyle="--"
-)
-
-# Hiển thị giá trị
-for p in ax.patches:
-
-    height = p.get_height()
-
-    if height > 0.05:
-
-        ax.annotate(
-            f"{height:.2f}",
-            (
-                p.get_x() + p.get_width()/2,
-                height
-            ),
-            ha='center',
-            va='bottom',
-            fontsize=9
-        )
-
-st.pyplot(fig)
-
-# ======================
-# LINE CHART
-# ======================
-
-st.markdown("### 📈 GPA Trend by Support Level")
-
-fig, ax = plt.subplots(figsize=(8,5))
-
-sns.lineplot(
-    data=support_gpa,
-    x="SupportLabel",
-    y="GPA",
-    marker="o",
-    linewidth=3,
-    ax=ax
-)
-
-ax.set_title(
-    "Trend Between Parental Support and GPA",
-    fontsize=16,
-    fontweight='bold'
-)
-
-ax.set_xlabel("Parental Support")
-ax.set_ylabel("Average GPA")
-
-ax.grid(
-    alpha=0.2,
-    linestyle="--"
-)
-
-# Hiển thị giá trị
-for i, row in support_gpa.iterrows():
-
-    ax.text(
-        i,
-        row["GPA"] + 0.02,
-        f"{row['GPA']:.2f}",
-        ha='center',
-        fontsize=9
+    sns.barplot(
+        data=support_gpa,
+        x="SupportLabel",
+        y="GPA",
+        ax=ax
     )
 
-st.pyplot(fig)
+    ax.set_title(
+        "Average GPA by Parental Support",
+        fontsize=14,
+        fontweight='bold'
+    )
+
+    ax.set_xlabel("Support Level")
+    ax.set_ylabel("Average GPA")
+
+    ax.grid(
+        alpha=0.2,
+        linestyle="--"
+    )
+
+    # Hiển thị giá trị
+    for p in ax.patches:
+
+        height = p.get_height()
+
+        if height > 0.05:
+
+            ax.annotate(
+                f"{height:.2f}",
+                (
+                    p.get_x() + p.get_width()/2,
+                    height
+                ),
+                ha='center',
+                va='bottom',
+                fontsize=8
+            )
+
+    st.pyplot(fig)
+
+# ----------------------
+# LINE CHART
+# ----------------------
+with col2:
+
+    st.markdown("### 📈 GPA Trend by Support Level")
+
+    fig, ax = plt.subplots(figsize=(6,4))
+
+    sns.lineplot(
+        data=support_gpa,
+        x="SupportLabel",
+        y="GPA",
+        marker="o",
+        linewidth=3,
+        ax=ax
+    )
+
+    ax.set_title(
+        "Trend Between Support and GPA",
+        fontsize=14,
+        fontweight='bold'
+    )
+
+    ax.set_xlabel("Support Level")
+    ax.set_ylabel("Average GPA")
+
+    ax.grid(
+        alpha=0.2,
+        linestyle="--"
+    )
+
+    # Hiển thị giá trị
+    for i, row in support_gpa.iterrows():
+
+        ax.text(
+            i,
+            row["GPA"] + 0.02,
+            f"{row['GPA']:.2f}",
+            ha='center',
+            fontsize=8
+        )
+
+    st.pyplot(fig)
 
 # ======================
 # CORRELATION
