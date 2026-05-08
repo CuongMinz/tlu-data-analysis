@@ -237,85 +237,6 @@ with col2:
 # ======================
 # NĂM HỌC vs TÍN CHỈ 
 # ======================
-st.subheader("📊 Tỷ lệ đăng ký tín chỉ theo năm học")
-
-cross_tab = pd.crosstab(data["NamHoc"], data["TinChi"])
-
-year_order = [1, 2, 3, 4]
-tinchi_order = ["Dưới 14", "14–16", "17–19", "20–22", "Trên 22"]
-
-cross_tab = cross_tab.reindex(index=year_order, columns=tinchi_order, fill_value=0)
-
-cross_tab_percent = cross_tab.div(cross_tab.sum(axis=1), axis=0)
-
-fig, ax = plt.subplots(figsize=(8,5))
-
-cross_tab_percent.plot(kind="bar", stacked=True, ax=ax)
-
-ax.set_xlabel("Năm học")
-ax.set_ylabel("Tỷ lệ (%)")
-ax.set_title("Tỷ lệ số tín chỉ theo từng năm học")
-
-ax.set_xticklabels(["Năm 1", "Năm 2", "Năm 3", "Năm 4"], rotation=0)
-ax.legend(title="Tín chỉ", bbox_to_anchor=(1.05, 1), loc='upper left')
-
-# hiển thị %
-for i in range(len(cross_tab_percent)):
-    cumulative = 0
-    for j in range(len(cross_tab_percent.columns)):
-        value = cross_tab_percent.iloc[i, j]
-        if value > 0:
-            ax.text(
-                i,
-                cumulative + value/2,
-                f"{value*100:.0f}%",
-                ha='center',
-                va='center',
-                fontsize=8
-            )
-            cumulative += value
-
-st.pyplot(fig)
-
-
-# ======================
-# TÍN CHỈ vs KHỐI LƯỢNG (100% STACKED)
-# ======================
-st.subheader("📊 Tỷ lệ cảm nhận khối lượng theo số tín chỉ")
-
-heatmap_data = pd.crosstab(
-    df_filtered["TinChi"],
-    df_filtered["KhoiLuong"]
-)
-
-# Sắp xếp đúng thứ tự
-heatmap_data = heatmap_data.reindex(
-    index=["Dưới 14", "14–16", "17–19", "20–22", "Trên 22"],
-    columns=["Nhẹ", "Vừa phải", "Hơi nặng", "Rất nặng"],
-    fill_value=0
-)
-
-# Vẽ
-fig, ax = plt.subplots(figsize=(8,5))
-
-sns.heatmap(
-    heatmap_data,
-    annot=True,
-    fmt="d",
-    cmap="YlOrRd",
-    ax=ax
-)
-
-ax.set_xlabel("Khối lượng học tập")
-ax.set_ylabel("Số tín chỉ")
-ax.set_title("Mối quan hệ giữa tín chỉ và khối lượng học tập")
-
-st.pyplot(fig)
-
-
-# ======================
-# LINE CHART: TÍN CHỈ TRUNG BÌNH
-# ======================
 st.subheader("📈 Tín chỉ trung bình theo năm học")
 
 # Mapping tín chỉ sang số
@@ -355,6 +276,41 @@ ax.set_title("Xu hướng đăng ký tín chỉ theo năm học")
 # Hiển thị giá trị
 for x, y in zip(avg_credit.index, avg_credit.values):
     ax.text(x, y+0.2, f"{y:.1f}", ha='center')
+
+st.pyplot(fig)
+
+
+# ======================
+# TÍN CHỈ vs KHỐI LƯỢNG (100% STACKED)
+# ======================
+st.subheader("📊 Tỷ lệ cảm nhận khối lượng theo số tín chỉ")
+
+heatmap_data = pd.crosstab(
+    df_filtered["TinChi"],
+    df_filtered["KhoiLuong"]
+)
+
+# Sắp xếp đúng thứ tự
+heatmap_data = heatmap_data.reindex(
+    index=["Dưới 14", "14–16", "17–19", "20–22", "Trên 22"],
+    columns=["Nhẹ", "Vừa phải", "Hơi nặng", "Rất nặng"],
+    fill_value=0
+)
+
+# Vẽ
+fig, ax = plt.subplots(figsize=(8,5))
+
+sns.heatmap(
+    heatmap_data,
+    annot=True,
+    fmt="d",
+    cmap="YlOrRd",
+    ax=ax
+)
+
+ax.set_xlabel("Khối lượng học tập")
+ax.set_ylabel("Số tín chỉ")
+ax.set_title("Mối quan hệ giữa tín chỉ và khối lượng học tập")
 
 st.pyplot(fig)
 
