@@ -992,24 +992,235 @@ st.info("""
 📖 Nhận xét:
 
 • Regression plot cho thấy GPA có xu hướng tăng khi thời gian tự học tăng.
-
 • Đường hồi quy đi lên cho thấy tồn tại mối quan hệ tích cực giữa Study Time và GPA.
-
 • GPA trung bình tăng dần theo từng nhóm thời gian học:
     - 0–5 giờ: 1.69
     - 5–10 giờ: 1.85
     - 10–15 giờ: 2.00
     - 15–20 giờ: 2.11
-
+    
 • Nhóm học dưới 5 giờ mỗi tuần có GPA thấp nhất, trong khi nhóm học nhiều nhất đạt GPA cao nhất.
-
 • Điều này cho thấy thời gian tự học có ảnh hưởng tích cực đến kết quả học tập.
-
 • Tuy nhiên, mức tăng GPA giữa các nhóm không quá lớn, cho thấy GPA còn chịu ảnh hưởng từ nhiều yếu tố khác.
-
 • Heatmap cho thấy số buổi nghỉ học (Absences) có tương quan âm rất mạnh với GPA (-0.92).
-
 • Trong khi đó, Study Time và Parental Support chỉ có tương quan dương nhẹ với GPA.
-
 • Kết quả cho thấy việc duy trì thời gian tự học hợp lý và hạn chế nghỉ học là hai yếu tố quan trọng giúp cải thiện kết quả học tập của sinh viên.
+""")
+
+# ======================
+# STEP 5 - ABSENCES → GPA
+# ======================
+
+st.markdown(
+    '<p class="section-title">📉 Step 5: Absences and GPA</p>',
+    unsafe_allow_html=True
+)
+
+st.write("""
+Sau khi phân tích thời gian tự học, bước tiếp theo tập trung vào ảnh hưởng của số buổi nghỉ học đến GPA.
+
+Mục tiêu:
+- Kiểm tra tác động của việc nghỉ học đến kết quả học tập
+- Quan sát xu hướng thay đổi GPA khi số buổi nghỉ tăng
+- Đánh giá mức độ ảnh hưởng của Absences đến GPA
+""")
+
+# ======================
+# DATA
+# ======================
+
+data = st.session_state.session_df.copy()
+
+# ======================
+# KPI
+# ======================
+
+st.markdown("### 📌 Tổng quan")
+
+col1, col2, col3 = st.columns(3)
+
+col1.metric(
+    "📅 Absences TB",
+    round(data["Absences"].mean(), 2)
+)
+
+col2.metric(
+    "📊 GPA TB",
+    round(data["GPA"].mean(), 2)
+)
+
+col3.metric(
+    "📉 Correlation",
+    round(
+        data["Absences"].corr(data["GPA"]),
+        2
+    )
+)
+
+# ======================
+# SCATTER PLOT
+# ======================
+
+st.markdown("### 📉 Scatter Plot: Absences vs GPA")
+
+fig, ax = plt.subplots(figsize=(9,5))
+
+sns.scatterplot(
+    data=data,
+    x="Absences",
+    y="GPA",
+    alpha=0.6,
+    ax=ax
+)
+
+ax.set_title(
+    "Relationship Between Absences and GPA",
+    fontsize=16,
+    fontweight='bold'
+)
+
+ax.set_xlabel("Number of Absences")
+ax.set_ylabel("GPA")
+
+ax.grid(
+    alpha=0.3,
+    linestyle="--"
+)
+
+st.pyplot(fig)
+
+# ======================
+# REGRESSION LINE
+# ======================
+
+st.markdown("### 📈 Regression Trend")
+
+fig, ax = plt.subplots(figsize=(9,5))
+
+sns.regplot(
+    data=data,
+    x="Absences",
+    y="GPA",
+    scatter_kws={
+        "alpha":0.4
+    },
+    line_kws={
+        "color":"red"
+    },
+    ax=ax
+)
+
+ax.set_title(
+    "Regression Between Absences and GPA",
+    fontsize=15,
+    fontweight='bold'
+)
+
+ax.set_xlabel("Absences")
+ax.set_ylabel("GPA")
+
+ax.grid(
+    alpha=0.3,
+    linestyle="--"
+)
+
+st.pyplot(fig)
+
+# ======================
+# GROUP ANALYSIS
+# ======================
+
+st.markdown("### 📊 GPA theo nhóm số buổi nghỉ")
+
+# Chia nhóm nghỉ học
+bins = [0, 5, 10, 20, 30]
+
+labels = [
+    "0-5 buổi",
+    "6-10 buổi",
+    "11-20 buổi",
+    "21-30 buổi"
+]
+
+data["AbsenceGroup"] = pd.cut(
+    data["Absences"],
+    bins=bins,
+    labels=labels,
+    include_lowest=True
+)
+
+absence_avg = (
+    data
+    .groupby("AbsenceGroup")["GPA"]
+    .mean()
+    .round(2)
+)
+
+fig, ax = plt.subplots(figsize=(8,5))
+
+sns.barplot(
+    x=absence_avg.index,
+    y=absence_avg.values,
+    ax=ax
+)
+
+# Hiển thị số GPA
+for i, v in enumerate(absence_avg.values):
+
+    ax.text(
+        i,
+        v + 0.03,
+        str(v),
+        ha='center',
+        fontsize=10
+    )
+
+ax.set_title(
+    "Average GPA by Absence Group",
+    fontsize=15,
+    fontweight='bold'
+)
+
+ax.set_xlabel("Absence Group")
+ax.set_ylabel("Average GPA")
+
+ax.grid(
+    alpha=0.2,
+    linestyle="--"
+)
+
+st.pyplot(fig)
+
+# ======================
+# SUMMARY TABLE
+# ======================
+
+st.markdown("### 📋 Summary Table")
+
+summary_df = pd.DataFrame({
+    "Absence Group": absence_avg.index,
+    "Average GPA": absence_avg.values
+})
+
+st.dataframe(
+    summary_df,
+    use_container_width=True
+)
+
+# ======================
+# INTERPRETATION
+# ======================
+
+st.info("""
+📖 Nhận xét:
+• Scatter plot cho thấy GPA có xu hướng giảm khi số buổi nghỉ học tăng lên.
+• Đường hồi quy đi xuống thể hiện mối quan hệ âm giữa Absences và GPA.
+• Sinh viên nghỉ học ít thường đạt GPA cao hơn so với nhóm nghỉ học nhiều.
+• Correlation âm mạnh cho thấy Absences là một trong những yếu tố ảnh hưởng lớn đến kết quả học tập.
+• GPA trung bình giảm dần theo từng nhóm nghỉ học:
+    - Nhóm nghỉ ít buổi có GPA cao hơn rõ rệt
+    - Nhóm nghỉ nhiều buổi thường có GPA thấp hơn
+
+• Điều này cho thấy tính chuyên cần đóng vai trò rất quan trọng trong việc duy trì kết quả học tập ổn định.
+• Kết quả cũng phù hợp với Heatmap ở bước trước khi Absences có tương quan âm mạnh nhất với GPA.
 """)
