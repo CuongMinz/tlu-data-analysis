@@ -643,3 +643,142 @@ st.info("""
 - Điều này phản ánh sự chênh lệch rõ rệt về kết quả học tập giữa các nhóm sinh viên.
 - Kết quả trên cho thấy cần phân tích sâu hơn các yếu tố như thời gian tự học, số buổi nghỉ học và hoạt động ngoại khóa để tìm ra nguyên nhân ảnh hưởng đến GPA.
 """)
+
+
+# ======================
+# STEP 3 - STUDY HABITS
+# ======================
+
+st.markdown(
+    '<p class="section-title">📚 Step 3: Study Habits Analysis</p>',
+    unsafe_allow_html=True
+)
+
+st.write("""
+Bước này tập trung phân tích thói quen học tập của sinh viên thông qua:
+- Thời gian tự học mỗi tuần
+- Số buổi nghỉ học
+
+Từ đó đánh giá mức độ đầu tư cho việc học của sinh viên.
+""")
+
+# ======================
+# KPI STUDY HABITS
+# ======================
+
+data = st.session_state.session_df
+
+col1, col2, col3 = st.columns(3)
+
+col1.metric(
+    "⏱️ Study Time TB",
+    round(data["StudyTimeWeekly"].mean(), 2)
+)
+
+col2.metric(
+    "📌 Study Time Max",
+    round(data["StudyTimeWeekly"].max(), 2)
+)
+
+col3.metric(
+    "❌ Absences TB",
+    round(data["Absences"].mean(), 2)
+)
+
+# ======================
+# HISTOGRAM STUDY TIME
+# ======================
+
+st.markdown("### ⏱️ Phân bố thời gian tự học")
+
+fig, ax = plt.subplots(figsize=(10,5))
+
+sns.histplot(
+    data=data,
+    x="StudyTimeWeekly",
+    bins=15,
+    kde=True,
+    ax=ax
+)
+
+ax.set_title("Distribution of Weekly Study Time")
+ax.set_xlabel("Study Time Weekly (hours)")
+ax.set_ylabel("Number of Students")
+
+ax.grid(
+    alpha=0.3,
+    linestyle="--"
+)
+
+st.pyplot(fig)
+
+# ======================
+# HISTOGRAM ABSENCES
+# ======================
+
+st.markdown("### ❌ Phân bố số buổi nghỉ học")
+
+fig, ax = plt.subplots(figsize=(10,5))
+
+sns.histplot(
+    data=data,
+    x="Absences",
+    bins=15,
+    kde=True,
+    ax=ax
+)
+
+ax.set_title("Distribution of Student Absences")
+ax.set_xlabel("Number of Absences")
+ax.set_ylabel("Number of Students")
+
+ax.grid(
+    alpha=0.3,
+    linestyle="--"
+)
+
+st.pyplot(fig)
+
+# ======================
+# SUMMARY TABLE
+# ======================
+
+st.markdown("### 📋 Thống kê thói quen học tập")
+
+summary_df = pd.DataFrame({
+
+    "Chỉ số": [
+        "Study Time Trung bình",
+        "Study Time Cao nhất",
+        "Study Time Thấp nhất",
+        "Absences Trung bình",
+        "Absences Cao nhất"
+    ],
+
+    "Giá trị": [
+        round(data["StudyTimeWeekly"].mean(), 2),
+        round(data["StudyTimeWeekly"].max(), 2),
+        round(data["StudyTimeWeekly"].min(), 2),
+        round(data["Absences"].mean(), 2),
+        round(data["Absences"].max(), 2)
+    ]
+})
+
+st.dataframe(
+    summary_df,
+    use_container_width=True
+)
+
+# ======================
+# INTERPRETATION
+# ======================
+
+st.info("""
+📖 Nhận xét:
+
+- Phần lớn sinh viên dành mức thời gian tự học ở mức trung bình mỗi tuần.
+- Một số sinh viên có thời gian học rất thấp, điều này có thể ảnh hưởng tiêu cực đến GPA.
+- Số buổi nghỉ học của sinh viên có sự chênh lệch khá lớn.
+- Một bộ phận sinh viên nghỉ học nhiều hơn mức trung bình, có thể làm giảm hiệu quả học tập.
+- Các yếu tố như thời gian tự học và nghỉ học sẽ được phân tích sâu hơn ở các bước tiếp theo để đánh giá mức độ ảnh hưởng đến GPA.
+""")
