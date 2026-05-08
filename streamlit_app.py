@@ -767,31 +767,6 @@ with col2:
 
     st.pyplot(fig)
 
-# ======================
-# SCATTER PLOT
-# ======================
-
-st.markdown("### 📉 Thời gian học và số buổi nghỉ")
-
-fig, ax = plt.subplots(figsize=(8,5))
-
-sns.scatterplot(
-    data=data,
-    x="StudyTimeWeekly",
-    y="Absences",
-    ax=ax
-)
-
-ax.set_title("Study Time vs Absences")
-ax.set_xlabel("Study Time Weekly")
-ax.set_ylabel("Absences")
-
-ax.grid(
-    alpha=0.3,
-    linestyle="--"
-)
-
-st.pyplot(fig)
 
 # ======================
 # INTERPRETATION
@@ -801,10 +776,9 @@ st.info("""
 📖 Nhận xét:
 
 - Trung bình mỗi sinh viên dành khoảng 9.77 giờ tự học mỗi tuần, cho thấy phần lớn sinh viên có đầu tư thời gian cho việc học ngoài giờ lên lớp.
-- Tuy nhiên, vẫn tồn tại những sinh viên gần như không tự học, phản ánh sự khác biệt rõ rệt về thói quen học tập giữa các cá nhân.
-- Một số sinh viên có thời gian tự học rất cao, gần 20 giờ mỗi tuần, cho thấy mức độ tập trung học tập lớn hơn đáng kể so với mặt bằng chung.
-- Số buổi nghỉ học trung bình ở mức khá cao, cho thấy tình trạng vắng học vẫn xuất hiện ở nhiều sinh viên.
-- Biểu đồ scatter cho thấy sinh viên có thời gian học thấp thường xuất hiện nhiều trường hợp nghỉ học cao hơn.
-- Ngược lại, nhóm sinh viên dành nhiều thời gian tự học thường có xu hướng nghỉ học ít hơn và duy trì việc học ổn định hơn.
-- Điều này cho thấy thời gian tự học và mức độ chuyên cần có thể là những yếu tố ảnh hưởng đáng kể đến kết quả học tập của sinh viên.
+- Tuy nhiên, vẫn tồn tại những sinh viên gần như không tự học (0 giờ), phản ánh sự khác biệt lớn về thói quen học tập.
+- Một số sinh viên có thời gian tự học rất cao, lên tới gần 20 giờ mỗi tuần, cho thấy mức độ tập trung học tập cao hơn đáng kể so với mặt bằng chung.
+- Số buổi nghỉ học trung bình là 14.54 buổi, tương đối cao và có thể ảnh hưởng tiêu cực đến kết quả học tập.
+- Có sinh viên nghỉ học tới 29 buổi, cho thấy tình trạng vắng học diễn ra khá nghiêm trọng ở một bộ phận sinh viên.
+- Nhìn chung, dữ liệu cho thấy sự chênh lệch rõ rệt về ý thức học tập và mức độ tham gia học tập giữa các sinh viên.
 """)
