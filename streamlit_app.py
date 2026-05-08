@@ -501,3 +501,99 @@ st.info("""
 - Đường KDE cho thấy phân bố dữ liệu khá cân đối, không bị lệch mạnh về một phía.
 - Điều này cho thấy phần lớn sinh viên có kết quả học tập ở mức ổn định.
 """)
+
+
+# ======================
+# STEP 2 - GRADE CLASSIFICATION
+# ======================
+
+st.markdown(
+    '<p class="section-title">🎓 Step 2: Academic Performance Classification</p>',
+    unsafe_allow_html=True
+)
+
+st.write("""
+Biểu đồ tròn giúp quan sát tỷ lệ học lực của sinh viên trong toàn bộ dữ liệu.
+Từ đó có thể đánh giá nhóm học lực nào chiếm đa số.
+""")
+
+# ======================
+# CREATE GPA CATEGORY
+# ======================
+
+grade_labels = []
+
+for gpa in st.session_state.session_df["GPA"]:
+
+    if gpa < 2.0:
+        grade_labels.append("Yếu")
+
+    elif gpa < 2.5:
+        grade_labels.append("Trung bình")
+
+    elif gpa < 3.2:
+        grade_labels.append("Khá")
+
+    else:
+        grade_labels.append("Giỏi")
+
+# Tạo cột mới
+grade_df = st.session_state.session_df.copy()
+grade_df["HocLuc"] = grade_labels
+
+# ======================
+# COUNT DATA
+# ======================
+
+grade_counts = grade_df["HocLuc"].value_counts()
+
+# Sắp xếp đúng thứ tự
+grade_counts = grade_counts.reindex(
+    ["Yếu", "Trung bình", "Khá", "Giỏi"]
+)
+
+# ======================
+# PIE CHART
+# ======================
+
+fig, ax = plt.subplots(figsize=(7,7))
+
+ax.pie(
+    grade_counts,
+    labels=grade_counts.index,
+    autopct='%1.1f%%',
+    startangle=90
+)
+
+ax.set_title("Tỷ lệ học lực sinh viên")
+
+st.pyplot(fig)
+
+# ======================
+# TABLE SUMMARY
+# ======================
+
+st.markdown("### 📋 Bảng thống kê học lực")
+
+summary_df = pd.DataFrame({
+    "Học lực": grade_counts.index,
+    "Số lượng": grade_counts.values
+})
+
+st.dataframe(
+    summary_df,
+    use_container_width=True
+)
+
+# ======================
+# INTERPRETATION
+# ======================
+
+st.info("""
+📖 Nhận xét:
+
+- Biểu đồ cho thấy tỷ lệ học lực của sinh viên trong dữ liệu khảo sát.
+- Nhóm học lực chiếm tỷ lệ cao nhất phản ánh mặt bằng học tập chung của sinh viên.
+- Nếu nhóm Khá/Giỏi chiếm đa số, kết quả học tập nhìn chung khá tích cực.
+- Nếu nhóm Yếu/Trung bình nhiều, có thể sinh viên đang gặp khó khăn trong học tập.
+""")
