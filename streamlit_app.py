@@ -1224,6 +1224,7 @@ st.dataframe(
 
 st.info("""
 📖 Nhận xét:
+
 • Scatter plot cho thấy GPA có xu hướng giảm khi số buổi nghỉ học tăng lên.
 
 • Đường hồi quy đi xuống thể hiện mối quan hệ âm giữa Absences và GPA.
@@ -1427,18 +1428,19 @@ for p in ax.patches:
 
     height = p.get_height()
 
-    ax.annotate(
-        f"{height:.2f}",
-        (
-            p.get_x() + p.get_width()/2,
-            height
-        ),
-        ha='center',
-        va='bottom',
-        fontsize=9
-    )
+    # Chỉ hiện khi > 0
+    if height > 0.05:
 
-st.pyplot(fig)
+        ax.annotate(
+            f"{height:.2f}",
+            (
+                p.get_x() + p.get_width()/2,
+                height
+            ),
+            ha='center',
+            va='bottom',
+            fontsize=9
+        )
 
 # ======================
 # BEST ACTIVITY
