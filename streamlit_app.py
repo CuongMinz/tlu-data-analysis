@@ -283,45 +283,28 @@ st.pyplot(fig)
 # ======================
 st.subheader("📊 Tỷ lệ cảm nhận khối lượng theo số tín chỉ")
 
-cross_tab = pd.crosstab(data["TinChi"], data["KhoiLuong"])
+mapping_khoiluong = {
+    "Nhẹ": 1,
+    "Vừa phải": 2,
+    "Hơi nặng": 3,
+    "Rất nặng": 4
+}
 
-tinchi_order = ["Dưới 14", "14–16", "17–19", "20–22", "Trên 22"]
-khoiluong_order = ["Nhẹ", "Vừa phải", "Hơi nặng", "Rất nặng"]
+df_box = df_filtered.copy()
 
-cross_tab = cross_tab.reindex(
-    index=tinchi_order,
-    columns=khoiluong_order,
-    fill_value=0
-)
-
-cross_tab_percent = cross_tab.div(cross_tab.sum(axis=1), axis=0)
+df_box["KhoiLuong_num"] = df_box["KhoiLuong"].map(mapping_khoiluong)
 
 fig, ax = plt.subplots(figsize=(8,5))
 
-cross_tab_percent.plot(kind="bar", stacked=True, ax=ax)
+sns.boxplot(
+    x="TinChi",
+    y="KhoiLuong_num",
+    data=df_box,
+    ax=ax
+)
 
 ax.set_xlabel("Số tín chỉ")
-ax.set_ylabel("Tỷ lệ (%)")
-ax.set_title("Ảnh hưởng của số tín chỉ đến khối lượng học tập")
-
-plt.xticks(rotation=0)
-ax.legend(title="Khối lượng", bbox_to_anchor=(1.05, 1), loc='upper left')
-
-for i in range(len(cross_tab_percent)):
-    cumulative = 0
-    for j in range(len(cross_tab_percent.columns)):
-        value = cross_tab_percent.iloc[i, j]
-        if value > 0:
-            ax.text(
-                i,
-                cumulative + value/2,
-                f"{value*100:.0f}%",
-                ha='center',
-                va='center',
-                fontsize=8,
-                color='black'
-            )
-            cumulative += value
+ax.set_ylabel("Mức khối lượng học tập")
 
 st.pyplot(fig)
 
