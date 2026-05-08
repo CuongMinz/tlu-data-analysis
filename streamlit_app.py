@@ -7,95 +7,151 @@ import statsmodels.api as sm
 # ======================
 # CONFIG + STYLE
 # ======================
-st.set_page_config(page_title="TLU Data Analysis", layout="wide")
+st.set_page_config(
+    page_title="Student GPA Analysis",
+    page_icon="📊",
+    layout="wide"
+)
 
 st.markdown("""
 <style>
+
 .main-title {
-    font-size:32px;
-    font-weight:bold;
-    text-align:center;
-    color:#2c3e50;
+    font-size: 38px;
+    font-weight: bold;
+    text-align: center;
+    color: #1f2937;
+    margin-bottom: 5px;
 }
+
 .sub-title {
-    text-align:center;
-    color:gray;
-    margin-bottom:20px;
+    text-align: center;
+    color: gray;
+    font-size: 18px;
+    margin-bottom: 30px;
 }
+
+.section-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #111827;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.metric-card {
+    background-color: #f9fafb;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="main-title">📊 Dashboard phân tích kết quả học tập SV TLU</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">Môn: Lập trình khoa học dữ liệu</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="main-title">📊 Student GPA Analysis Dashboard</div>',
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    '<div class="sub-title">Scientific Data Programming Project</div>',
+    unsafe_allow_html=True
+)
 
 # ======================
 # LOAD DATA
 # ======================
 try:
     df_raw = pd.read_csv("data.csv")
+
 except:
-    st.error("❌ Không tìm thấy file data.csv")
+    st.error("❌ Cannot find data.csv")
     st.stop()
 
 # ======================
 # CLEAN DATA
 # ======================
 df = df_raw.copy()
+
+# Remove spaces in column names
 df.columns = df.columns.str.strip()
 
-if "Dấu thời gian" in df.columns:
-    df = df.drop(columns=["Dấu thời gian"])
+# ======================
+# DROP UNUSED COLUMNS
+# ======================
+if "Age" in df.columns:
+    df = df.drop(columns=["Age"])
 
-df = df.rename(columns={
-    "Bạn đang học năm mấy?": "NamHoc",
-    "Một học kỳ bạn thường học bao nhiêu tín chỉ?": "TinChi",
-    "Một kì bạn thường học bao nhiêu tín chỉ?": "TinChi",
-    "Bạn cảm thấy khối lượng học tập của mình:": "KhoiLuong",
-    "GPA học kỳ gần nhất của bạn khoảng:": "GPA",
-    "GPA học kì gần nhất của bạn khoảng:": "GPA",
-    "Bạn đã từng học lại môn nào chưa?": "HocLai",
-    "Khi học nhiều môn cùng lúc, kết quả của bạn:": "AnhHuong",
-    "Trung bình mỗi ngày bạn dành bao nhiêu thời gian tự học?": "TuHoc",
-    "Bạn đánh giá mức độ khó của học kỳ vừa rồi:": "DoKho"
-})
+if "Ethnicity" in df.columns:
+    df = df.drop(columns=["Ethnicity"])
 
-mapping_year = {"Năm 1":1,"Năm 2":2,"Năm 3":3,"Năm 4":4}
-df["NamHoc"] = df["NamHoc"].map(mapping_year)
+if "ParentalEducation" in df.columns:
+    df = df.drop(columns=["ParentalEducation"])
+
+# ======================
+# REMOVE DUPLICATES
+# ======================
+df = df.drop_duplicates()
+
+# ======================
+# REMOVE NULL VALUES
+# ======================
 df = df.dropna()
+
+# ======================
+# CONVERT DATA TYPES
+# ======================
+binary_cols = [
+    "Gender",
+    "Tutoring",
+    "Extracurricular",
+    "Sports",
+    "Music",
+    "Volunteering"
+]
+
+for col in binary_cols:
+    if col in df.columns:
+        df[col] = df[col].astype(int)
 
 # ======================
 # SIDEBAR FILTER
 # ======================
-st.sidebar.title("⚙️ Bộ lọc")
+st.sidebar.title("⚙️ Filters")
 
-if st.sidebar.button("🔄 Reset"):
+if st.sidebar.button("🔄 Reset Filters"):
     st.rerun()
 
-year_filter = st.sidebar.multiselect(
-    "Năm học",
-    sorted(df["NamHoc"].unique()),
-    default=sorted(df["NamHoc"].unique())
+gender_filter = st.sidebar.multiselect(
+    "Gender",
+    [0, 1],
+    default=[0, 1]
 )
 
-credit_options = ["Dưới 14","14–16","17–19","20–22","Trên 22"]
-gpa_options = ["Dưới 2.0","2.0 – 2.49","2.5 – 3.19","3.2 – 3.59","Trên 3.6"]
+tutoring_filter = st.sidebar.multiselect(
+    "Tutoring",
+    [0, 1],
+    default=[0, 1]
+)
 
-credit_filter = st.sidebar.multiselect("Tín chỉ", credit_options, default=credit_options)
-gpa_filter = st.sidebar.multiselect("GPA", gpa_options, default=gpa_options)
-khoiluong_filter = st.sidebar.multiselect("Khối lượng", df["KhoiLuong"].unique(), default=df["KhoiLuong"].unique())
+grade_filter = st.sidebar.multiselect(
+    "Grade Class",
+    sorted(df["GradeClass"].unique()),
+    default=sorted(df["GradeClass"].unique())
+)
 
 # ======================
 # FILTER DATA
 # ======================
 df_filtered = df[
-    (df["NamHoc"].isin(year_filter)) &
-    (df["TinChi"].isin(credit_filter)) &
-    (df["GPA"].isin(gpa_filter)) &
-    (df["KhoiLuong"].isin(khoiluong_filter))
+    (df["Gender"].isin(gender_filter)) &
+    (df["Tutoring"].isin(tutoring_filter)) &
+    (df["GradeClass"].isin(grade_filter))
 ]
 
 # ======================
-# 🔥 DATA SOURCE DUY NHẤT (QUAN TRỌNG)
+# SESSION DATA
 # ======================
 if "session_df" not in st.session_state:
     st.session_state.session_df = df_filtered.copy()
@@ -105,38 +161,126 @@ else:
 # ======================
 # CRUD MODULE
 # ======================
-st.subheader("🛠️ CRUD dữ liệu (toàn dashboard)")
+st.markdown(
+    '<p class="section-title">🛠️ CRUD Management</p>',
+    unsafe_allow_html=True
+)
 
 df_work = st.session_state.session_df
 
-# -------- CREATE --------
+# ======================
+# CREATE DATA
+# ======================
 with st.form("add_form"):
-    st.markdown("### ➕ Thêm dữ liệu")
 
-    namhoc = st.selectbox("Năm học", [1,2,3,4])
-    tinchi = st.selectbox("Tín chỉ", credit_options)
-    gpa = st.selectbox("GPA", gpa_options)
-    khoiluong = st.selectbox("Khối lượng", df["KhoiLuong"].unique())
-    tuhoc = st.selectbox("Thời gian tự học", df["TuHoc"].unique())
-    do_kho = st.selectbox("Độ khó", df["DoKho"].unique())
+    st.markdown("### ➕ Add New Student")
 
-    submit = st.form_submit_button("➕ Thêm")
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        student_id = st.number_input(
+            "Student ID",
+            min_value=1000,
+            step=1
+        )
+
+        gender = st.selectbox(
+            "Gender",
+            [0, 1],
+            help="0 = Female, 1 = Male"
+        )
+
+        study_time = st.number_input(
+            "Study Time Weekly",
+            min_value=0.0,
+            max_value=40.0,
+            step=0.5
+        )
+
+        absences = st.number_input(
+            "Absences",
+            min_value=0,
+            max_value=50,
+            step=1
+        )
+
+        tutoring = st.selectbox(
+            "Tutoring",
+            [0, 1]
+        )
+
+    with col2:
+
+        parental_support = st.slider(
+            "Parental Support",
+            min_value=0,
+            max_value=4,
+            step=1
+        )
+
+        extracurricular = st.selectbox(
+            "Extracurricular",
+            [0, 1]
+        )
+
+        sports = st.selectbox(
+            "Sports",
+            [0, 1]
+        )
+
+        music = st.selectbox(
+            "Music",
+            [0, 1]
+        )
+
+        volunteering = st.selectbox(
+            "Volunteering",
+            [0, 1]
+        )
+
+        gpa = st.number_input(
+            "GPA",
+            min_value=0.0,
+            max_value=4.0,
+            step=0.01
+        )
+
+        grade_class = st.selectbox(
+            "Grade Class",
+            [0, 1, 2, 3, 4]
+        )
+
+    submit = st.form_submit_button("➕ Add Student")
 
     if submit:
+
         new_row = pd.DataFrame([{
-            "NamHoc": namhoc,
-            "TinChi": tinchi,
+            "StudentID": student_id,
+            "Gender": gender,
+            "StudyTimeWeekly": study_time,
+            "Absences": absences,
+            "Tutoring": tutoring,
+            "ParentalSupport": parental_support,
+            "Extracurricular": extracurricular,
+            "Sports": sports,
+            "Music": music,
+            "Volunteering": volunteering,
             "GPA": gpa,
-            "KhoiLuong": khoiluong,
-            "TuHoc": tuhoc,
-            "DoKho": do_kho
+            "GradeClass": grade_class
         }])
 
-        st.session_state.session_df = pd.concat([df_work, new_row], ignore_index=True)
-        st.success("✔ Đã thêm dữ liệu")
+        st.session_state.session_df = pd.concat(
+            [df_work, new_row],
+            ignore_index=True
+        )
 
-# -------- UPDATE --------
-st.markdown("### ✏️ Chỉnh sửa dữ liệu")
+        st.success("✔ Student added successfully")
+
+# ======================
+# UPDATE DATA
+# ======================
+st.markdown("### ✏️ Edit Dataset")
 
 edited_df = st.data_editor(
     st.session_state.session_df,
@@ -146,305 +290,125 @@ edited_df = st.data_editor(
 
 st.session_state.session_df = edited_df
 
-# -------- DELETE --------
-st.markdown("### 🗑️ Xoá dữ liệu")
+# ======================
+# DELETE DATA
+# ======================
+st.markdown("### 🗑️ Delete Row")
 
 idx = st.number_input(
-    "Index dòng cần xoá",
+    "Enter row index to delete",
     min_value=0,
-    max_value=max(len(st.session_state.session_df)-1, 0)
+    max_value=max(len(st.session_state.session_df)-1, 0),
+    step=1
 )
 
-if st.button("🗑️ Xoá"):
-    st.session_state.session_df = st.session_state.session_df.drop(idx).reset_index(drop=True)
-    st.success("✔ Đã xoá")
+if st.button("🗑️ Delete"):
+
+    st.session_state.session_df = (
+        st.session_state.session_df
+        .drop(idx)
+        .reset_index(drop=True)
+    )
+
+    st.success("✔ Row deleted successfully")
 
 # ======================
 # DATA VIEW
 # ======================
-st.markdown("### 📂 Dữ liệu toàn hệ thống")
-st.dataframe(st.session_state.session_df)
+st.markdown(
+    '<p class="section-title">📂 Current Dataset</p>',
+    unsafe_allow_html=True
+)
 
+st.dataframe(
+    st.session_state.session_df,
+    use_container_width=True
+)
 
 # ======================
-# 🔍 SEARCH DATA
+# SEARCH DATA
 # ======================
-st.subheader("🔍 Tìm kiếm dữ liệu")
+st.markdown(
+    '<p class="section-title">🔍 Search Data</p>',
+    unsafe_allow_html=True
+)
 
-keyword = st.text_input("Nhập từ khóa (năm, GPA, tín chỉ, tự học...)")
+keyword = st.text_input(
+    "Search by GPA, study time, absences, activities..."
+)
 
 search_df = st.session_state.session_df.copy()
 
 if keyword:
+
     search_df = search_df[
         search_df.astype(str).apply(
-            lambda row: row.str.contains(keyword, case=False).any(),
+            lambda row: row.str.contains(
+                keyword,
+                case=False
+            ).any(),
             axis=1
         )
     ]
 
-st.dataframe(search_df)
-
+st.dataframe(
+    search_df,
+    use_container_width=True
+)
 
 # ======================
-# 📤 EXPORT DATA
+# EXPORT DATA
 # ======================
-st.subheader("📤 Xuất dữ liệu")
+st.markdown(
+    '<p class="section-title">📤 Export Dataset</p>',
+    unsafe_allow_html=True
+)
 
-csv_data = st.session_state.session_df.to_csv(index=False).encode("utf-8")
+csv_data = (
+    st.session_state.session_df
+    .to_csv(index=False)
+    .encode("utf-8")
+)
 
 st.download_button(
-    label="📥 Tải file CSV",
+    label="📥 Download CSV",
     data=csv_data,
-    file_name="tlu_dashboard_data.csv",
+    file_name="student_gpa_analysis.csv",
     mime="text/csv"
 )
 
-
 # ======================
-# KPI 
+# KPI
 # ======================
-st.subheader("📌 Tổng quan")
+st.markdown(
+    '<p class="section-title">📌 Overview</p>',
+    unsafe_allow_html=True
+)
 
 data = st.session_state.session_df
 
-col1, col2, col3 = st.columns(3)
-col1.metric("👨‍🎓 Số SV", len(data))
-col2.metric("📊 GPA phổ biến", data["GPA"].mode()[0])
-col3.metric("⏱️ Tự học phổ biến", data["TuHoc"].mode()[0])
-
-# ======================
-# CHARTS (USE SESSION DATA)
-# ======================
-
-# GPA
-col1, col2 = st.columns(2)
+col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    st.subheader("📊 Phân bố GPA")
-    fig1, ax1 = plt.subplots()
-    sns.countplot(x=data["GPA"], order=gpa_options, ax=ax1)
-    plt.xticks(rotation=20)
-    st.pyplot(fig1)
+    st.metric(
+        "👨‍🎓 Students",
+        len(data)
+    )
 
 with col2:
-    st.subheader("📊 Phân bố tín chỉ")
-    fig2, ax2 = plt.subplots()
-    data["TinChi"].value_counts().reindex(credit_options).plot(kind="pie", autopct="%1.1f%%", ax=ax2)
-    ax2.set_ylabel("")
-    st.pyplot(fig2)
+    st.metric(
+        "📊 Average GPA",
+        round(data["GPA"].mean(), 2)
+    )
 
+with col3:
+    st.metric(
+        "📚 Avg Study Time",
+        round(data["StudyTimeWeekly"].mean(), 2)
+    )
 
-# ======================
-# NĂM HỌC vs TÍN CHỈ 
-# ======================
-st.subheader("📈 Tín chỉ trung bình theo năm học")
-
-# Mapping tín chỉ sang số
-mapping_credit = {
-    "Dưới 14": 13,
-    "14–16": 15,
-    "17–19": 18,
-    "20–22": 21,
-    "Trên 22": 23
-}
-
-df_line = df_filtered.copy()
-
-df_line["TinChi_num"] = df_line["TinChi"].map(mapping_credit)
-
-# Tính trung bình
-avg_credit = df_line.groupby("NamHoc")["TinChi_num"].mean()
-
-# Vẽ
-fig, ax = plt.subplots(figsize=(8,5))
-
-ax.plot(
-    avg_credit.index,
-    avg_credit.values,
-    marker='o',
-    linewidth=2
-)
-
-# Format
-ax.set_xticks([1,2,3,4])
-ax.set_xticklabels(["Năm 1","Năm 2","Năm 3","Năm 4"])
-
-ax.set_xlabel("Năm học")
-ax.set_ylabel("Tín chỉ trung bình")
-ax.set_title("Xu hướng đăng ký tín chỉ theo năm học")
-
-# Hiển thị giá trị
-for x, y in zip(avg_credit.index, avg_credit.values):
-    ax.text(x, y+0.2, f"{y:.1f}", ha='center')
-
-st.pyplot(fig)
-
-
-# ======================
-# TÍN CHỈ vs KHỐI LƯỢNG (100% STACKED)
-# ======================
-st.subheader("📊 Tỷ lệ cảm nhận khối lượng theo số tín chỉ")
-
-heatmap_data = pd.crosstab(
-    df_filtered["TinChi"],
-    df_filtered["KhoiLuong"]
-)
-
-# Sắp xếp đúng thứ tự
-heatmap_data = heatmap_data.reindex(
-    index=["Dưới 14", "14–16", "17–19", "20–22", "Trên 22"],
-    columns=["Nhẹ", "Vừa phải", "Hơi nặng", "Rất nặng"],
-    fill_value=0
-)
-
-# Vẽ
-fig, ax = plt.subplots(figsize=(8,5))
-
-sns.heatmap(
-    heatmap_data,
-    annot=True,
-    fmt="d",
-    cmap="YlOrRd",
-    ax=ax
-)
-
-ax.set_xlabel("Khối lượng học tập")
-ax.set_ylabel("Số tín chỉ")
-ax.set_title("Mối quan hệ giữa tín chỉ và khối lượng học tập")
-
-st.pyplot(fig)
-
-
-
-# ======================
-# TỰ HỌC vs GPA 
-# ======================
-st.subheader("📊 Ảnh hưởng của thời gian tự học đến GPA")
-
-cross_tab = pd.crosstab(df_filtered["TuHoc"], df_filtered["GPA"])
-
-# Thứ tự chuẩn
-tuhoc_order = ["Dưới 1 giờ", "1–2 giờ", "2–4 giờ", "Trên 4 giờ"]
-gpa_order = ["Dưới 2.0", "2.0 – 2.49", "2.5 – 3.19", "3.2 – 3.59"]
-
-cross_tab = cross_tab.reindex(index=tuhoc_order, columns=gpa_order, fill_value=0)
-
-# Chuyển sang %
-cross_tab_percent = cross_tab.div(cross_tab.sum(axis=1), axis=0)
-
-# Vẽ biểu đồ
-fig, ax = plt.subplots(figsize=(8,5))
-
-cross_tab_percent.plot(
-    kind="bar",
-    stacked=True,
-    ax=ax
-)
-
-# Format
-ax.set_xlabel("Thời gian tự học")
-ax.set_ylabel("Tỷ lệ (%)")
-ax.set_title("Tỷ lệ GPA theo thời gian tự học")
-
-plt.xticks(rotation=0)
-ax.legend(title="GPA", bbox_to_anchor=(1.05, 1), loc='upper left')
-
-# Hiển thị %
-for i in range(len(cross_tab_percent)):
-    cumulative = 0
-    for j in range(len(cross_tab_percent.columns)):
-        value = cross_tab_percent.iloc[i, j]
-        if value > 0:
-            ax.text(
-                i,
-                cumulative + value/2,
-                f"{value*100:.0f}%",
-                ha='center',
-                va='center',
-                fontsize=8
-            )
-            cumulative += value
-
-st.pyplot(fig)
-
-
-# ======================
-# HỒI QUY TUYẾN TÍNH OLS
-# ======================
-st.subheader("📈 Mô hình hồi quy tuyến tính OLS")
-
-# Copy dữ liệu
-df_ols = df_filtered.copy()
-
-# ======================
-# MAPPING
-# ======================
-
-mapping_gpa = {
-    "Dưới 2.0": 1.8,
-    "2.0 – 2.49": 2.25,
-    "2.5 – 3.19": 2.85,
-    "3.2 – 3.59": 3.4,
-    "Trên 3.6": 3.8
-}
-
-mapping_tuhoc = {
-    "Dưới 1 giờ": 0.5,
-    "1–2 giờ": 1.5,
-    "2–4 giờ": 3,
-    "Trên 4 giờ": 5
-}
-
-mapping_tinchi = {
-    "Dưới 14": 13,
-    "14–16": 15,
-    "17–19": 18,
-    "20–22": 21,
-    "Trên 22": 23
-}
-
-mapping_khoiluong = {
-    "Nhẹ": 1,
-    "Vừa phải": 2,
-    "Hơi nặng": 3,
-    "Rất nặng": 4
-}
-
-# Apply mapping
-df_ols["GPA_num"] = df_ols["GPA"].map(mapping_gpa)
-df_ols["TuHoc_num"] = df_ols["TuHoc"].map(mapping_tuhoc)
-df_ols["TinChi_num"] = df_ols["TinChi"].map(mapping_tinchi)
-df_ols["KhoiLuong_num"] = df_ols["KhoiLuong"].map(mapping_khoiluong)
-
-# ======================
-# X và Y
-# ======================
-
-X = df_ols[[
-    "TuHoc_num",
-    "TinChi_num",
-    "KhoiLuong_num",
-    "NamHoc"
-]]
-
-Y = df_ols["GPA_num"]
-
-# Thêm hằng số
-X = sm.add_constant(X)
-
-# Train model
-model = sm.OLS(Y, X).fit()
-
-# ======================
-# KẾT QUẢ
-# ======================
-
-st.text(model.summary())
-
-
-# ======================
-# FOOTER
-# ======================
-st.markdown("---")
-st.markdown("<center>👨‍💻 Sinh viên thực hiện: <b>Tên của bạn</b></center>", unsafe_allow_html=True)
+with col4:
+    st.metric(
+        "❌ Avg Absences",
+        round(data["Absences"].mean(), 2)
+    )
