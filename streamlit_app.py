@@ -493,10 +493,11 @@ col4.metric(
 # ======================
 
 st.info("""
-📖 Interpretation:
+📖 Nhận xét:
 
-- Histogram shows the distribution of student GPA.
-- The KDE curve helps identify the overall trend.
-- If the graph peaks around high GPA values, most students perform well.
-- If the distribution is skewed left/right, it indicates imbalance in academic performance.
+- GPA của sinh viên phân bố chủ yếu trong khoảng từ 1.0 đến 3.0.
+- Số lượng sinh viên đạt GPA trung bình và khá chiếm tỷ lệ lớn nhất.
+- Rất ít sinh viên có GPA quá thấp hoặc quá cao.
+- Đường KDE cho thấy phân bố dữ liệu khá cân đối, không bị lệch mạnh về một phía.
+- Điều này cho thấy phần lớn sinh viên có kết quả học tập ở mức ổn định.
 """)
