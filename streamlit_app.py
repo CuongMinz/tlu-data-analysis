@@ -283,28 +283,32 @@ st.pyplot(fig)
 # ======================
 st.subheader("📊 Tỷ lệ cảm nhận khối lượng theo số tín chỉ")
 
-mapping_khoiluong = {
-    "Nhẹ": 1,
-    "Vừa phải": 2,
-    "Hơi nặng": 3,
-    "Rất nặng": 4
-}
+heatmap_data = pd.crosstab(
+    df_filtered["TinChi"],
+    df_filtered["KhoiLuong"]
+)
 
-df_box = df_filtered.copy()
+# Sắp xếp đúng thứ tự
+heatmap_data = heatmap_data.reindex(
+    index=["Dưới 14", "14–16", "17–19", "20–22", "Trên 22"],
+    columns=["Nhẹ", "Vừa phải", "Hơi nặng", "Rất nặng"],
+    fill_value=0
+)
 
-df_box["KhoiLuong_num"] = df_box["KhoiLuong"].map(mapping_khoiluong)
-
+# Vẽ
 fig, ax = plt.subplots(figsize=(8,5))
 
-sns.boxplot(
-    x="TinChi",
-    y="KhoiLuong_num",
-    data=df_box,
+sns.heatmap(
+    heatmap_data,
+    annot=True,
+    fmt="d",
+    cmap="YlOrRd",
     ax=ax
 )
 
-ax.set_xlabel("Số tín chỉ")
-ax.set_ylabel("Mức khối lượng học tập")
+ax.set_xlabel("Khối lượng học tập")
+ax.set_ylabel("Số tín chỉ")
+ax.set_title("Mối quan hệ giữa tín chỉ và khối lượng học tập")
 
 st.pyplot(fig)
 
