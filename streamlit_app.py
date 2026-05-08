@@ -363,30 +363,21 @@ st.pyplot(fig)
 # ======================
 st.subheader("📊 Ảnh hưởng của thời gian tự học đến GPA")
 
-heatmap_data = pd.crosstab(
-    df_filtered["TuHoc"],
-    df_filtered["GPA"]
-)
+tuhoc_order = ["Dưới 1 giờ","1–2 giờ","2–4 giờ","Trên 4 giờ"]
+gpa_order = ["Dưới 2.0","2.0 – 2.49","2.5 – 3.19","3.2 – 3.59"]
 
-heatmap_data = heatmap_data.reindex(
-    index=["Dưới 1 giờ", "1–2 giờ", "2–4 giờ", "Trên 4 giờ"],
-    columns=["Dưới 2.0", "2.0 – 2.49", "2.5 – 3.19", "3.2 – 3.59"],
-    fill_value=0
-)
+cross_tab = pd.crosstab(df_filtered["TuHoc"], df_filtered["GPA"])
+cross_tab = cross_tab.reindex(index=tuhoc_order, columns=gpa_order, fill_value=0)
 
-fig, ax = plt.subplots(figsize=(7,5))
+cross_tab_percent = cross_tab.div(cross_tab.sum(axis=1), axis=0)
 
-sns.heatmap(
-    heatmap_data,
-    annot=True,
-    fmt="d",
-    cmap="Blues",
-    ax=ax
-)
+fig5, ax5 = plt.subplots(figsize=(8,5))
+cross_tab_percent.plot(kind="bar", stacked=True, ax=ax5)
 
-ax.set_title("Mối quan hệ giữa thời gian tự học và GPA")
+ax5.set_ylabel("Tỷ lệ")
+ax5.legend(title="GPA", bbox_to_anchor=(1.05,1))
 
-st.pyplot(fig)
+st.pyplot(fig5)
 
 
 # ======================
