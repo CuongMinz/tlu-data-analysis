@@ -686,59 +686,38 @@ col3.metric(
 )
 
 # ======================
-# HISTOGRAM STUDY TIME
+# BOXPLOT STUDY TIME
 # ======================
 
-st.markdown("### ⏱️ Phân bố thời gian tự học")
+st.markdown("### 📦 Boxplot thời gian tự học")
 
-fig, ax = plt.subplots(figsize=(10,5))
+fig, ax = plt.subplots(figsize=(10,2))
 
-sns.histplot(
-    data=data,
-    x="StudyTimeWeekly",
-    bins=15,
-    kde=True,
+sns.boxplot(
+    x=data["StudyTimeWeekly"],
     ax=ax
 )
 
-ax.set_title("Distribution of Weekly Study Time")
-ax.set_xlabel("Study Time Weekly (hours)")
-ax.set_ylabel("Number of Students")
-
-ax.grid(
-    alpha=0.3,
-    linestyle="--"
-)
+ax.set_title("Boxplot of Weekly Study Time")
 
 st.pyplot(fig)
 
 # ======================
-# HISTOGRAM ABSENCES
+# BOXPLOT ABSENCES
 # ======================
 
-st.markdown("### ❌ Phân bố số buổi nghỉ học")
+st.markdown("### 📦 Boxplot số buổi nghỉ học")
 
-fig, ax = plt.subplots(figsize=(10,5))
+fig, ax = plt.subplots(figsize=(10,2))
 
-sns.histplot(
-    data=data,
-    x="Absences",
-    bins=15,
-    kde=True,
+sns.boxplot(
+    x=data["Absences"],
     ax=ax
 )
 
-ax.set_title("Distribution of Student Absences")
-ax.set_xlabel("Number of Absences")
-ax.set_ylabel("Number of Students")
-
-ax.grid(
-    alpha=0.3,
-    linestyle="--"
-)
+ax.set_title("Boxplot of Student Absences")
 
 st.pyplot(fig)
-
 # ======================
 # SUMMARY TABLE
 # ======================
