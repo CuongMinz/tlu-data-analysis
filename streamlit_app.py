@@ -1498,9 +1498,9 @@ st.info("""
 
 • Sinh viên tham gia hoạt động thường có GPA cao hơn nhóm không tham gia.
 
-• Trong các hoạt động được phân tích, Music cho thấy mức cải thiện GPA rõ rệt nhất.
+• Trong các hoạt động được phân tích, Extracurricular cho thấy mức cải thiện GPA rõ rệt nhất.
 
-• Sports và Extracurricular cũng có tác động tích cực tương đối tốt đến kết quả học tập.
+• Sports và Music cũng có tác động tích cực tương đối tốt đến kết quả học tập.
 
 • Volunteering gần như không tạo ra sự khác biệt lớn về GPA.
 
