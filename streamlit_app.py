@@ -782,3 +782,166 @@ st.info("""
 - Có sinh viên nghỉ học tới 29 buổi, cho thấy tình trạng vắng học diễn ra khá nghiêm trọng ở một bộ phận sinh viên.
 - Nhìn chung, dữ liệu cho thấy sự chênh lệch rõ rệt về ý thức học tập và mức độ tham gia học tập giữa các sinh viên.
 """)
+
+# ======================
+# STEP 4 - STUDY TIME → GPA
+# ======================
+
+st.markdown(
+    '<p class="section-title">📈 Step 4: Study Time and GPA</p>',
+    unsafe_allow_html=True
+)
+
+st.write("""
+Bước này phân tích mối quan hệ giữa thời gian tự học và GPA của sinh viên.
+
+Mục tiêu:
+- Kiểm tra liệu sinh viên học nhiều hơn có đạt GPA cao hơn hay không
+- Quan sát xu hướng thay đổi GPA theo thời gian học
+- Đánh giá mức độ ảnh hưởng của Study Time đến kết quả học tập
+""")
+
+# ======================
+# DATA
+# ======================
+
+data = st.session_state.session_df
+
+# ======================
+# KPI
+# ======================
+
+st.markdown("### 📌 Tổng quan")
+
+col1, col2, col3 = st.columns(3)
+
+col1.metric(
+    "⏱️ Study Time TB",
+    round(data["StudyTimeWeekly"].mean(), 2)
+)
+
+col2.metric(
+    "📊 GPA TB",
+    round(data["GPA"].mean(), 2)
+)
+
+col3.metric(
+    "📈 Correlation",
+    round(
+        data["StudyTimeWeekly"].corr(data["GPA"]),
+        2
+    )
+)
+
+# ======================
+# REGRESSION PLOT
+# ======================
+
+st.markdown("### 📉 Regression Plot: Study Time vs GPA")
+
+fig, ax = plt.subplots(figsize=(9,5))
+
+sns.regplot(
+    data=data,
+    x="StudyTimeWeekly",
+    y="GPA",
+    scatter_kws={"alpha":0.5},
+    line_kws={"color":"red"},
+    ax=ax
+)
+
+ax.set_title("Relationship Between Study Time and GPA")
+ax.set_xlabel("Study Time Weekly")
+ax.set_ylabel("GPA")
+
+ax.grid(
+    alpha=0.3,
+    linestyle="--"
+)
+
+st.pyplot(fig)
+
+# ======================
+# GROUP ANALYSIS
+# ======================
+
+st.markdown("### 📊 GPA trung bình theo nhóm thời gian học")
+
+# Chia nhóm study time
+bins = [0, 5, 10, 15, 20]
+labels = [
+    "0-5 giờ",
+    "5-10 giờ",
+    "10-15 giờ",
+    "15-20 giờ"
+]
+
+data["StudyGroup"] = pd.cut(
+    data["StudyTimeWeekly"],
+    bins=bins,
+    labels=labels,
+    include_lowest=True
+)
+
+group_avg = (
+    data
+    .groupby("StudyGroup")["GPA"]
+    .mean()
+    .round(2)
+)
+
+fig, ax = plt.subplots(figsize=(8,5))
+
+sns.barplot(
+    x=group_avg.index,
+    y=group_avg.values,
+    ax=ax
+)
+
+# Hiển thị số GPA
+for i, v in enumerate(group_avg.values):
+
+    ax.text(
+        i,
+        v + 0.03,
+        str(v),
+        ha='center',
+        fontsize=10
+    )
+
+ax.set_title("Average GPA by Study Time Group")
+ax.set_xlabel("Study Time Group")
+ax.set_ylabel("Average GPA")
+
+st.pyplot(fig)
+
+# ======================
+# SUMMARY TABLE
+# ======================
+
+st.markdown("### 📋 Bảng thống kê theo nhóm")
+
+summary_df = pd.DataFrame({
+    "Nhóm Study Time": group_avg.index,
+    "GPA trung bình": group_avg.values
+})
+
+st.dataframe(
+    summary_df,
+    use_container_width=True
+)
+
+# ======================
+# INTERPRETATION
+# ======================
+
+st.info("""
+📖 Nhận xét:
+
+- Regression plot cho thấy GPA có xu hướng tăng khi thời gian tự học tăng.
+- Đường hồi quy đi lên cho thấy tồn tại mối quan hệ tích cực giữa Study Time và GPA.
+- Nhóm sinh viên học ít giờ hơn thường có GPA thấp hơn so với nhóm học nhiều giờ.
+- GPA trung bình tăng dần theo từng nhóm thời gian học, đặc biệt ở nhóm học trên 10 giờ mỗi tuần.
+- Tuy nhiên, dữ liệu vẫn có sự phân tán khá lớn, cho thấy GPA không chỉ phụ thuộc vào thời gian học mà còn chịu ảnh hưởng từ nhiều yếu tố khác như nghỉ học, hoạt động ngoại khóa và mức độ hỗ trợ từ gia đình.
+- Kết quả này cho thấy việc duy trì thời gian tự học hợp lý có thể góp phần cải thiện kết quả học tập của sinh viên.
+""")
