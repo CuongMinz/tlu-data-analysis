@@ -358,6 +358,54 @@ for x, y in zip(avg_gpa.index, avg_gpa.values):
 
 st.pyplot(fig)
 
+
+# ======================
+# LINE CHART: TÍN CHỈ TRUNG BÌNH
+# ======================
+st.subheader("📈 Tín chỉ trung bình theo năm học")
+
+# Mapping tín chỉ sang số
+mapping_credit = {
+    "Dưới 14": 13,
+    "14–16": 15,
+    "17–19": 18,
+    "20–22": 21,
+    "Trên 22": 23
+}
+
+df_line = df_filtered.copy()
+
+df_line["TinChi_num"] = df_line["TinChi"].map(mapping_credit)
+
+# Tính trung bình
+avg_credit = df_line.groupby("NamHoc")["TinChi_num"].mean()
+
+# Vẽ
+fig, ax = plt.subplots(figsize=(8,5))
+
+ax.plot(
+    avg_credit.index,
+    avg_credit.values,
+    marker='o',
+    linewidth=2
+)
+
+# Format
+ax.set_xticks([1,2,3,4])
+ax.set_xticklabels(["Năm 1","Năm 2","Năm 3","Năm 4"])
+
+ax.set_xlabel("Năm học")
+ax.set_ylabel("Tín chỉ trung bình")
+ax.set_title("Xu hướng đăng ký tín chỉ theo năm học")
+
+# Hiển thị giá trị
+for x, y in zip(avg_credit.index, avg_credit.values):
+    ax.text(x, y+0.2, f"{y:.1f}", ha='center')
+
+st.pyplot(fig)
+
+
+
 # ======================
 # TỰ HỌC vs GPA 
 # ======================
