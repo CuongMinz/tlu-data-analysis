@@ -1244,3 +1244,233 @@ st.info("""
 """)
 
 
+# ======================
+# STEP 6 - ACTIVITIES → GPA
+# ======================
+
+st.markdown(
+    '<p class="section-title">🎯 Step 6: Activities and GPA</p>',
+    unsafe_allow_html=True
+)
+
+st.write("""
+Bước này phân tích ảnh hưởng của các hoạt động ngoại khóa đến GPA của sinh viên.
+
+Các hoạt động được xem xét gồm:
+- Extracurricular
+- Sports
+- Music
+- Volunteering
+
+Mục tiêu:
+- So sánh GPA giữa sinh viên có và không tham gia hoạt động
+- Xác định hoạt động có ảnh hưởng tích cực nhất đến kết quả học tập
+- Đánh giá vai trò của hoạt động ngoại khóa đối với sinh viên
+""")
+
+# ======================
+# DATA
+# ======================
+
+data = st.session_state.session_df.copy()
+
+# ======================
+# CALCULATE AVG GPA
+# ======================
+
+activities = [
+    "Extracurricular",
+    "Sports",
+    "Music",
+    "Volunteering"
+]
+
+activity_results = []
+
+for activity in activities:
+
+    yes_gpa = (
+        data[data[activity] == 1]["GPA"]
+        .mean()
+    )
+
+    no_gpa = (
+        data[data[activity] == 0]["GPA"]
+        .mean()
+    )
+
+    difference = yes_gpa - no_gpa
+
+    activity_results.append([
+        activity,
+        round(no_gpa, 2),
+        round(yes_gpa, 2),
+        round(difference, 2)
+    ])
+
+activity_df = pd.DataFrame(
+    activity_results,
+    columns=[
+        "Activity",
+        "No Activity GPA",
+        "Participated GPA",
+        "Difference"
+    ]
+)
+
+# ======================
+# TABLE
+# ======================
+
+st.markdown("### 📋 Comparison Table")
+
+st.dataframe(
+    activity_df,
+    use_container_width=True
+)
+
+# ======================
+# GROUPED BAR CHART
+# ======================
+
+st.markdown("### 📊 GPA Comparison by Activities")
+
+plot_df = activity_df.melt(
+    id_vars="Activity",
+    value_vars=[
+        "No Activity GPA",
+        "Participated GPA"
+    ],
+    var_name="Group",
+    value_name="GPA"
+)
+
+fig, ax = plt.subplots(figsize=(9,5))
+
+sns.barplot(
+    data=plot_df,
+    x="Activity",
+    y="GPA",
+    hue="Group",
+    ax=ax
+)
+
+ax.set_title(
+    "Average GPA by Student Activities",
+    fontsize=16,
+    fontweight='bold'
+)
+
+ax.set_xlabel("Activities")
+ax.set_ylabel("Average GPA")
+
+ax.grid(
+    alpha=0.2,
+    linestyle="--"
+)
+
+# Hiển thị số
+for p in ax.patches:
+
+    height = p.get_height()
+
+    ax.annotate(
+        f"{height:.2f}",
+        (
+            p.get_x() + p.get_width()/2,
+            height
+        ),
+        ha='center',
+        va='bottom',
+        fontsize=9
+    )
+
+st.pyplot(fig)
+
+# ======================
+# DIFFERENCE CHART
+# ======================
+
+st.markdown("### 📈 GPA Improvement by Activities")
+
+fig, ax = plt.subplots(figsize=(8,5))
+
+sns.barplot(
+    data=activity_df,
+    x="Activity",
+    y="Difference",
+    ax=ax
+)
+
+ax.set_title(
+    "Impact of Activities on GPA",
+    fontsize=15,
+    fontweight='bold'
+)
+
+ax.set_xlabel("Activities")
+ax.set_ylabel("GPA Difference")
+
+ax.axhline(
+    0,
+    color='black',
+    linewidth=1
+)
+
+ax.grid(
+    alpha=0.2,
+    linestyle="--"
+)
+
+# Hiển thị số
+for p in ax.patches:
+
+    height = p.get_height()
+
+    ax.annotate(
+        f"{height:.2f}",
+        (
+            p.get_x() + p.get_width()/2,
+            height
+        ),
+        ha='center',
+        va='bottom',
+        fontsize=9
+    )
+
+st.pyplot(fig)
+
+# ======================
+# BEST ACTIVITY
+# ======================
+
+best_activity = activity_df.loc[
+    activity_df["Difference"].idxmax()
+]
+
+st.success(f"""
+🏆 Hoạt động có ảnh hưởng tích cực nhất đến GPA:
+**{best_activity['Activity']}**
+(với mức tăng GPA trung bình khoảng {best_activity['Difference']})
+""")
+
+# ======================
+# INTERPRETATION
+# ======================
+
+st.info("""
+📖 Nhận xét:
+
+• Sinh viên tham gia hoạt động ngoại khóa thường có GPA cao hơn so với nhóm không tham gia.
+
+• Các hoạt động như Sports, Music và Volunteering đều cho thấy ảnh hưởng tích cực đến kết quả học tập.
+
+• Điều này cho thấy việc tham gia hoạt động ngoài học tập có thể giúp sinh viên cải thiện kỹ năng quản lý thời gian, tinh thần học tập và khả năng cân bằng cuộc sống.
+
+• Tuy nhiên, mức chênh lệch GPA giữa các nhóm không quá lớn, cho thấy hoạt động ngoại khóa không phải yếu tố quyết định duy nhất.
+
+• Một số hoạt động có tác động tích cực rõ rệt hơn các hoạt động khác, đặc biệt là hoạt động có tính kỷ luật hoặc tương tác xã hội cao.
+
+• Kết quả cho thấy sinh viên duy trì được sự cân bằng giữa học tập và hoạt động ngoại khóa thường có kết quả học tập ổn định hơn.
+""")
+
