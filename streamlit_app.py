@@ -1228,6 +1228,7 @@ st.info("""
 • Sinh viên nghỉ học ít thường đạt GPA cao hơn so với nhóm nghỉ học nhiều.
 
 • Correlation âm mạnh cho thấy Absences là một trong những yếu tố ảnh hưởng lớn đến kết quả học tập.
+
 • GPA trung bình giảm dần theo từng nhóm nghỉ học:
     - Nhóm nghỉ ít buổi có GPA cao hơn rõ rệt
     - Nhóm nghỉ nhiều buổi thường có GPA thấp hơn
