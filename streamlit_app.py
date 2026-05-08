@@ -1000,10 +1000,15 @@ st.info("""
     - 15–20 giờ: 2.11
     
 • Nhóm học dưới 5 giờ mỗi tuần có GPA thấp nhất, trong khi nhóm học nhiều nhất đạt GPA cao nhất.
+
 • Điều này cho thấy thời gian tự học có ảnh hưởng tích cực đến kết quả học tập.
+
 • Tuy nhiên, mức tăng GPA giữa các nhóm không quá lớn, cho thấy GPA còn chịu ảnh hưởng từ nhiều yếu tố khác.
+
 • Heatmap cho thấy số buổi nghỉ học (Absences) có tương quan âm rất mạnh với GPA (-0.92).
+
 • Trong khi đó, Study Time và Parental Support chỉ có tương quan dương nhẹ với GPA.
+
 • Kết quả cho thấy việc duy trì thời gian tự học hợp lý và hạn chế nghỉ học là hai yếu tố quan trọng giúp cải thiện kết quả học tập của sinh viên.
 """)
 
