@@ -2184,27 +2184,36 @@ st.success(f"""
 st.info(f"""
 📖 Nhận xét:
 
-• OLS Regression phù hợp để phân tích mối quan hệ tuyến tính
-giữa các yếu tố học tập và GPA.
+• Kết quả so sánh cho thấy mô hình OLS Regression đạt giá trị R² cao nhất,
+đồng nghĩa với việc mô hình này dự đoán GPA hiệu quả hơn
+so với Decision Tree trên bộ dữ liệu hiện tại.
 
-• Decision Tree có khả năng học các mối quan hệ phi tuyến,
-nên đôi khi cho kết quả tốt hơn với dữ liệu phức tạp.
+• Điều này cho thấy mối quan hệ giữa GPA
+và các yếu tố học tập như:
+StudyTimeWeekly, Absences hay ParentalSupport
+có xu hướng tuyến tính khá rõ ràng.
+
+• OLS Regression phù hợp để phân tích mức độ ảnh hưởng
+của từng yếu tố đến GPA,
+đồng thời giúp giải thích chiều hướng tác động
+(tăng hoặc giảm GPA).
+
+• Trong khi đó,
+Decision Tree có khả năng xử lý các mối quan hệ phi tuyến,
+nhưng với bộ dữ liệu này,
+mô hình chưa thể hiện được hiệu quả vượt trội.
 
 • Logistic Regression được sử dụng để phân loại GradeClass
-và được đánh giá bằng Accuracy.
+và đánh giá bằng Accuracy.
+Kết quả Accuracy cho thấy mô hình có khả năng phân loại học lực ở mức tương đối tốt.
 
-• Mô hình có R² cao nhất là:
-{best_regression['Model']}.
+• Nhìn chung,
+thời gian học tập và mức độ chuyên cần
+vẫn là những yếu tố ảnh hưởng mạnh nhất đến kết quả học tập của sinh viên.
 
-• Điều này cho thấy mô hình trên phù hợp nhất
-để dự đoán GPA trong bộ dữ liệu hiện tại.
-
-• Nếu Decision Tree có R² cao hơn,
-điều đó cho thấy dữ liệu có xu hướng phi tuyến.
-
-• Nếu OLS có kết quả tốt hơn,
-điều đó cho thấy GPA chịu ảnh hưởng khá tuyến tính
-từ các yếu tố học tập.
+• Qua quá trình đánh giá mô hình,
+OLS Regression được xem là mô hình phù hợp nhất
+để phân tích và dự đoán GPA trong bài toán này.
 """)
 
 
