@@ -1912,26 +1912,45 @@ cho thấy các hoạt động này hỗ trợ học tập ở mức vừa phả
 
 
 # =========================================================
-# STEP 9 — OLS REGRESSION ANALYSIS
+# STEP 9 — MACHINE LEARNING MODEL COMPARISON
 # =========================================================
 
 st.markdown("---")
 
-st.header("🔥 Step 9: OLS Regression Analysis")
+st.header("🤖 Step 9: Machine Learning Model Comparison")
 
 st.write("""
-Bước cuối cùng sử dụng mô hình hồi quy tuyến tính OLS
-(Ordinary Least Squares)
-để đánh giá mức độ ảnh hưởng của các yếu tố học tập đến GPA.
+Bước cuối cùng sử dụng nhiều mô hình học máy khác nhau
+để dự đoán GPA của sinh viên.
+
+Các mô hình được sử dụng:
+- OLS Regression
+- Linear Regression
+- Decision Tree
+- Logistic Regression
 
 Mục tiêu:
-- Xác định yếu tố ảnh hưởng mạnh nhất
-- Đánh giá chiều hướng tác động (+ / -)
-- Phân tích khả năng dự đoán GPA
+- So sánh độ chính xác của các mô hình
+- Đánh giá khả năng dự đoán GPA
+- Chọn mô hình phù hợp nhất
 """)
 
 # =========================================================
-# SELECT FEATURES
+# IMPORT SKLEARN
+# =========================================================
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.metrics import (
+    r2_score,
+    mean_absolute_error,
+    accuracy_score
+)
+
+# =========================================================
+# FEATURES
 # =========================================================
 
 X = data[[
@@ -1945,104 +1964,240 @@ X = data[[
     "Volunteering"
 ]]
 
-y = data["GPA"]
+# GPA dùng cho regression
+y_reg = data["GPA"]
+
+# GradeClass dùng cho classification
+y_clf = data["GradeClass"]
 
 # =========================================================
-# ADD CONSTANT
+# SPLIT DATA
 # =========================================================
 
-X = sm.add_constant(X)
+X_train, X_test, y_train_reg, y_test_reg = train_test_split(
+    X,
+    y_reg,
+    test_size=0.2,
+    random_state=42
+)
+
+_, _, y_train_clf, y_test_clf = train_test_split(
+    X,
+    y_clf,
+    test_size=0.2,
+    random_state=42
+)
 
 # =========================================================
-# BUILD MODEL
+# 1. OLS REGRESSION
 # =========================================================
 
-model = sm.OLS(y, X).fit()
+X_train_ols = sm.add_constant(X_train)
+X_test_ols = sm.add_constant(X_test)
+
+ols_model = sm.OLS(
+    y_train_reg,
+    X_train_ols
+).fit()
+
+ols_pred = ols_model.predict(X_test_ols)
+
+ols_r2 = r2_score(
+    y_test_reg,
+    ols_pred
+)
+
+ols_mae = mean_absolute_error(
+    y_test_reg,
+    ols_pred
+)
 
 # =========================================================
-# MODEL SUMMARY
+# 2. LINEAR REGRESSION
 # =========================================================
 
-st.subheader("📄 OLS Regression Summary")
+linear_model = LinearRegression()
 
-st.text(model.summary())
+linear_model.fit(
+    X_train,
+    y_train_reg
+)
+
+linear_pred = linear_model.predict(X_test)
+
+linear_r2 = r2_score(
+    y_test_reg,
+    linear_pred
+)
+
+linear_mae = mean_absolute_error(
+    y_test_reg,
+    linear_pred
+)
 
 # =========================================================
-# COEFFICIENT TABLE
+# 3. DECISION TREE
 # =========================================================
 
-st.subheader("📊 Regression Coefficients")
+tree_model = DecisionTreeRegressor(
+    max_depth=5,
+    random_state=42
+)
 
-coef_df = pd.DataFrame({
-    "Feature": model.params.index,
-    "Coefficient": model.params.values.round(4),
-    "P-Value": model.pvalues.values.round(4)
+tree_model.fit(
+    X_train,
+    y_train_reg
+)
+
+tree_pred = tree_model.predict(X_test)
+
+tree_r2 = r2_score(
+    y_test_reg,
+    tree_pred
+)
+
+tree_mae = mean_absolute_error(
+    y_test_reg,
+    tree_pred
+)
+
+# =========================================================
+# 4. LOGISTIC REGRESSION
+# =========================================================
+
+logistic_model = LogisticRegression(
+    max_iter=1000
+)
+
+logistic_model.fit(
+    X_train,
+    y_train_clf
+)
+
+logistic_pred = logistic_model.predict(X_test)
+
+logistic_acc = accuracy_score(
+    y_test_clf,
+    logistic_pred
+)
+
+# =========================================================
+# RESULT TABLE
+# =========================================================
+
+st.subheader("📋 Model Performance Comparison")
+
+result_df = pd.DataFrame({
+
+    "Model": [
+        "OLS Regression",
+        "Linear Regression",
+        "Decision Tree",
+        "Logistic Regression"
+    ],
+
+    "R² Score": [
+        round(ols_r2, 3),
+        round(linear_r2, 3),
+        round(tree_r2, 3),
+        "-"
+    ],
+
+    "MAE": [
+        round(ols_mae, 3),
+        round(linear_mae, 3),
+        round(tree_mae, 3),
+        "-"
+    ],
+
+    "Accuracy": [
+        "-",
+        "-",
+        "-",
+        round(logistic_acc, 3)
+    ]
+
 })
 
 st.dataframe(
-    coef_df,
+    result_df,
     use_container_width=True
 )
 
 # =========================================================
-# VISUALIZE COEFFICIENTS
+# BAR CHART
 # =========================================================
 
-st.subheader("📈 Feature Impact on GPA")
+st.subheader("📊 R² Comparison")
 
-coef_plot = coef_df[coef_df["Feature"] != "const"]
+regression_df = pd.DataFrame({
 
-fig, ax = plt.subplots(figsize=(9,5))
+    "Model": [
+        "OLS",
+        "Linear",
+        "Decision Tree"
+    ],
+
+    "R²": [
+        ols_r2,
+        linear_r2,
+        tree_r2
+    ]
+
+})
+
+fig, ax = plt.subplots(figsize=(8,5))
 
 sns.barplot(
-    data=coef_plot,
-    x="Coefficient",
-    y="Feature",
+    data=regression_df,
+    x="Model",
+    y="R²",
     ax=ax
 )
 
-ax.axvline(0, color='black', linestyle='--')
-
 ax.set_title(
-    "OLS Coefficients",
-    fontsize=18,
+    "Regression Model Comparison",
+    fontsize=16,
     fontweight='bold'
 )
+
+ax.set_ylim(0, 1)
+
+# Hiển thị số
+for p in ax.patches:
+
+    height = p.get_height()
+
+    ax.annotate(
+        f"{height:.2f}",
+        (
+            p.get_x() + p.get_width()/2,
+            height
+        ),
+        ha='center',
+        va='bottom'
+    )
 
 st.pyplot(fig)
 
 # =========================================================
-# MODEL PERFORMANCE
+# BEST MODEL
 # =========================================================
 
-r2 = model.rsquared
-adj_r2 = model.rsquared_adj
+best_regression = regression_df.loc[
+    regression_df["R²"].idxmax()
+]
 
-col1, col2 = st.columns(2)
+st.success(f"""
+🏆 Best Regression Model:
+{best_regression['Model']}
+with R² Score = {best_regression['R²']:.3f}
+""")
 
-with col1:
-
-    st.metric(
-        "📌 R² Score",
-        round(r2, 3)
-    )
-
-with col2:
-
-    st.metric(
-        "📌 Adjusted R²",
-        round(adj_r2, 3)
-    )
-
-# =========================================================
-# MOST IMPORTANT FACTORS
-# =========================================================
-
-important_feature = (
-    coef_plot.iloc[
-        coef_plot["Coefficient"].abs().idxmax()
-    ]
-)
+st.success(f"""
+🏆 Logistic Regression Accuracy:
+{logistic_acc:.3f}
+""")
 
 # =========================================================
 # INTERPRETATION
@@ -2051,29 +2206,23 @@ important_feature = (
 st.info(f"""
 📖 Nhận xét:
 
-• Mô hình OLS cho thấy mức độ ảnh hưởng của từng yếu tố tới GPA.
+• OLS và Linear Regression cho kết quả khá tương đồng
+vì cả hai đều là mô hình hồi quy tuyến tính.
 
-• R² = {r2:.3f} cho thấy mô hình giải thích được khoảng
-{r2*100:.1f}% sự biến động của GPA.
+• Decision Tree có khả năng học các mối quan hệ phi tuyến,
+nên đôi khi cho kết quả tốt hơn với dữ liệu phức tạp.
 
-• Yếu tố ảnh hưởng mạnh nhất là
-'{important_feature["Feature"]}'
-với hệ số khoảng {important_feature["Coefficient"]:.2f}.
+• Logistic Regression được sử dụng để phân loại GradeClass
+và đánh giá bằng Accuracy.
 
-• Hệ số dương cho thấy yếu tố đó làm GPA tăng,
-trong khi hệ số âm cho thấy GPA có xu hướng giảm.
+• Mô hình có R² cao nhất là:
+{best_regression['Model']}.
 
-• Absences thường có hệ số âm khá lớn,
-cho thấy nghỉ học nhiều ảnh hưởng tiêu cực rõ rệt tới kết quả học tập.
+• Điều này cho thấy mô hình trên phù hợp nhất
+để dự đoán GPA trong bộ dữ liệu hiện tại.
 
-• StudyTimeWeekly và ParentalSupport
-thường có tác động tích cực tới GPA.
-
-• Một số hoạt động ngoại khóa có tác động nhỏ,
-cho thấy chúng hỗ trợ học tập ở mức vừa phải
-thay vì quyết định trực tiếp GPA.
-
-• Nhìn chung,
-mô hình cho thấy sự chuyên cần và thời gian học tập
-là những yếu tố quan trọng nhất ảnh hưởng đến kết quả học tập của sinh viên.
+• Tuy nhiên,
+nếu dữ liệu lớn hơn và phức tạp hơn,
+có thể cần sử dụng các mô hình mạnh hơn như:
+Random Forest hoặc XGBoost.
 """)
