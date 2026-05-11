@@ -2181,39 +2181,24 @@ st.success(f"""
 # INTERPRETATION
 # =========================================================
 
+
 st.info(f"""
 📖 Nhận xét:
 
 • Kết quả so sánh cho thấy mô hình OLS Regression đạt giá trị R² cao nhất,
-đồng nghĩa với việc mô hình này dự đoán GPA hiệu quả hơn
-so với Decision Tree trên bộ dữ liệu hiện tại.
+cho thấy mô hình này phù hợp nhất để dự đoán GPA
+trong bộ dữ liệu hiện tại.
 
-• Điều này cho thấy mối quan hệ giữa GPA
-và các yếu tố học tập như:
-StudyTimeWeekly, Absences hay ParentalSupport
-có xu hướng tuyến tính khá rõ ràng.
-
-• OLS Regression phù hợp để phân tích mức độ ảnh hưởng
-của từng yếu tố đến GPA,
-đồng thời giúp giải thích chiều hướng tác động
-(tăng hoặc giảm GPA).
-
-• Trong khi đó,
-Decision Tree có khả năng xử lý các mối quan hệ phi tuyến,
-nhưng với bộ dữ liệu này,
-mô hình chưa thể hiện được hiệu quả vượt trội.
+• Decision Tree có khả năng xử lý các mối quan hệ phi tuyến,
+tuy nhiên hiệu quả dự đoán chưa vượt qua OLS Regression.
 
 • Logistic Regression được sử dụng để phân loại GradeClass
 và đánh giá bằng Accuracy.
-Kết quả Accuracy cho thấy mô hình có khả năng phân loại học lực ở mức tương đối tốt.
+Kết quả cho thấy mô hình có khả năng phân loại học lực ở mức tương đối tốt.
 
-• Nhìn chung,
-thời gian học tập và mức độ chuyên cần
-vẫn là những yếu tố ảnh hưởng mạnh nhất đến kết quả học tập của sinh viên.
-
-• Qua quá trình đánh giá mô hình,
-OLS Regression được xem là mô hình phù hợp nhất
-để phân tích và dự đoán GPA trong bài toán này.
+• Từ kết quả trên,
+OLS Regression sẽ được sử dụng để phân tích chi tiết
+mức độ ảnh hưởng của từng yếu tố tới GPA của sinh viên.
 """)
 
 # =========================================================
@@ -2335,33 +2320,36 @@ important_feature = (
 # =========================================================
 
 st.info(f"""
-📖 Nhận xét:
+📖 Phân tích chi tiết mô hình OLS:
 
-• Mô hình OLS cho thấy mức độ ảnh hưởng của từng yếu tố tới GPA.
+• Mô hình OLS cho thấy mức độ ảnh hưởng của từng yếu tố tới GPA của sinh viên.
 
-• R² = {r2:.3f} cho thấy mô hình giải thích được khoảng
-{r2*100:.1f}% sự biến động của GPA.
+• Giá trị R² = {r2:.3f} cho thấy mô hình có thể giải thích khoảng
+{r2*100:.1f}% sự biến động của GPA dựa trên các biến đầu vào.
 
-• Yếu tố ảnh hưởng mạnh nhất là
+• Yếu tố ảnh hưởng mạnh nhất là:
 '{important_feature["Feature"]}'
-với hệ số khoảng {important_feature["Coefficient"]:.2f}.
+với hệ số hồi quy khoảng {important_feature["Coefficient"]:.2f}.
 
-• Hệ số dương cho thấy yếu tố đó làm GPA tăng,
-trong khi hệ số âm cho thấy GPA có xu hướng giảm.
+• Hệ số hồi quy dương cho thấy khi biến đó tăng,
+GPA có xu hướng tăng theo.
 
-• Absences thường có hệ số âm khá lớn,
-cho thấy nghỉ học nhiều ảnh hưởng tiêu cực rõ rệt tới kết quả học tập.
+• Ngược lại,
+hệ số âm cho thấy biến đó tác động tiêu cực đến GPA.
+
+• Absences thường có hệ số âm lớn,
+điều này cho thấy nghỉ học nhiều làm giảm kết quả học tập đáng kể.
 
 • StudyTimeWeekly và ParentalSupport
-thường có tác động tích cực tới GPA.
+có xu hướng tác động tích cực đến GPA,
+cho thấy sự chuyên cần và môi trường hỗ trợ
+đóng vai trò quan trọng trong học tập.
 
-• Một số hoạt động ngoại khóa có tác động nhỏ,
-cho thấy chúng hỗ trợ học tập ở mức vừa phải
-thay vì quyết định trực tiếp GPA.
+• Các hoạt động ngoại khóa như Sports, Music hay Volunteering
+có ảnh hưởng nhưng ở mức nhỏ hơn,
+chủ yếu hỗ trợ phát triển kỹ năng và tinh thần học tập.
 
 • Nhìn chung,
-mô hình cho thấy sự chuyên cần và thời gian học tập
-là những yếu tố quan trọng nhất ảnh hưởng đến kết quả học tập của sinh viên.
+mô hình OLS cho thấy GPA của sinh viên chịu ảnh hưởng mạnh bởi:
+thời gian học tập, mức độ chuyên cần và sự hỗ trợ từ gia đình.
 """)
-
-
