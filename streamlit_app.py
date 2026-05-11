@@ -1925,7 +1925,6 @@ Bước cuối cùng sử dụng nhiều mô hình học máy khác nhau
 
 Các mô hình được sử dụng:
 - OLS Regression
-- Linear Regression
 - Decision Tree
 - Logistic Regression
 
