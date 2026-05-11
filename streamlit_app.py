@@ -1761,3 +1761,151 @@ thường có động lực học tập tốt hơn.
 trong việc cải thiện kết quả học tập của sinh viên,
 dù không phải yếu tố quyết định duy nhất.
 """)
+
+
+# =========================================================
+# STEP 8 — CORRELATION ANALYSIS
+# =========================================================
+
+st.markdown("---")
+
+st.header("🔥 Step 8: Correlation Between Study Factors")
+
+st.write("""
+Bước này nhằm phân tích mức độ tương quan giữa các yếu tố học tập
+và GPA của sinh viên.
+
+Giá trị tương quan:
+- Gần 1  → tương quan dương mạnh
+- Gần -1 → tương quan âm mạnh
+- Gần 0  → tương quan yếu
+""")
+
+# =========================================================
+# SELECT NUMERIC COLUMNS
+# =========================================================
+
+corr_df = data[[
+    "GPA",
+    "StudyTimeWeekly",
+    "Absences",
+    "ParentalSupport",
+    "Tutoring",
+    "Extracurricular",
+    "Sports",
+    "Music",
+    "Volunteering"
+]]
+
+# =========================================================
+# CORRELATION MATRIX
+# =========================================================
+
+corr_matrix = corr_df.corr()
+
+# =========================================================
+# HEATMAP
+# =========================================================
+
+st.subheader("📊 Correlation Heatmap")
+
+fig, ax = plt.subplots(figsize=(10,7))
+
+sns.heatmap(
+    corr_matrix,
+    annot=True,
+    cmap="Blues",
+    fmt=".2f",
+    linewidths=0.5,
+    ax=ax
+)
+
+ax.set_title(
+    "Correlation Between Study Factors",
+    fontsize=18,
+    fontweight='bold'
+)
+
+st.pyplot(fig)
+
+# =========================================================
+# TOP FACTORS
+# =========================================================
+
+st.subheader("📌 Correlation With GPA")
+
+gpa_corr = (
+    corr_matrix["GPA"]
+    .drop("GPA")
+    .sort_values(ascending=False)
+)
+
+corr_result = pd.DataFrame({
+    "Factor": gpa_corr.index,
+    "Correlation With GPA": gpa_corr.values.round(2)
+})
+
+st.dataframe(
+    corr_result,
+    use_container_width=True
+)
+
+# =========================================================
+# STRONGEST FACTORS
+# =========================================================
+
+highest_positive = gpa_corr.idxmax()
+highest_positive_value = gpa_corr.max()
+
+highest_negative = gpa_corr.idxmin()
+highest_negative_value = gpa_corr.min()
+
+# =========================================================
+# KPI
+# =========================================================
+
+col1, col2 = st.columns(2)
+
+with col1:
+
+    st.metric(
+        "📈 Strongest Positive Factor",
+        highest_positive,
+        f"{highest_positive_value:.2f}"
+    )
+
+with col2:
+
+    st.metric(
+        "📉 Strongest Negative Factor",
+        highest_negative,
+        f"{highest_negative_value:.2f}"
+    )
+
+# =========================================================
+# INTERPRETATION
+# =========================================================
+
+st.success(f"""
+📖 Nhận xét:
+
+• Yếu tố có tương quan dương mạnh nhất với GPA là
+'{highest_positive}' với hệ số khoảng {highest_positive_value:.2f}.
+
+• Điều này cho thấy khi '{highest_positive}' tăng,
+GPA của sinh viên có xu hướng tăng theo.
+
+• Yếu tố có tương quan âm mạnh nhất là
+'{highest_negative}' với hệ số khoảng {highest_negative_value:.2f}.
+
+• Điều này cho thấy khi '{highest_negative}' tăng,
+GPA thường giảm xuống đáng kể.
+
+• Heatmap cho thấy Absences có ảnh hưởng tiêu cực mạnh tới kết quả học tập,
+trong khi thời gian học và sự hỗ trợ từ gia đình
+có xu hướng tác động tích cực hơn.
+
+• Một số hoạt động ngoại khóa như Sports, Music hoặc Volunteering
+có tương quan dương nhưng ở mức yếu,
+cho thấy các hoạt động này hỗ trợ học tập ở mức vừa phải.
+""")
