@@ -1998,15 +1998,16 @@ còn Absences làm GPA giảm rõ rệt.
 
 
 # =========================================================
-# STEP 9 — MACHINE LEARNING MODEL COMPARISON
+# STEP 9 — SO SÁNH CÁC MÔ HÌNH HỌC MÁY
 # =========================================================
 
-st.markdown("---")
-
-st.header("🤖 Step 9: Machine Learning Model Comparison")
+st.markdown(
+    '<p class="section-title">🤖 Bước 9: So sánh các mô hình học máy</p>',
+    unsafe_allow_html=True
+)
 
 st.write("""
-Bước cuối cùng sử dụng nhiều mô hình học máy khác nhau
+Bước này sử dụng nhiều mô hình học máy khác nhau
 để dự đoán GPA của sinh viên.
 
 Các mô hình được sử dụng:
@@ -2015,17 +2016,15 @@ Các mô hình được sử dụng:
 - Logistic Regression
 
 Mục tiêu:
-- So sánh độ chính xác của các mô hình
+- So sánh hiệu quả của các mô hình
 - Đánh giá khả năng dự đoán GPA
-- Chọn mô hình phù hợp nhất
+- Chọn mô hình phù hợp nhất cho bài toán
 """)
 
 # =========================================================
-# IMPORT SKLEARN
+# IMPORT THƯ VIỆN
 # =========================================================
 
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import (
@@ -2049,29 +2048,26 @@ X = data[[
     "Volunteering"
 ]]
 
-# GPA dùng cho regression
+# GPA cho regression
 y_reg = data["GPA"]
 
-# GradeClass dùng cho classification
+# GradeClass cho classification
 y_clf = data["GradeClass"]
 
 # =========================================================
-# SPLIT DATA
+# CHIA DỮ LIỆU
 # =========================================================
 
-X_train, X_test, y_train_reg, y_test_reg = train_test_split(
-    X,
-    y_reg,
-    test_size=0.2,
-    random_state=42
-)
+split_index = int(len(X) * 0.8)
 
-_, _, y_train_clf, y_test_clf = train_test_split(
-    X,
-    y_clf,
-    test_size=0.2,
-    random_state=42
-)
+X_train = X.iloc[:split_index]
+X_test = X.iloc[split_index:]
+
+y_train_reg = y_reg.iloc[:split_index]
+y_test_reg = y_reg.iloc[split_index:]
+
+y_train_clf = y_clf.iloc[:split_index]
+y_test_clf = y_clf.iloc[split_index:]
 
 # =========================================================
 # 1. OLS REGRESSION
@@ -2144,14 +2140,14 @@ logistic_acc = accuracy_score(
 )
 
 # =========================================================
-# RESULT TABLE
+# BẢNG SO SÁNH
 # =========================================================
 
-st.subheader("📋 Model Performance Comparison")
+st.markdown("### 📋 Bảng so sánh mô hình")
 
 result_df = pd.DataFrame({
 
-    "Model": [
+    "Mô hình": [
         "OLS Regression",
         "Decision Tree",
         "Logistic Regression"
@@ -2183,10 +2179,10 @@ st.dataframe(
 )
 
 # =========================================================
-# BAR CHART
+# BIỂU ĐỒ SO SÁNH
 # =========================================================
 
-st.subheader("📊 Regression Model Comparison")
+st.markdown("### 📊 So sánh độ chính xác mô hình Regression")
 
 regression_df = pd.DataFrame({
 
@@ -2212,7 +2208,7 @@ sns.barplot(
 )
 
 ax.set_title(
-    "Regression Model R² Comparison",
+    "So sánh R² giữa các mô hình",
     fontsize=16,
     fontweight='bold'
 )
@@ -2224,7 +2220,7 @@ ax.grid(
     linestyle="--"
 )
 
-# Hiển thị số
+# Hiển thị giá trị
 for p in ax.patches:
 
     height = p.get_height()
@@ -2245,7 +2241,7 @@ for p in ax.patches:
 st.pyplot(fig)
 
 # =========================================================
-# BEST MODEL
+# MÔ HÌNH TỐT NHẤT
 # =========================================================
 
 best_regression = regression_df.loc[
@@ -2253,9 +2249,9 @@ best_regression = regression_df.loc[
 ]
 
 st.success(f"""
-🏆 Best Regression Model:
+🏆 Mô hình Regression tốt nhất:
 {best_regression['Model']}
-with R² Score = {best_regression['R²']:.3f}
+với R² Score = {best_regression['R²']:.3f}
 """)
 
 st.success(f"""
@@ -2264,32 +2260,32 @@ st.success(f"""
 """)
 
 # =========================================================
-# INTERPRETATION
+# NHẬN XÉT
 # =========================================================
-
 
 st.info(f"""
 📖 Nhận xét:
 
-• Kết quả so sánh cho thấy mô hình OLS Regression đạt giá trị R² cao nhất,
+• Kết quả cho thấy mô hình OLS Regression đạt giá trị R² cao nhất,
 cho thấy mô hình này phù hợp nhất để dự đoán GPA
 trong bộ dữ liệu hiện tại.
 
 • Decision Tree có khả năng xử lý các mối quan hệ phi tuyến,
 tuy nhiên hiệu quả dự đoán chưa vượt qua OLS Regression.
 
-• Logistic Regression được sử dụng để phân loại GradeClass
-và đánh giá bằng Accuracy.
-Kết quả cho thấy mô hình có khả năng phân loại học lực ở mức tương đối tốt.
+• Logistic Regression được sử dụng để phân loại học lực sinh viên
+và đạt độ chính xác tương đối tốt.
 
 • Từ kết quả trên,
-OLS Regression sẽ được sử dụng để phân tích chi tiết
-mức độ ảnh hưởng của từng yếu tố tới GPA của sinh viên.
+mô hình OLS sẽ được sử dụng để phân tích chi tiết
+mức độ ảnh hưởng của từng yếu tố tới GPA.
 """)
 
 # =========================================================
-# SELECT FEATURES
+# PHÂN TÍCH CHI TIẾT OLS
 # =========================================================
+
+st.markdown("### 📄 Phân tích chi tiết mô hình OLS")
 
 X = data[[
     "StudyTimeWeekly",
@@ -2320,18 +2316,18 @@ model = sm.OLS(y, X).fit()
 # MODEL SUMMARY
 # =========================================================
 
-st.subheader("📄 OLS Regression Summary")
+st.markdown("### 📋 OLS Regression Summary")
 
 st.text(model.summary())
 
 # =========================================================
-# COEFFICIENT TABLE
+# BẢNG HỆ SỐ
 # =========================================================
 
-st.subheader("📊 Regression Coefficients")
+st.markdown("### 📊 Bảng hệ số hồi quy")
 
 coef_df = pd.DataFrame({
-    "Feature": model.params.index,
+    "Yếu tố": model.params.index,
     "Coefficient": model.params.values.round(4),
     "P-Value": model.pvalues.values.round(4)
 })
@@ -2345,20 +2341,24 @@ st.dataframe(
 # VISUALIZE COEFFICIENTS
 # =========================================================
 
-st.subheader("📈 Feature Impact on GPA")
+st.markdown("### 📈 Mức độ ảnh hưởng của các yếu tố")
 
-coef_plot = coef_df[coef_df["Feature"] != "const"]
+coef_plot = coef_df[coef_df["Yếu tố"] != "const"]
 
 fig, ax = plt.subplots(figsize=(9,5))
 
 sns.barplot(
     data=coef_plot,
     x="Coefficient",
-    y="Feature",
+    y="Yếu tố",
     ax=ax
 )
 
-ax.axvline(0, color='black', linestyle='--')
+ax.axvline(
+    0,
+    color='black',
+    linestyle='--'
+)
 
 ax.set_title(
     "OLS Coefficients",
@@ -2392,7 +2392,7 @@ with col2:
     )
 
 # =========================================================
-# MOST IMPORTANT FACTORS
+# YẾU TỐ QUAN TRỌNG NHẤT
 # =========================================================
 
 important_feature = (
@@ -2402,7 +2402,7 @@ important_feature = (
 )
 
 # =========================================================
-# INTERPRETATION
+# NHẬN XÉT CHI TIẾT OLS
 # =========================================================
 
 st.info(f"""
@@ -2411,10 +2411,10 @@ st.info(f"""
 • Mô hình OLS cho thấy mức độ ảnh hưởng của từng yếu tố tới GPA của sinh viên.
 
 • Giá trị R² = {r2:.3f} cho thấy mô hình có thể giải thích khoảng
-{r2*100:.1f}% sự biến động của GPA dựa trên các biến đầu vào.
+{r2*100:.1f}% sự biến động của GPA.
 
 • Yếu tố ảnh hưởng mạnh nhất là:
-'{important_feature["Feature"]}'
+'{important_feature["Yếu tố"]}'
 với hệ số hồi quy khoảng {important_feature["Coefficient"]:.2f}.
 
 • Hệ số hồi quy dương cho thấy khi biến đó tăng,
@@ -2424,29 +2424,30 @@ GPA có xu hướng tăng theo.
 hệ số âm cho thấy biến đó tác động tiêu cực đến GPA.
 
 • Absences thường có hệ số âm lớn,
-điều này cho thấy nghỉ học nhiều làm giảm kết quả học tập đáng kể.
+cho thấy nghỉ học nhiều làm giảm kết quả học tập đáng kể.
 
 • StudyTimeWeekly và ParentalSupport
 có xu hướng tác động tích cực đến GPA,
 cho thấy sự chuyên cần và môi trường hỗ trợ
 đóng vai trò quan trọng trong học tập.
 
-• Các hoạt động ngoại khóa như Sports, Music hay Volunteering
-có ảnh hưởng nhưng ở mức nhỏ hơn,
-chủ yếu hỗ trợ phát triển kỹ năng và tinh thần học tập.
+• Các hoạt động ngoại khóa như Sports, Music và Volunteering
+có ảnh hưởng nhưng ở mức nhỏ hơn.
 
 • Nhìn chung,
-mô hình OLS cho thấy GPA của sinh viên chịu ảnh hưởng mạnh bởi:
-thời gian học tập, mức độ chuyên cần và sự hỗ trợ từ gia đình.
+mô hình cho thấy GPA của sinh viên chịu ảnh hưởng mạnh bởi:
+thời gian học tập, mức độ chuyên cần
+và sự hỗ trợ từ gia đình.
 """)
 
 # =========================================================
-# STEP 10 — ACADEMIC RECOMMENDATION SYSTEM
+# STEP 10 — HỆ THỐNG GỢI Ý HỌC TẬP
 # =========================================================
 
-st.markdown("---")
-
-st.header("🎯 Step 10: Academic Recommendation System")
+st.markdown(
+    '<p class="section-title">🎯 Bước 10: Hệ thống gợi ý học tập</p>',
+    unsafe_allow_html=True
+)
 
 st.write("""
 Dựa trên kết quả phân tích dữ liệu và mô hình học máy,
@@ -2454,25 +2455,25 @@ hệ thống sẽ đưa ra các gợi ý học tập phù hợp cho sinh viên.
 
 Mục tiêu:
 - Hỗ trợ sinh viên cải thiện GPA
-- Đề xuất mức học tập phù hợp
+- Đề xuất kế hoạch học tập phù hợp
 - Giảm nguy cơ học lực yếu
-- Hỗ trợ lập kế hoạch học tập hiệu quả hơn
+- Hỗ trợ định hướng học tập hiệu quả hơn
 """)
 
 # =========================================================
-# CREATE COPY
+# TẠO BẢN SAO DỮ LIỆU
 # =========================================================
 
 recommend_df = data.copy()
 
 # =========================================================
-# RECOMMENDATION FUNCTION
+# HÀM GỢI Ý
 # =========================================================
 
 def recommend(row):
 
     # =====================================================
-    # WEAK PERFORMANCE
+    # GPA THẤP
     # =====================================================
 
     if row["GPA"] < 2.0:
@@ -2481,59 +2482,63 @@ def recommend(row):
 
             return (
                 "⚠️ GPA thấp và nghỉ học nhiều. "
-                "Cần giảm nghỉ học, tăng thời gian tự học "
-                "và nên tham gia tutoring."
+                "Cần giảm số buổi nghỉ học, tăng thời gian tự học "
+                "và nên tham gia tutoring để cải thiện kết quả học tập."
             )
 
         elif row["StudyTimeWeekly"] < 8:
 
             return (
                 "⚠️ GPA thấp do thời gian tự học chưa đủ. "
-                "Nên tăng thời gian học mỗi tuần."
+                "Nên tăng thời gian học mỗi tuần và xây dựng kế hoạch học tập ổn định."
             )
 
         else:
 
             return (
-                "⚠️ GPA thấp. "
-                "Nên giảm tải học phần và tập trung cải thiện nền tảng."
+                "⚠️ GPA còn thấp. "
+                "Nên tập trung củng cố kiến thức nền tảng "
+                "và giảm áp lực học phần trong thời gian tới."
             )
 
     # =====================================================
-    # AVERAGE PERFORMANCE
+    # GPA TRUNG BÌNH
     # =====================================================
 
     elif row["GPA"] < 3.0:
 
         return (
             "📘 Kết quả học tập ở mức trung bình. "
-            "Cần duy trì học tập ổn định và hạn chế nghỉ học."
+            "Cần duy trì học tập ổn định và hạn chế nghỉ học "
+            "để cải thiện GPA."
         )
 
     # =====================================================
-    # GOOD PERFORMANCE
+    # GPA KHÁ
     # =====================================================
 
     elif row["GPA"] < 3.5:
 
         return (
             "✅ Kết quả học tập khá tốt. "
-            "Có thể đăng ký thêm học phần hoặc tham gia hoạt động ngoại khóa."
+            "Có thể đăng ký thêm học phần phù hợp "
+            "hoặc tham gia thêm hoạt động ngoại khóa."
         )
 
     # =====================================================
-    # EXCELLENT PERFORMANCE
+    # GPA GIỎI
     # =====================================================
 
     else:
 
         return (
             "🏆 Thành tích học tập rất tốt. "
-            "Có thể cân nhắc học nâng cao hoặc phát triển kỹ năng chuyên môn."
+            "Có thể cân nhắc học nâng cao, phát triển kỹ năng chuyên môn "
+            "hoặc tham gia các dự án thực tế."
         )
 
 # =========================================================
-# APPLY RECOMMENDATION
+# ÁP DỤNG GỢI Ý
 # =========================================================
 
 recommend_df["Recommendation"] = recommend_df.apply(
@@ -2542,22 +2547,22 @@ recommend_df["Recommendation"] = recommend_df.apply(
 )
 
 # =========================================================
-# RECOMMEND CATEGORY
+# PHÂN LOẠI NHÓM
 # =========================================================
 
 def classify_recommendation(gpa):
 
     if gpa < 2.0:
-        return "Need Support"
+        return "Cần hỗ trợ"
 
     elif gpa < 3.0:
-        return "Average"
+        return "Trung bình"
 
     elif gpa < 3.5:
-        return "Good"
+        return "Khá"
 
     else:
-        return "Excellent"
+        return "Giỏi"
 
 recommend_df["Category"] = recommend_df["GPA"].apply(
     classify_recommendation
@@ -2567,21 +2572,21 @@ recommend_df["Category"] = recommend_df["GPA"].apply(
 # KPI
 # =========================================================
 
-st.subheader("📌 Recommendation Overview")
+st.markdown("### 📌 Tổng quan gợi ý học tập")
 
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
 
     st.metric(
-        "Students Need Support",
+        "⚠️ Cần hỗ trợ",
         len(recommend_df[recommend_df["GPA"] < 2.0])
     )
 
 with col2:
 
     st.metric(
-        "Average Students",
+        "📘 Trung bình",
         len(
             recommend_df[
                 (recommend_df["GPA"] >= 2.0) &
@@ -2593,7 +2598,7 @@ with col2:
 with col3:
 
     st.metric(
-        "Good Students",
+        "✅ Khá",
         len(
             recommend_df[
                 (recommend_df["GPA"] >= 3.0) &
@@ -2605,15 +2610,15 @@ with col3:
 with col4:
 
     st.metric(
-        "Excellent Students",
+        "🏆 Giỏi",
         len(recommend_df[recommend_df["GPA"] >= 3.5])
     )
 
 # =========================================================
-# RECOMMENDATION TABLE
+# BẢNG GỢI Ý
 # =========================================================
 
-st.subheader("📋 Student Recommendations")
+st.markdown("### 📋 Gợi ý học tập cho sinh viên")
 
 show_cols = [
     "StudentID",
@@ -2629,17 +2634,17 @@ st.dataframe(
 )
 
 # =========================================================
-# PIE CHART
+# BIỂU ĐỒ TRÒN
 # =========================================================
 
-st.subheader("📊 Recommendation Category Distribution")
+st.markdown("### 📊 Phân bố nhóm sinh viên")
 
 category_counts = (
     recommend_df["Category"]
     .value_counts()
 )
 
-explode = [0.08, 0, 0, 0]
+explode = [0.08, 0.04, 0.04, 0.04]
 
 fig, ax = plt.subplots(figsize=(7,7))
 
@@ -2652,7 +2657,7 @@ ax.pie(
 )
 
 ax.set_title(
-    "Student Recommendation Categories",
+    "Phân loại gợi ý học tập",
     fontsize=16,
     fontweight='bold'
 )
@@ -2660,7 +2665,7 @@ ax.set_title(
 st.pyplot(fig)
 
 # =========================================================
-# FINAL INTERPRETATION
+# NHẬN XÉT
 # =========================================================
 
 st.info("""
@@ -2671,24 +2676,23 @@ GPA, thời gian tự học và số buổi nghỉ học của sinh viên.
 
 • Những sinh viên có GPA thấp thường đi kèm:
 - thời gian học ít
-- số buổi nghỉ cao
+- số buổi nghỉ học cao
 - hiệu suất học tập chưa ổn định.
 
-• Nhóm sinh viên học lực tốt có xu hướng:
-- học tập đều đặn
-- nghỉ học ít
-- duy trì thời gian tự học cao hơn trung bình.
+• Nhóm sinh viên có kết quả học tập tốt
+thường duy trì thời gian học tập đều đặn
+và nghỉ học ít hơn.
 
-• Kết quả cho thấy việc tăng thời gian học tập
+• Kết quả cho thấy việc tăng thời gian tự học
 và giảm số buổi nghỉ học
-có thể cải thiện đáng kể kết quả học tập.
+có thể cải thiện đáng kể GPA của sinh viên.
 
 • Hệ thống recommendation giúp sinh viên:
-- định hướng kế hoạch học tập
-- lựa chọn khối lượng học phù hợp
-- nâng cao hiệu quả học tập trong tương lai.
+- xây dựng kế hoạch học tập phù hợp
+- lựa chọn khối lượng học hợp lý
+- cải thiện hiệu quả học tập trong tương lai.
 
 • Đây là bước mở rộng mang tính ứng dụng thực tế,
-giúp chuyển đổi dữ liệu phân tích
-thành các gợi ý hỗ trợ học tập cho sinh viên.
+giúp chuyển đổi kết quả phân tích dữ liệu
+thành các gợi ý hỗ trợ học tập cụ thể cho sinh viên.
 """)
