@@ -850,13 +850,12 @@ và mức độ tham gia học tập giữa các sinh viên.
 """)
 
 # ======================
-# STEP 4 - STUDY TIME → GPA
+# STEP 4 - THỜI GIAN TỰ HỌC VÀ GPA
 # ======================
 
-st.markdown(
-    '<p class="section-title">📈 Step 4: Study Time and GPA</p>',
-    unsafe_allow_html=True
-)
+st.markdown("---")
+
+st.header("📈 Bước 4: Mối quan hệ giữa thời gian tự học và GPA")
 
 st.write("""
 Bước này phân tích mối quan hệ giữa thời gian tự học và GPA của sinh viên.
@@ -882,17 +881,17 @@ st.markdown("### 📌 Tổng quan")
 col1, col2, col3 = st.columns(3)
 
 col1.metric(
-    "⏱️ Study Time TB",
+    "⏱️ Tự học trung bình",
     round(data["StudyTimeWeekly"].mean(), 2)
 )
 
 col2.metric(
-    "📊 GPA TB",
+    "📊 GPA trung bình",
     round(data["GPA"].mean(), 2)
 )
 
 col3.metric(
-    "📈 Correlation",
+    "📈 Hệ số tương quan",
     round(
         data["StudyTimeWeekly"].corr(data["GPA"]),
         2
@@ -903,7 +902,7 @@ col3.metric(
 # REGRESSION PLOT
 # ======================
 
-st.markdown("### 📉 Regression Plot")
+st.markdown("### 📉 Biểu đồ hồi quy")
 
 fig, ax = plt.subplots(figsize=(9,5))
 
@@ -921,7 +920,7 @@ sns.regplot(
 )
 
 ax.set_title(
-    "Relationship Between Study Time and GPA",
+    "Mối quan hệ giữa thời gian tự học và GPA",
     fontsize=16,
     fontweight='bold'
 )
@@ -940,7 +939,7 @@ st.pyplot(fig)
 # GPA BY STUDY GROUP
 # ======================
 
-st.markdown("### 📊 Average GPA by Study Time Group")
+st.markdown("### 📊 GPA trung bình theo nhóm thời gian học")
 
 # Chia nhóm thời gian học
 bins = [0, 5, 10, 15, 20]
@@ -986,13 +985,13 @@ for i, v in enumerate(group_avg.values):
     )
 
 ax.set_title(
-    "Average GPA by Study Time Group",
+    "GPA trung bình theo nhóm thời gian học",
     fontsize=15,
     fontweight='bold'
 )
 
-ax.set_xlabel("Study Time Group")
-ax.set_ylabel("Average GPA")
+ax.set_xlabel("Nhóm thời gian học")
+ax.set_ylabel("GPA trung bình")
 
 ax.grid(
     alpha=0.2,
@@ -1005,11 +1004,11 @@ st.pyplot(fig)
 # SUMMARY TABLE
 # ======================
 
-st.markdown("### 📋 Summary Table")
+st.markdown("### 📋 Bảng thống kê")
 
 summary_df = pd.DataFrame({
-    "Study Time Group": group_avg.index,
-    "Average GPA": group_avg.values
+    "Nhóm thời gian học": group_avg.index,
+    "GPA trung bình": group_avg.values
 })
 
 st.dataframe(
@@ -1021,7 +1020,7 @@ st.dataframe(
 # MINI HEATMAP
 # ======================
 
-st.markdown("### 🔥 Mini Correlation Heatmap")
+st.markdown("### 🔥 Heatmap tương quan")
 
 corr_cols = [
     "GPA",
@@ -1043,7 +1042,7 @@ sns.heatmap(
 )
 
 ax.set_title(
-    "Correlation Between Study Factors",
+    "Tương quan giữa các yếu tố học tập",
     fontsize=15,
     fontweight='bold'
 )
@@ -1057,36 +1056,44 @@ st.pyplot(fig)
 st.info("""
 📖 Nhận xét:
 
-• Regression plot cho thấy GPA có xu hướng tăng khi thời gian tự học tăng.
+• Regression Plot cho thấy GPA có xu hướng tăng khi thời gian tự học tăng.
 
-• Đường hồi quy đi lên cho thấy tồn tại mối quan hệ tích cực giữa Study Time và GPA.
+• Đường hồi quy đi lên cho thấy tồn tại mối quan hệ tích cực giữa thời gian tự học và GPA.
 
-• GPA trung bình tăng dần theo từng nhóm thời gian học.
-    
-• Nhóm học dưới 5 giờ mỗi tuần có GPA thấp nhất, trong khi nhóm học nhiều nhất đạt GPA cao nhất.
+• GPA trung bình tăng dần theo từng nhóm thời gian học,
+cho thấy sinh viên học nhiều hơn thường đạt kết quả học tập tốt hơn.
 
-• Điều này cho thấy thời gian tự học có ảnh hưởng tích cực đến kết quả học tập.
+• Nhóm học dưới 5 giờ mỗi tuần có GPA thấp nhất,
+trong khi nhóm học từ 15–20 giờ đạt GPA cao nhất.
 
-• Tuy nhiên, mức tăng GPA giữa các nhóm không quá lớn, cho thấy GPA còn chịu ảnh hưởng từ nhiều yếu tố khác.
+• Tuy nhiên,
+mức tăng GPA giữa các nhóm không quá lớn,
+cho thấy GPA còn chịu ảnh hưởng từ nhiều yếu tố khác ngoài thời gian học.
 
-• Heatmap cho thấy số buổi nghỉ học (Absences) có tương quan âm rất mạnh với GPA (-0.92).
+• Heatmap cho thấy số buổi nghỉ học có tương quan âm mạnh với GPA,
+đồng nghĩa với việc nghỉ học nhiều thường làm kết quả học tập giảm.
 
-• Trong khi đó, Study Time và Parental Support chỉ có tương quan dương nhẹ với GPA.
+• Trong khi đó,
+Study Time và Parental Support có tương quan dương với GPA,
+cho thấy việc duy trì học tập đều đặn và nhận được hỗ trợ phù hợp
+có thể giúp cải thiện kết quả học tập.
 
-• Kết quả cho thấy việc duy trì thời gian tự học hợp lý và hạn chế nghỉ học là hai yếu tố quan trọng giúp cải thiện kết quả học tập của sinh viên.
+• Nhìn chung,
+thời gian tự học là yếu tố có tác động tích cực đến GPA,
+nhưng sự chuyên cần vẫn là yếu tố ảnh hưởng mạnh nhất trong dữ liệu hiện tại.
 """)
 
 # ======================
-# STEP 5 - ABSENCES → GPA
+# STEP 5 - SỐ BUỔI NGHỈ HỌC VÀ GPA
 # ======================
 
-st.markdown(
-    '<p class="section-title">📉 Step 5: Absences and GPA</p>',
-    unsafe_allow_html=True
-)
+st.markdown("---")
+
+st.header("📉 Bước 5: Mối quan hệ giữa số buổi nghỉ học và GPA")
 
 st.write("""
-Sau khi phân tích thời gian tự học, bước tiếp theo tập trung vào ảnh hưởng của số buổi nghỉ học đến GPA.
+Sau khi phân tích thời gian tự học,
+bước tiếp theo tập trung vào ảnh hưởng của số buổi nghỉ học đến GPA.
 
 Mục tiêu:
 - Kiểm tra tác động của việc nghỉ học đến kết quả học tập
@@ -1109,17 +1116,17 @@ st.markdown("### 📌 Tổng quan")
 col1, col2, col3 = st.columns(3)
 
 col1.metric(
-    "📅 Absences TB",
+    "📅 Nghỉ học trung bình",
     round(data["Absences"].mean(), 2)
 )
 
 col2.metric(
-    "📊 GPA TB",
+    "📊 GPA trung bình",
     round(data["GPA"].mean(), 2)
 )
 
 col3.metric(
-    "📉 Correlation",
+    "📉 Hệ số tương quan",
     round(
         data["Absences"].corr(data["GPA"]),
         2
@@ -1150,12 +1157,12 @@ with col1:
     )
 
     ax.set_title(
-        "Absences vs GPA",
+        "Mối quan hệ giữa nghỉ học và GPA",
         fontsize=14,
         fontweight='bold'
     )
 
-    ax.set_xlabel("Number of Absences")
+    ax.set_xlabel("Số buổi nghỉ học")
     ax.set_ylabel("GPA")
 
     ax.grid(
@@ -1170,7 +1177,7 @@ with col1:
 # ----------------------
 with col2:
 
-    st.markdown("### 📈 Regression Trend")
+    st.markdown("### 📈 Regression Plot")
 
     fig, ax = plt.subplots(figsize=(6,4))
 
@@ -1188,12 +1195,12 @@ with col2:
     )
 
     ax.set_title(
-        "Regression Between Absences and GPA",
+        "Xu hướng hồi quy giữa nghỉ học và GPA",
         fontsize=14,
         fontweight='bold'
     )
 
-    ax.set_xlabel("Absences")
+    ax.set_xlabel("Số buổi nghỉ học")
     ax.set_ylabel("GPA")
 
     ax.grid(
@@ -1207,7 +1214,7 @@ with col2:
 # GROUP ANALYSIS
 # ======================
 
-st.markdown("### 📊 GPA theo nhóm số buổi nghỉ")
+st.markdown("### 📊 GPA trung bình theo nhóm nghỉ học")
 
 # Chia nhóm nghỉ học
 bins = [0, 5, 10, 20, 30]
@@ -1253,13 +1260,13 @@ for i, v in enumerate(absence_avg.values):
     )
 
 ax.set_title(
-    "Average GPA by Absence Group",
+    "GPA trung bình theo nhóm nghỉ học",
     fontsize=15,
     fontweight='bold'
 )
 
-ax.set_xlabel("Absence Group")
-ax.set_ylabel("Average GPA")
+ax.set_xlabel("Nhóm nghỉ học")
+ax.set_ylabel("GPA trung bình")
 
 ax.grid(
     alpha=0.2,
@@ -1272,11 +1279,11 @@ st.pyplot(fig)
 # SUMMARY TABLE
 # ======================
 
-st.markdown("### 📋 Summary Table")
+st.markdown("### 📋 Bảng thống kê")
 
 summary_df = pd.DataFrame({
-    "Absence Group": absence_avg.index,
-    "Average GPA": absence_avg.values
+    "Nhóm nghỉ học": absence_avg.index,
+    "GPA trung bình": absence_avg.values
 })
 
 st.dataframe(
@@ -1291,37 +1298,40 @@ st.dataframe(
 st.info("""
 📖 Nhận xét:
 
-• Scatter plot cho thấy GPA có xu hướng giảm khi số buổi nghỉ học tăng lên.
+• Scatter Plot cho thấy GPA có xu hướng giảm khi số buổi nghỉ học tăng lên.
 
 • Đường hồi quy đi xuống thể hiện mối quan hệ âm giữa Absences và GPA.
 
-• Sinh viên nghỉ học ít thường đạt GPA cao hơn so với nhóm nghỉ học nhiều.
+• Sinh viên nghỉ học ít thường đạt GPA cao hơn đáng kể
+so với nhóm nghỉ học nhiều.
 
-• Correlation âm mạnh cho thấy Absences là một trong những yếu tố ảnh hưởng lớn đến kết quả học tập.
+• Hệ số tương quan âm mạnh cho thấy Absences là một trong những yếu tố ảnh hưởng lớn nhất đến kết quả học tập.
 
-• GPA trung bình giảm dần theo từng nhóm nghỉ học:
+• GPA trung bình giảm dần theo từng nhóm nghỉ học,
+đặc biệt nhóm nghỉ trên 20 buổi có kết quả học tập thấp hơn rõ rệt.
 
-    - Nhóm nghỉ ít buổi có GPA cao hơn rõ rệt
-    
-    - Nhóm nghỉ nhiều buổi thường có GPA thấp hơn
+• Điều này cho thấy tính chuyên cần đóng vai trò rất quan trọng
+trong việc duy trì kết quả học tập ổn định.
 
-• Điều này cho thấy tính chuyên cần đóng vai trò rất quan trọng trong việc duy trì kết quả học tập ổn định.
+• Kết quả cũng phù hợp với Heatmap ở bước trước,
+khi Absences là biến có tương quan âm mạnh nhất với GPA.
 
-• Kết quả cũng phù hợp với Heatmap ở bước trước khi Absences có tương quan âm mạnh nhất với GPA.
+• Nhìn chung,
+việc hạn chế nghỉ học có thể giúp cải thiện đáng kể kết quả học tập của sinh viên.
 """)
 
 
 # ======================
-# STEP 6 - ACTIVITIES → GPA
+# STEP 6 - HOẠT ĐỘNG NGOẠI KHÓA VÀ GPA
 # ======================
 
-st.markdown(
-    '<p class="section-title">🎯 Step 6: Activities and GPA</p>',
-    unsafe_allow_html=True
-)
+st.markdown("---")
+
+st.header("🎯 Bước 6: Ảnh hưởng của hoạt động ngoại khóa đến GPA")
 
 st.write("""
-Ở bước này, bài toán tập trung phân tích ảnh hưởng của các hoạt động ngoại khóa đến GPA của sinh viên.
+Ở bước này,
+bài toán tập trung phân tích ảnh hưởng của các hoạt động ngoại khóa đến GPA của sinh viên.
 
 Các hoạt động được xem xét gồm:
 - Extracurricular
@@ -1378,10 +1388,10 @@ for activity in activities:
 activity_df = pd.DataFrame(
     activity_results,
     columns=[
-        "Activity",
-        "No Activity GPA",
-        "Participated GPA",
-        "Difference"
+        "Hoạt động",
+        "GPA không tham gia",
+        "GPA tham gia",
+        "Mức chênh lệch"
     ]
 )
 
@@ -1392,35 +1402,35 @@ activity_df = pd.DataFrame(
 st.markdown("### 📌 Tổng quan")
 
 best_activity = activity_df.loc[
-    activity_df["Difference"].idxmax()
+    activity_df["Mức chênh lệch"].idxmax()
 ]
 
 positive_count = (
-    activity_df["Difference"] > 0
+    activity_df["Mức chênh lệch"] > 0
 ).sum()
 
 col1, col2, col3 = st.columns(3)
 
 col1.metric(
-    "🎯 Activities Analyzed",
+    "🎯 Số hoạt động phân tích",
     len(activities)
 )
 
 col2.metric(
-    "📈 Positive Activities",
+    "📈 Hoạt động tác động tích cực",
     positive_count
 )
 
 col3.metric(
-    "🏆 Best Activity",
-    best_activity["Activity"]
+    "🏆 Hoạt động nổi bật",
+    best_activity["Hoạt động"]
 )
 
 # ======================
 # TABLE
 # ======================
 
-st.markdown("### 📋 Comparison Table")
+st.markdown("### 📋 Bảng so sánh")
 
 st.dataframe(
     activity_df,
@@ -1431,15 +1441,15 @@ st.dataframe(
 # GROUPED BAR CHART
 # ======================
 
-st.markdown("### 📊 Average GPA by Student Activities")
+st.markdown("### 📊 GPA trung bình theo hoạt động")
 
 plot_df = activity_df.melt(
-    id_vars="Activity",
+    id_vars="Hoạt động",
     value_vars=[
-        "No Activity GPA",
-        "Participated GPA"
+        "GPA không tham gia",
+        "GPA tham gia"
     ],
-    var_name="Group",
+    var_name="Nhóm",
     value_name="GPA"
 )
 
@@ -1447,20 +1457,20 @@ fig, ax = plt.subplots(figsize=(10,5))
 
 sns.barplot(
     data=plot_df,
-    x="Activity",
+    x="Hoạt động",
     y="GPA",
-    hue="Group",
+    hue="Nhóm",
     ax=ax
 )
 
 ax.set_title(
-    "Average GPA by Student Activities",
+    "So sánh GPA theo hoạt động ngoại khóa",
     fontsize=18,
     fontweight='bold'
 )
 
-ax.set_xlabel("Activities")
-ax.set_ylabel("Average GPA")
+ax.set_xlabel("Hoạt động")
+ax.set_ylabel("GPA trung bình")
 
 ax.grid(
     alpha=0.2,
@@ -1472,7 +1482,6 @@ for p in ax.patches:
 
     height = p.get_height()
 
-    # Tránh hiện 0.00 dư
     if height > 0.05:
 
         ax.annotate(
@@ -1492,25 +1501,25 @@ st.pyplot(fig)
 # IMPACT CHART
 # ======================
 
-st.markdown("### 📈 GPA Improvement by Activities")
+st.markdown("### 📈 Mức cải thiện GPA theo hoạt động")
 
 fig, ax = plt.subplots(figsize=(8,5))
 
 sns.barplot(
     data=activity_df,
-    x="Activity",
-    y="Difference",
+    x="Hoạt động",
+    y="Mức chênh lệch",
     ax=ax
 )
 
 ax.set_title(
-    "Impact of Activities on GPA",
+    "Mức ảnh hưởng của hoạt động ngoại khóa đến GPA",
     fontsize=16,
     fontweight='bold'
 )
 
-ax.set_xlabel("Activities")
-ax.set_ylabel("GPA Difference")
+ax.set_xlabel("Hoạt động")
+ax.set_ylabel("Mức chênh lệch GPA")
 
 ax.axhline(
     0,
@@ -1549,8 +1558,8 @@ st.pyplot(fig)
 
 st.success(f"""
 🏆 Hoạt động có ảnh hưởng tích cực nhất đến GPA là:
-**{best_activity['Activity']}**
-với mức tăng GPA trung bình khoảng **{best_activity['Difference']}** điểm.
+{best_activity['Hoạt động']}
+với mức tăng GPA trung bình khoảng {best_activity['Mức chênh lệch']} điểm.
 """)
 
 # ======================
@@ -1562,26 +1571,36 @@ st.info("""
 
 • Hầu hết các hoạt động ngoại khóa đều có ảnh hưởng tích cực đến GPA của sinh viên.
 
-• Sinh viên tham gia hoạt động thường có GPA cao hơn nhóm không tham gia.
+• Sinh viên tham gia hoạt động thường có GPA cao hơn
+so với nhóm không tham gia.
 
-• Trong các hoạt động được phân tích, Extracurricular cho thấy mức cải thiện GPA rõ rệt nhất.
+• Trong các hoạt động được phân tích,
+Extracurricular cho thấy mức cải thiện GPA rõ rệt nhất.
 
 • Sports và Music cũng có tác động tích cực tương đối tốt đến kết quả học tập.
 
 • Volunteering gần như không tạo ra sự khác biệt lớn về GPA.
 
-• Điều này cho thấy sinh viên có xu hướng năng động, biết cân bằng giữa học tập và hoạt động cá nhân thường đạt kết quả học tập ổn định hơn.
+• Điều này cho thấy sinh viên năng động,
+biết cân bằng giữa học tập và hoạt động cá nhân
+thường có kết quả học tập ổn định hơn.
 
-• Tuy nhiên, mức chênh lệch GPA giữa các nhóm không quá lớn, nên hoạt động ngoại khóa không phải yếu tố quyết định duy nhất đến thành tích học tập.
+• Tuy nhiên,
+mức chênh lệch GPA giữa các nhóm không quá lớn,
+cho thấy hoạt động ngoại khóa không phải yếu tố quyết định duy nhất đến thành tích học tập.
+
+• Nhìn chung,
+việc tham gia hoạt động ngoại khóa hợp lý
+có thể hỗ trợ sinh viên phát triển kỹ năng mềm
+và duy trì hiệu quả học tập tốt hơn.
 """)
 
-
 # ======================
-# STEP 7 - PARENTAL SUPPORT → GPA
+# STEP 7 - PHÂN TÍCH ẢNH HƯỞNG CỦA GIA ĐÌNH ĐẾN GPA
 # ======================
 
 st.markdown(
-    '<p class="section-title">👨‍👩‍👧 Step 7: Parental Support and GPA</p>',
+    '<p class="section-title">👨‍👩‍👧 Bước 7: Ảnh hưởng của hỗ trợ gia đình đến GPA</p>',
     unsafe_allow_html=True
 )
 
@@ -1589,9 +1608,9 @@ st.write("""
 Bước này phân tích ảnh hưởng của mức độ hỗ trợ từ gia đình đến GPA của sinh viên.
 
 Mục tiêu:
-- So sánh GPA trung bình theo từng mức hỗ trợ của phụ huynh
-- Kiểm tra liệu sự quan tâm từ gia đình có ảnh hưởng đến kết quả học tập hay không
-- Tìm xu hướng giữa Parental Support và GPA
+- So sánh GPA trung bình theo từng mức hỗ trợ từ phụ huynh
+- Kiểm tra liệu sự quan tâm của gia đình có ảnh hưởng đến kết quả học tập hay không
+- Quan sát xu hướng thay đổi GPA theo mức độ hỗ trợ
 """)
 
 # ======================
@@ -1601,15 +1620,15 @@ Mục tiêu:
 data = st.session_state.session_df.copy()
 
 # ======================
-# MAP LABEL
+# ĐỔI NHÃN MỨC HỖ TRỢ
 # ======================
 
 support_labels = {
-    0: "Very Low",
-    1: "Low",
-    2: "Medium",
-    3: "High",
-    4: "Very High"
+    0: "Rất thấp",
+    1: "Thấp",
+    2: "Trung bình",
+    3: "Cao",
+    4: "Rất cao"
 }
 
 data["SupportLabel"] = (
@@ -1618,18 +1637,18 @@ data["SupportLabel"] = (
 )
 
 # ======================
-# CALCULATE GPA
+# TÍNH GPA TRUNG BÌNH
 # ======================
 
 support_gpa = (
     data.groupby("SupportLabel")["GPA"]
     .mean()
     .reindex([
-        "Very Low",
-        "Low",
-        "Medium",
-        "High",
-        "Very High"
+        "Rất thấp",
+        "Thấp",
+        "Trung bình",
+        "Cao",
+        "Rất cao"
     ])
     .reset_index()
 )
@@ -1643,7 +1662,7 @@ support_gpa["GPA"] = (
 # KPI
 # ======================
 
-st.markdown("### 📌 Overview")
+st.markdown("### 📌 Tổng quan")
 
 highest_support = support_gpa.loc[
     support_gpa["GPA"].idxmax()
@@ -1656,25 +1675,25 @@ lowest_support = support_gpa.loc[
 col1, col2, col3 = st.columns(3)
 
 col1.metric(
-    "Highest GPA Group",
+    "Nhóm GPA cao nhất",
     highest_support["SupportLabel"]
 )
 
 col2.metric(
-    "Highest GPA",
+    "GPA cao nhất",
     highest_support["GPA"]
 )
 
 col3.metric(
-    "Lowest GPA",
+    "GPA thấp nhất",
     lowest_support["GPA"]
 )
 
 # ======================
-# TABLE
+# BẢNG DỮ LIỆU
 # ======================
 
-st.markdown("### 📋 GPA by Parental Support")
+st.markdown("### 📋 GPA theo mức hỗ trợ gia đình")
 
 st.dataframe(
     support_gpa,
@@ -1682,8 +1701,9 @@ st.dataframe(
 )
 
 # ======================
-# VẼ BIỂU ĐỒ
+# BIỂU ĐỒ
 # ======================
+
 col1, col2 = st.columns(2)
 
 # ----------------------
@@ -1691,7 +1711,7 @@ col1, col2 = st.columns(2)
 # ----------------------
 with col1:
 
-    st.markdown("### 📊 Average GPA by Parental Support")
+    st.markdown("### 📊 GPA trung bình theo mức hỗ trợ")
 
     fig, ax = plt.subplots(figsize=(6,4))
 
@@ -1703,20 +1723,20 @@ with col1:
     )
 
     ax.set_title(
-        "Average GPA by Parental Support",
+        "GPA trung bình theo mức hỗ trợ gia đình",
         fontsize=14,
         fontweight='bold'
     )
 
-    ax.set_xlabel("Support Level")
-    ax.set_ylabel("Average GPA")
+    ax.set_xlabel("Mức hỗ trợ")
+    ax.set_ylabel("GPA trung bình")
 
     ax.grid(
         alpha=0.2,
         linestyle="--"
     )
 
-    # Hiển thị giá trị
+    # Hiển thị số trên cột
     for p in ax.patches:
 
         height = p.get_height()
@@ -1741,7 +1761,7 @@ with col1:
 # ----------------------
 with col2:
 
-    st.markdown("### 📈 GPA Trend by Support Level")
+    st.markdown("### 📈 Xu hướng GPA theo mức hỗ trợ")
 
     fig, ax = plt.subplots(figsize=(6,4))
 
@@ -1755,20 +1775,20 @@ with col2:
     )
 
     ax.set_title(
-        "Trend Between Support and GPA",
+        "Xu hướng giữa hỗ trợ gia đình và GPA",
         fontsize=14,
         fontweight='bold'
     )
 
-    ax.set_xlabel("Support Level")
-    ax.set_ylabel("Average GPA")
+    ax.set_xlabel("Mức hỗ trợ")
+    ax.set_ylabel("GPA trung bình")
 
     ax.grid(
         alpha=0.2,
         linestyle="--"
     )
 
-    # Hiển thị giá trị
+    # Hiển thị số
     for i, row in support_gpa.iterrows():
 
         ax.text(
@@ -1792,50 +1812,42 @@ correlation = round(
 )
 
 st.success(f"""
-📌 Correlation between Parental Support and GPA: {correlation}
+📌 Hệ số tương quan giữa Parental Support và GPA: {correlation}
 
 Giá trị dương cho thấy khi mức hỗ trợ từ gia đình tăng,
 GPA của sinh viên có xu hướng tăng theo.
 """)
 
 # ======================
-# INTERPRETATION
+# NHẬN XÉT
 # ======================
 
 st.info("""
 📖 Nhận xét:
 
-• GPA trung bình tăng dần theo mức độ hỗ trợ từ gia đình.
+• GPA trung bình có xu hướng tăng khi mức độ hỗ trợ từ gia đình tăng lên.
 
-• Sinh viên có mức hỗ trợ “Very High” đạt GPA trung bình khoảng 2.19,
-cao hơn rõ rệt so với nhóm “Very Low” chỉ khoảng 1.54.
+• Nhóm sinh viên nhận được mức hỗ trợ “Rất cao” đạt GPA cao hơn đáng kể so với nhóm “Rất thấp”.
 
-• Biểu đồ đường cho thấy xu hướng tăng khá đều giữa Parental Support và GPA,
-chứng tỏ sự hỗ trợ từ gia đình có ảnh hưởng tích cực đến kết quả học tập.
+• Biểu đồ đường cho thấy xu hướng tăng tương đối ổn định giữa Parental Support và GPA.
 
-• Hệ số tương quan khoảng 0.19 cho thấy mối quan hệ dương nhưng không quá mạnh.
-Điều này nghĩa là hỗ trợ từ gia đình có tác động nhất định,
-tuy nhiên GPA vẫn còn phụ thuộc vào nhiều yếu tố khác như:
-thời gian học, ý thức cá nhân, hoạt động ngoại khóa và mức độ chuyên cần.
+• Điều này cho thấy sự quan tâm, động viên và hỗ trợ từ gia đình có tác động tích cực đến kết quả học tập của sinh viên.
 
-• Khoảng cách GPA giữa các nhóm khá rõ ràng,
-đặc biệt từ mức “Medium” trở lên,
-cho thấy sinh viên nhận được sự quan tâm và động viên nhiều hơn
-thường có động lực học tập tốt hơn.
+• Tuy nhiên, hệ số tương quan không quá mạnh, cho thấy GPA vẫn còn chịu ảnh hưởng từ nhiều yếu tố khác như:
+thời gian học tập, số buổi nghỉ học và ý thức cá nhân.
 
-• Kết quả cho thấy môi trường gia đình đóng vai trò hỗ trợ quan trọng
-trong việc cải thiện kết quả học tập của sinh viên,
-dù không phải yếu tố quyết định duy nhất.
+• Kết quả cho thấy môi trường gia đình đóng vai trò hỗ trợ quan trọng trong quá trình học tập,
+đặc biệt trong việc duy trì động lực và tinh thần học tập của sinh viên.
 """)
 
-
 # =========================================================
-# STEP 8 — CORRELATION ANALYSIS
+# STEP 8 — PHÂN TÍCH TƯƠNG QUAN
 # =========================================================
 
-st.markdown("---")
-
-st.header("🔥 Step 8: Correlation Between Study Factors")
+st.markdown(
+    '<p class="section-title">🔥 Bước 8: Tương quan giữa các yếu tố học tập</p>',
+    unsafe_allow_html=True
+)
 
 st.write("""
 Bước này nhằm phân tích mức độ tương quan giữa các yếu tố học tập
@@ -1848,7 +1860,7 @@ Giá trị tương quan:
 """)
 
 # =========================================================
-# SELECT NUMERIC COLUMNS
+# CHỌN CÁC CỘT SỐ
 # =========================================================
 
 corr_df = data[[
@@ -1864,7 +1876,7 @@ corr_df = data[[
 ]]
 
 # =========================================================
-# CORRELATION MATRIX
+# MA TRẬN TƯƠNG QUAN
 # =========================================================
 
 corr_matrix = corr_df.corr()
@@ -1873,7 +1885,7 @@ corr_matrix = corr_df.corr()
 # HEATMAP
 # =========================================================
 
-st.subheader("📊 Correlation Heatmap")
+st.markdown("### 🔥 Correlation Heatmap")
 
 fig, ax = plt.subplots(figsize=(10,7))
 
@@ -1887,7 +1899,7 @@ sns.heatmap(
 )
 
 ax.set_title(
-    "Correlation Between Study Factors",
+    "Ma trận tương quan giữa các yếu tố học tập",
     fontsize=18,
     fontweight='bold'
 )
@@ -1895,10 +1907,10 @@ ax.set_title(
 st.pyplot(fig)
 
 # =========================================================
-# TOP FACTORS
+# TƯƠNG QUAN VỚI GPA
 # =========================================================
 
-st.subheader("📌 Correlation With GPA")
+st.markdown("### 📊 Mức độ tương quan với GPA")
 
 gpa_corr = (
     corr_matrix["GPA"]
@@ -1907,8 +1919,8 @@ gpa_corr = (
 )
 
 corr_result = pd.DataFrame({
-    "Factor": gpa_corr.index,
-    "Correlation With GPA": gpa_corr.values.round(2)
+    "Yếu tố": gpa_corr.index,
+    "Tương quan với GPA": gpa_corr.values.round(2)
 })
 
 st.dataframe(
@@ -1917,7 +1929,7 @@ st.dataframe(
 )
 
 # =========================================================
-# STRONGEST FACTORS
+# YẾU TỐ MẠNH NHẤT
 # =========================================================
 
 highest_positive = gpa_corr.idxmax()
@@ -1935,7 +1947,7 @@ col1, col2 = st.columns(2)
 with col1:
 
     st.metric(
-        "📈 Strongest Positive Factor",
+        "📈 Yếu tố tích cực mạnh nhất",
         highest_positive,
         f"{highest_positive_value:.2f}"
     )
@@ -1943,16 +1955,16 @@ with col1:
 with col2:
 
     st.metric(
-        "📉 Strongest Negative Factor",
+        "📉 Yếu tố tiêu cực mạnh nhất",
         highest_negative,
         f"{highest_negative_value:.2f}"
     )
 
 # =========================================================
-# INTERPRETATION
+# NHẬN XÉT
 # =========================================================
 
-st.success(f"""
+st.info(f"""
 📖 Nhận xét:
 
 • Yếu tố có tương quan dương mạnh nhất với GPA là
@@ -1967,13 +1979,21 @@ GPA của sinh viên có xu hướng tăng theo.
 • Điều này cho thấy khi '{highest_negative}' tăng,
 GPA thường giảm xuống đáng kể.
 
-• Heatmap cho thấy Absences có ảnh hưởng tiêu cực mạnh tới kết quả học tập,
-trong khi thời gian học và sự hỗ trợ từ gia đình
-có xu hướng tác động tích cực hơn.
+• Heatmap cho thấy số buổi nghỉ học (Absences)
+có ảnh hưởng tiêu cực rất mạnh tới kết quả học tập.
 
-• Một số hoạt động ngoại khóa như Sports, Music hoặc Volunteering
-có tương quan dương nhưng ở mức yếu,
-cho thấy các hoạt động này hỗ trợ học tập ở mức vừa phải.
+• Trong khi đó,
+thời gian học tập và sự hỗ trợ từ gia đình
+có xu hướng tác động tích cực đến GPA.
+
+• Các hoạt động ngoại khóa như Sports, Music và Volunteering
+có tương quan dương nhưng ở mức khá yếu,
+cho thấy chúng chỉ hỗ trợ học tập ở mức vừa phải
+thay vì quyết định trực tiếp GPA.
+
+• Kết quả phân tích tương quan phù hợp với các bước trước,
+khi StudyTimeWeekly giúp GPA tăng
+còn Absences làm GPA giảm rõ rệt.
 """)
 
 
