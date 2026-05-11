@@ -2012,7 +2012,6 @@ ols_mae = mean_absolute_error(
     ols_pred
 )
 
-
 # =========================================================
 # 2. DECISION TREE
 # =========================================================
@@ -2102,7 +2101,7 @@ st.dataframe(
 # BAR CHART
 # =========================================================
 
-st.subheader("📊 R² Comparison")
+st.subheader("📊 Regression Model Comparison")
 
 regression_df = pd.DataFrame({
 
@@ -2128,27 +2127,35 @@ sns.barplot(
 )
 
 ax.set_title(
-    "Regression Model Comparison",
+    "Regression Model R² Comparison",
     fontsize=16,
     fontweight='bold'
 )
 
 ax.set_ylim(0, 1)
 
+ax.grid(
+    alpha=0.2,
+    linestyle="--"
+)
+
 # Hiển thị số
 for p in ax.patches:
 
     height = p.get_height()
 
-    ax.annotate(
-        f"{height:.2f}",
-        (
-            p.get_x() + p.get_width()/2,
-            height
-        ),
-        ha='center',
-        va='bottom'
-    )
+    if height > 0:
+
+        ax.annotate(
+            f"{height:.2f}",
+            (
+                p.get_x() + p.get_width()/2,
+                height
+            ),
+            ha='center',
+            va='bottom',
+            fontsize=9
+        )
 
 st.pyplot(fig)
 
@@ -2178,16 +2185,27 @@ st.success(f"""
 st.info(f"""
 📖 Nhận xét:
 
+• OLS Regression phù hợp để phân tích mối quan hệ tuyến tính
+giữa các yếu tố học tập và GPA.
+
 • Decision Tree có khả năng học các mối quan hệ phi tuyến,
 nên đôi khi cho kết quả tốt hơn với dữ liệu phức tạp.
 
 • Logistic Regression được sử dụng để phân loại GradeClass
-và đánh giá bằng Accuracy.
+và được đánh giá bằng Accuracy.
 
 • Mô hình có R² cao nhất là:
 {best_regression['Model']}.
 
 • Điều này cho thấy mô hình trên phù hợp nhất
 để dự đoán GPA trong bộ dữ liệu hiện tại.
+
+• Nếu Decision Tree có R² cao hơn,
+điều đó cho thấy dữ liệu có xu hướng phi tuyến.
+
+• Nếu OLS có kết quả tốt hơn,
+điều đó cho thấy GPA chịu ảnh hưởng khá tuyến tính
+từ các yếu tố học tập.
+""")
 
 
