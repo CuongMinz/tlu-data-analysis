@@ -2706,24 +2706,22 @@ st.markdown("---")
 st.markdown("""
 <div style='text-align: center; padding: 20px;'>
 
-<h4 style='color:#2c3e50;'>
-📊 Student Performance Analysis Dashboard
-</h4>
 
 <p style='color:gray; font-size:15px;'>
-Developed using Python, Streamlit, Pandas, Matplotlib, Seaborn and Machine Learning
+Được phát triển bằng Python, Streamlit, Pandas, Matplotlib, Seaborn and Machine Learning
 </p>
 
 <p style='color:gray; font-size:14px;'>
-Course: Scientific Data Programming
+Môn học: Lập trình khoa học dữ liệu
 </p>
 
 <p style='color:gray; font-size:14px;'>
-Thuy Loi University (TLU)
+Trường Đại học Thăng Long
 </p>
 
-<p style='color:#7f8c8d; font-size:13px;'>
-© 2026 - Student GPA Analysis Project
+<p style='color:gray; font-size:14px;'>
+Sinh viên thực hiện:
+Nguyễn Minh Cường — Vũ Văn Toàn
 </p>
 
 </div>
