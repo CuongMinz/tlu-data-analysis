@@ -415,19 +415,18 @@ with col4:
 
 
 # ======================
-# STEP 1 - GPA OVERVIEW
+# STEP 1 - TỔNG QUAN GPA
 # ======================
 
-st.markdown(
-    '<p class="section-title">📊 Step 1: GPA Distribution Overview</p>',
-    unsafe_allow_html=True
-)
+st.markdown("---")
+
+st.header("📊 Bước 1: Tổng quan phân bố GPA")
 
 st.write("""
 Biểu đồ Histogram giúp quan sát phân bố GPA của sinh viên.
 Từ đó có thể đánh giá:
 - GPA tập trung ở mức nào
-- Dữ liệu có lệch hay không
+- Dữ liệu có bị lệch hay không
 - Sinh viên đạt GPA cao hay thấp chiếm đa số
 """)
 
@@ -446,9 +445,14 @@ sns.histplot(
 )
 
 # Format
-ax.set_title("Distribution of Student GPA", fontsize=16)
+ax.set_title(
+    "Phân bố GPA của sinh viên",
+    fontsize=16,
+    fontweight='bold'
+)
+
 ax.set_xlabel("GPA")
-ax.set_ylabel("Number of Students")
+ax.set_ylabel("Số lượng sinh viên")
 
 # Grid
 ax.grid(
@@ -462,29 +466,29 @@ st.pyplot(fig)
 # GPA SUMMARY
 # ======================
 
-st.markdown("### 📌 GPA Statistics")
+st.markdown("### 📌 Thống kê GPA")
 
 gpa_data = st.session_state.session_df["GPA"]
 
 col1, col2, col3, col4 = st.columns(4)
 
 col1.metric(
-    "Average GPA",
+    "GPA trung bình",
     round(gpa_data.mean(), 2)
 )
 
 col2.metric(
-    "Highest GPA",
+    "GPA cao nhất",
     round(gpa_data.max(), 2)
 )
 
 col3.metric(
-    "Lowest GPA",
+    "GPA thấp nhất",
     round(gpa_data.min(), 2)
 )
 
 col4.metric(
-    "Median GPA",
+    "GPA trung vị",
     round(gpa_data.median(), 2)
 )
 
@@ -495,13 +499,17 @@ col4.metric(
 st.info("""
 📖 Nhận xét:
 
-- GPA của sinh viên phân bố chủ yếu trong khoảng từ 1.0 đến 3.0.
-- Số lượng sinh viên đạt GPA trung bình và khá chiếm tỷ lệ lớn nhất.
-- Rất ít sinh viên có GPA quá thấp hoặc quá cao.
-- Đường KDE cho thấy phân bố dữ liệu khá cân đối, không bị lệch mạnh về một phía.
-- Điều này cho thấy phần lớn sinh viên có kết quả học tập ở mức ổn định.
-""")
+• GPA của sinh viên phân bố chủ yếu trong khoảng từ 1.0 đến 3.0.
 
+• Nhóm sinh viên đạt GPA trung bình và khá chiếm tỷ lệ lớn nhất trong dữ liệu.
+
+• Chỉ có một số lượng nhỏ sinh viên đạt GPA quá thấp hoặc quá cao.
+
+• Đường KDE cho thấy dữ liệu có phân bố tương đối cân đối,
+không bị lệch mạnh về một phía.
+
+• Điều này cho thấy phần lớn sinh viên có kết quả học tập ở mức ổn định.
+""")
 
 # ======================
 # STEP 2 - GRADE CLASSIFICATION
