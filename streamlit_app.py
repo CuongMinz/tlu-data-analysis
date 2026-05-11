@@ -512,17 +512,19 @@ không bị lệch mạnh về một phía.
 """)
 
 # ======================
-# STEP 2 - GRADE CLASSIFICATION
+# STEP 2 - PHÂN LOẠI HỌC LỰC
 # ======================
 
-st.markdown(
-    '<p class="section-title">🎓 Step 2: Academic Performance Classification</p>',
-    unsafe_allow_html=True
-)
+st.markdown("---")
+
+st.header("🎓 Bước 2: Phân loại học lực sinh viên")
 
 st.write("""
 Biểu đồ tròn giúp thể hiện tỷ lệ học lực của sinh viên trong tập dữ liệu.
-Qua đó có thể đánh giá nhóm học lực nào chiếm đa số và mức độ phân hóa kết quả học tập.
+Qua đó có thể đánh giá:
+- Nhóm học lực nào chiếm đa số
+- Mức độ phân hóa kết quả học tập
+- Tỷ lệ sinh viên học tốt và học yếu
 """)
 
 # ======================
@@ -565,7 +567,7 @@ st.markdown("### 🥧 Tỷ lệ học lực sinh viên")
 
 fig, ax = plt.subplots(figsize=(8,8))
 
-# Tách từng phần nhẹ để đẹp hơn
+# Tách từng phần để dễ quan sát hơn
 explode = [0.03, 0.05, 0.08, 0.12]
 
 colors = [
@@ -646,29 +648,38 @@ col4.metric(
 st.info("""
 📖 Nhận xét:
 
-- Nhóm sinh viên có học lực Yếu chiếm tỷ lệ cao nhất với 53.3%, cho thấy phần lớn sinh viên trong tập dữ liệu đang gặp khó khăn trong học tập.
-- Tỷ lệ sinh viên đạt mức Khá và Giỏi còn khá thấp, lần lượt là 20.7% và 8.8%.
-- Điều này phản ánh sự chênh lệch rõ rệt về kết quả học tập giữa các nhóm sinh viên.
-- Kết quả trên cho thấy cần phân tích sâu hơn các yếu tố như thời gian tự học, số buổi nghỉ học và hoạt động ngoại khóa để tìm ra nguyên nhân ảnh hưởng đến GPA.
+• Nhóm sinh viên có học lực Yếu chiếm tỷ lệ cao nhất,
+cho thấy nhiều sinh viên vẫn gặp khó khăn trong học tập.
+
+• Tỷ lệ sinh viên đạt mức Khá và Giỏi còn tương đối thấp,
+phản ánh sự chênh lệch khá rõ về kết quả học tập giữa các nhóm.
+
+• Nhóm học lực Trung bình và Yếu chiếm phần lớn dữ liệu,
+cho thấy GPA của sinh viên hiện chủ yếu tập trung ở mức chưa cao.
+
+• Kết quả này cho thấy cần tiếp tục phân tích các yếu tố như:
+thời gian tự học, số buổi nghỉ học và hoạt động ngoại khóa
+để tìm ra nguyên nhân ảnh hưởng đến GPA.
+
+• Đây cũng là cơ sở để xây dựng các giải pháp hỗ trợ học tập
+phù hợp cho từng nhóm sinh viên.
 """)
 
-
 # ======================
-# STEP 3 - STUDY HABITS
+# STEP 3 - PHÂN TÍCH THÓI QUEN HỌC TẬP
 # ======================
 
-st.markdown(
-    '<p class="section-title">📚 Step 3: Study Habits Analysis</p>',
-    unsafe_allow_html=True
-)
+st.markdown("---")
+
+st.header("📚 Bước 3: Phân tích thói quen học tập")
 
 st.write("""
 Bước này phân tích thói quen học tập của sinh viên thông qua:
 - Thời gian tự học mỗi tuần
 - Số buổi nghỉ học
-- Mối quan hệ giữa học tập và nghỉ học
+- Mức độ đầu tư cho việc học
 
-Từ đó đánh giá mức độ đầu tư học tập của sinh viên.
+Từ đó đánh giá ý thức học tập và sự khác biệt giữa các sinh viên.
 """)
 
 # ======================
@@ -686,22 +697,22 @@ st.markdown("### 📌 Tổng quan thói quen học tập")
 col1, col2, col3, col4 = st.columns(4)
 
 col1.metric(
-    "⏱️ Study Time TB",
+    "⏱️ Tự học trung bình",
     round(data["StudyTimeWeekly"].mean(), 2)
 )
 
 col2.metric(
-    "📈 Study Time Max",
+    "📈 Tự học cao nhất",
     round(data["StudyTimeWeekly"].max(), 2)
 )
 
 col3.metric(
-    "❌ Absences TB",
+    "❌ Nghỉ học trung bình",
     round(data["Absences"].mean(), 2)
 )
 
 col4.metric(
-    "🚫 Absences Max",
+    "🚫 Nghỉ học cao nhất",
     round(data["Absences"].max(), 2)
 )
 
@@ -736,6 +747,17 @@ st.dataframe(
 )
 
 # ======================
+# TRANSITION
+# ======================
+
+st.write("""
+Để quan sát rõ hơn mức độ phân tán dữ liệu và phát hiện các giá trị bất thường,
+biểu đồ Boxplot được sử dụng cho:
+- Thời gian tự học
+- Số buổi nghỉ học
+""")
+
+# ======================
 # BOXPLOT
 # ======================
 
@@ -753,8 +775,18 @@ with col1:
         ax=ax
     )
 
-    ax.set_title("Boxplot of Weekly Study Time")
+    ax.set_title(
+        "Phân bố thời gian tự học",
+        fontsize=14,
+        fontweight='bold'
+    )
+
     ax.set_xlabel("Study Time Weekly")
+
+    ax.grid(
+        alpha=0.2,
+        linestyle="--"
+    )
 
     st.pyplot(fig)
 
@@ -770,11 +802,20 @@ with col2:
         ax=ax
     )
 
-    ax.set_title("Boxplot of Student Absences")
+    ax.set_title(
+        "Phân bố số buổi nghỉ học",
+        fontsize=14,
+        fontweight='bold'
+    )
+
     ax.set_xlabel("Absences")
 
-    st.pyplot(fig)
+    ax.grid(
+        alpha=0.2,
+        linestyle="--"
+    )
 
+    st.pyplot(fig)
 
 # ======================
 # INTERPRETATION
@@ -783,12 +824,29 @@ with col2:
 st.info("""
 📖 Nhận xét:
 
-- Trung bình mỗi sinh viên dành khoảng 9.77 giờ tự học mỗi tuần, cho thấy phần lớn sinh viên có đầu tư thời gian cho việc học ngoài giờ lên lớp.
-- Tuy nhiên, vẫn tồn tại những sinh viên gần như không tự học (0 giờ), phản ánh sự khác biệt lớn về thói quen học tập.
-- Một số sinh viên có thời gian tự học rất cao, lên tới gần 20 giờ mỗi tuần, cho thấy mức độ tập trung học tập cao hơn đáng kể so với mặt bằng chung.
-- Số buổi nghỉ học trung bình là 14.54 buổi, tương đối cao và có thể ảnh hưởng tiêu cực đến kết quả học tập.
-- Có sinh viên nghỉ học tới 29 buổi, cho thấy tình trạng vắng học diễn ra khá nghiêm trọng ở một bộ phận sinh viên.
-- Nhìn chung, dữ liệu cho thấy sự chênh lệch rõ rệt về ý thức học tập và mức độ tham gia học tập giữa các sinh viên.
+• Trung bình mỗi sinh viên dành khoảng 9.77 giờ tự học mỗi tuần,
+cho thấy phần lớn sinh viên có đầu tư thời gian cho việc học ngoài giờ lên lớp.
+
+• Tuy nhiên,
+vẫn tồn tại những sinh viên gần như không tự học,
+phản ánh sự khác biệt khá lớn về thói quen học tập.
+
+• Một số sinh viên có thời gian tự học rất cao,
+gần 20 giờ mỗi tuần,
+cho thấy mức độ tập trung học tập vượt trội hơn mặt bằng chung.
+
+• Số buổi nghỉ học trung bình ở mức khá cao,
+điều này có thể ảnh hưởng tiêu cực đến kết quả học tập.
+
+• Có sinh viên nghỉ học tới gần 30 buổi,
+cho thấy tình trạng vắng học vẫn diễn ra khá nghiêm trọng ở một bộ phận sinh viên.
+
+• Boxplot cho thấy dữ liệu có độ phân tán tương đối lớn,
+đặc biệt xuất hiện một số giá trị ngoại lệ về thời gian học và số buổi nghỉ học.
+
+• Nhìn chung,
+dữ liệu phản ánh sự chênh lệch rõ rệt về ý thức học tập
+và mức độ tham gia học tập giữa các sinh viên.
 """)
 
 # ======================
