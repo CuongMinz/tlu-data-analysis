@@ -2353,3 +2353,256 @@ chủ yếu hỗ trợ phát triển kỹ năng và tinh thần học tập.
 mô hình OLS cho thấy GPA của sinh viên chịu ảnh hưởng mạnh bởi:
 thời gian học tập, mức độ chuyên cần và sự hỗ trợ từ gia đình.
 """)
+
+# =========================================================
+# STEP 10 — ACADEMIC RECOMMENDATION SYSTEM
+# =========================================================
+
+st.markdown("---")
+
+st.header("🎯 Step 10: Academic Recommendation System")
+
+st.write("""
+Dựa trên kết quả phân tích dữ liệu và mô hình học máy,
+hệ thống sẽ đưa ra các gợi ý học tập phù hợp cho sinh viên.
+
+Mục tiêu:
+- Hỗ trợ sinh viên cải thiện GPA
+- Đề xuất mức học tập phù hợp
+- Giảm nguy cơ học lực yếu
+- Hỗ trợ lập kế hoạch học tập hiệu quả hơn
+""")
+
+# =========================================================
+# CREATE COPY
+# =========================================================
+
+recommend_df = data.copy()
+
+# =========================================================
+# RECOMMENDATION FUNCTION
+# =========================================================
+
+def recommend(row):
+
+    # =====================================================
+    # WEAK PERFORMANCE
+    # =====================================================
+
+    if row["GPA"] < 2.0:
+
+        if row["Absences"] > 15:
+
+            return (
+                "⚠️ GPA thấp và nghỉ học nhiều. "
+                "Cần giảm nghỉ học, tăng thời gian tự học "
+                "và nên tham gia tutoring."
+            )
+
+        elif row["StudyTimeWeekly"] < 8:
+
+            return (
+                "⚠️ GPA thấp do thời gian tự học chưa đủ. "
+                "Nên tăng thời gian học mỗi tuần."
+            )
+
+        else:
+
+            return (
+                "⚠️ GPA thấp. "
+                "Nên giảm tải học phần và tập trung cải thiện nền tảng."
+            )
+
+    # =====================================================
+    # AVERAGE PERFORMANCE
+    # =====================================================
+
+    elif row["GPA"] < 3.0:
+
+        return (
+            "📘 Kết quả học tập ở mức trung bình. "
+            "Cần duy trì học tập ổn định và hạn chế nghỉ học."
+        )
+
+    # =====================================================
+    # GOOD PERFORMANCE
+    # =====================================================
+
+    elif row["GPA"] < 3.5:
+
+        return (
+            "✅ Kết quả học tập khá tốt. "
+            "Có thể đăng ký thêm học phần hoặc tham gia hoạt động ngoại khóa."
+        )
+
+    # =====================================================
+    # EXCELLENT PERFORMANCE
+    # =====================================================
+
+    else:
+
+        return (
+            "🏆 Thành tích học tập rất tốt. "
+            "Có thể cân nhắc học nâng cao hoặc phát triển kỹ năng chuyên môn."
+        )
+
+# =========================================================
+# APPLY RECOMMENDATION
+# =========================================================
+
+recommend_df["Recommendation"] = recommend_df.apply(
+    recommend,
+    axis=1
+)
+
+# =========================================================
+# RECOMMEND CATEGORY
+# =========================================================
+
+def classify_recommendation(gpa):
+
+    if gpa < 2.0:
+        return "Need Support"
+
+    elif gpa < 3.0:
+        return "Average"
+
+    elif gpa < 3.5:
+        return "Good"
+
+    else:
+        return "Excellent"
+
+recommend_df["Category"] = recommend_df["GPA"].apply(
+    classify_recommendation
+)
+
+# =========================================================
+# KPI
+# =========================================================
+
+st.subheader("📌 Recommendation Overview")
+
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+
+    st.metric(
+        "Students Need Support",
+        len(recommend_df[recommend_df["GPA"] < 2.0])
+    )
+
+with col2:
+
+    st.metric(
+        "Average Students",
+        len(
+            recommend_df[
+                (recommend_df["GPA"] >= 2.0) &
+                (recommend_df["GPA"] < 3.0)
+            ]
+        )
+    )
+
+with col3:
+
+    st.metric(
+        "Good Students",
+        len(
+            recommend_df[
+                (recommend_df["GPA"] >= 3.0) &
+                (recommend_df["GPA"] < 3.5)
+            ]
+        )
+    )
+
+with col4:
+
+    st.metric(
+        "Excellent Students",
+        len(recommend_df[recommend_df["GPA"] >= 3.5])
+    )
+
+# =========================================================
+# RECOMMENDATION TABLE
+# =========================================================
+
+st.subheader("📋 Student Recommendations")
+
+show_cols = [
+    "StudentID",
+    "GPA",
+    "StudyTimeWeekly",
+    "Absences",
+    "Recommendation"
+]
+
+st.dataframe(
+    recommend_df[show_cols],
+    use_container_width=True
+)
+
+# =========================================================
+# PIE CHART
+# =========================================================
+
+st.subheader("📊 Recommendation Category Distribution")
+
+category_counts = (
+    recommend_df["Category"]
+    .value_counts()
+)
+
+explode = [0.08, 0, 0, 0]
+
+fig, ax = plt.subplots(figsize=(7,7))
+
+ax.pie(
+    category_counts.values,
+    labels=category_counts.index,
+    autopct='%1.1f%%',
+    explode=explode,
+    shadow=True
+)
+
+ax.set_title(
+    "Student Recommendation Categories",
+    fontsize=16,
+    fontweight='bold'
+)
+
+st.pyplot(fig)
+
+# =========================================================
+# FINAL INTERPRETATION
+# =========================================================
+
+st.info("""
+📖 Nhận xét:
+
+• Hệ thống gợi ý học tập được xây dựng dựa trên:
+GPA, thời gian tự học và số buổi nghỉ học của sinh viên.
+
+• Những sinh viên có GPA thấp thường đi kèm:
+- thời gian học ít
+- số buổi nghỉ cao
+- hiệu suất học tập chưa ổn định.
+
+• Nhóm sinh viên học lực tốt có xu hướng:
+- học tập đều đặn
+- nghỉ học ít
+- duy trì thời gian tự học cao hơn trung bình.
+
+• Kết quả cho thấy việc tăng thời gian học tập
+và giảm số buổi nghỉ học
+có thể cải thiện đáng kể kết quả học tập.
+
+• Hệ thống recommendation giúp sinh viên:
+- định hướng kế hoạch học tập
+- lựa chọn khối lượng học phù hợp
+- nâng cao hiệu quả học tập trong tương lai.
+
+• Đây là bước mở rộng mang tính ứng dụng thực tế,
+giúp chuyển đổi dữ liệu phân tích
+thành các gợi ý hỗ trợ học tập cho sinh viên.
+""")
