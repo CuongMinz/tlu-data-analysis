@@ -2696,3 +2696,35 @@ có thể cải thiện đáng kể GPA của sinh viên.
 giúp chuyển đổi kết quả phân tích dữ liệu
 thành các gợi ý hỗ trợ học tập cụ thể cho sinh viên.
 """)
+
+# =========================================================
+# FOOTER
+# =========================================================
+
+st.markdown("---")
+
+st.markdown("""
+<div style='text-align: center; padding: 20px;'>
+
+<h4 style='color:#2c3e50;'>
+📊 Student Performance Analysis Dashboard
+</h4>
+
+<p style='color:gray; font-size:15px;'>
+Developed using Python, Streamlit, Pandas, Matplotlib, Seaborn and Machine Learning
+</p>
+
+<p style='color:gray; font-size:14px;'>
+Course: Scientific Data Programming
+</p>
+
+<p style='color:gray; font-size:14px;'>
+Thuy Loi University (TLU)
+</p>
+
+<p style='color:#7f8c8d; font-size:13px;'>
+© 2026 - Student GPA Analysis Project
+</p>
+
+</div>
+""", unsafe_allow_html=True)
