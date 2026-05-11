@@ -2216,4 +2216,152 @@ OLS Regression được xem là mô hình phù hợp nhất
 để phân tích và dự đoán GPA trong bài toán này.
 """)
 
+# =========================================================
+# SELECT FEATURES
+# =========================================================
+
+X = data[[
+    "StudyTimeWeekly",
+    "Absences",
+    "ParentalSupport",
+    "Tutoring",
+    "Extracurricular",
+    "Sports",
+    "Music",
+    "Volunteering"
+]]
+
+y = data["GPA"]
+
+# =========================================================
+# ADD CONSTANT
+# =========================================================
+
+X = sm.add_constant(X)
+
+# =========================================================
+# BUILD MODEL
+# =========================================================
+
+model = sm.OLS(y, X).fit()
+
+# =========================================================
+# MODEL SUMMARY
+# =========================================================
+
+st.subheader("📄 OLS Regression Summary")
+
+st.text(model.summary())
+
+# =========================================================
+# COEFFICIENT TABLE
+# =========================================================
+
+st.subheader("📊 Regression Coefficients")
+
+coef_df = pd.DataFrame({
+    "Feature": model.params.index,
+    "Coefficient": model.params.values.round(4),
+    "P-Value": model.pvalues.values.round(4)
+})
+
+st.dataframe(
+    coef_df,
+    use_container_width=True
+)
+
+# =========================================================
+# VISUALIZE COEFFICIENTS
+# =========================================================
+
+st.subheader("📈 Feature Impact on GPA")
+
+coef_plot = coef_df[coef_df["Feature"] != "const"]
+
+fig, ax = plt.subplots(figsize=(9,5))
+
+sns.barplot(
+    data=coef_plot,
+    x="Coefficient",
+    y="Feature",
+    ax=ax
+)
+
+ax.axvline(0, color='black', linestyle='--')
+
+ax.set_title(
+    "OLS Coefficients",
+    fontsize=18,
+    fontweight='bold'
+)
+
+st.pyplot(fig)
+
+# =========================================================
+# MODEL PERFORMANCE
+# =========================================================
+
+r2 = model.rsquared
+adj_r2 = model.rsquared_adj
+
+col1, col2 = st.columns(2)
+
+with col1:
+
+    st.metric(
+        "📌 R² Score",
+        round(r2, 3)
+    )
+
+with col2:
+
+    st.metric(
+        "📌 Adjusted R²",
+        round(adj_r2, 3)
+    )
+
+# =========================================================
+# MOST IMPORTANT FACTORS
+# =========================================================
+
+important_feature = (
+    coef_plot.iloc[
+        coef_plot["Coefficient"].abs().idxmax()
+    ]
+)
+
+# =========================================================
+# INTERPRETATION
+# =========================================================
+
+st.info(f"""
+📖 Nhận xét:
+
+• Mô hình OLS cho thấy mức độ ảnh hưởng của từng yếu tố tới GPA.
+
+• R² = {r2:.3f} cho thấy mô hình giải thích được khoảng
+{r2*100:.1f}% sự biến động của GPA.
+
+• Yếu tố ảnh hưởng mạnh nhất là
+'{important_feature["Feature"]}'
+với hệ số khoảng {important_feature["Coefficient"]:.2f}.
+
+• Hệ số dương cho thấy yếu tố đó làm GPA tăng,
+trong khi hệ số âm cho thấy GPA có xu hướng giảm.
+
+• Absences thường có hệ số âm khá lớn,
+cho thấy nghỉ học nhiều ảnh hưởng tiêu cực rõ rệt tới kết quả học tập.
+
+• StudyTimeWeekly và ParentalSupport
+thường có tác động tích cực tới GPA.
+
+• Một số hoạt động ngoại khóa có tác động nhỏ,
+cho thấy chúng hỗ trợ học tập ở mức vừa phải
+thay vì quyết định trực tiếp GPA.
+
+• Nhìn chung,
+mô hình cho thấy sự chuyên cần và thời gian học tập
+là những yếu tố quan trọng nhất ảnh hưởng đến kết quả học tập của sinh viên.
+""")
+
 
