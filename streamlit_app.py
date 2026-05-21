@@ -50,12 +50,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown(
-    '<div class="main-title">📊 Student GPA Analysis Dashboard</div>',
+    '<div class="main-title">PHÂN TÍCH KẾT QUẢ HỌC TẬP CỦA SINH VIÊN</div>',
     unsafe_allow_html=True
 )
 
 st.markdown(
-    '<div class="sub-title">Scientific Data Programming Project</div>',
+    '<div class="sub-title">Lập trình khoa học dữ liệu</div>',
     unsafe_allow_html=True
 )
 
