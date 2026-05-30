@@ -1018,38 +1018,34 @@ col3.metric(
     )
 )
 
-    st.markdown("### 📈 Mối quan hệ giữa số buổi nghỉ học và GPA")
+st.markdown("### 📈 Mối quan hệ giữa số buổi nghỉ học và GPA")
+fig, ax = plt.subplots(figsize=(6,4))
+sns.regplot(
+    data=data,
+    x="Absences",
+    y="GPA",
+    scatter_kws={
+        "alpha":0.4
+    },
+    line_kws={
+        "color":"red"
+    },
+    ax=ax
+)
+ax.set_title(
+    "Xu hướng hồi quy giữa nghỉ học và GPA",
+    fontsize=14,
+    fontweight='bold'
+)
 
-    fig, ax = plt.subplots(figsize=(6,4))
+ax.set_xlabel("Số buổi nghỉ học")
+ax.set_ylabel("GPA")
 
-    sns.regplot(
-        data=data,
-        x="Absences",
-        y="GPA",
-        scatter_kws={
-            "alpha":0.4
-        },
-        line_kws={
-            "color":"red"
-        },
-        ax=ax
-    )
-
-    ax.set_title(
-        "Xu hướng hồi quy giữa nghỉ học và GPA",
-        fontsize=14,
-        fontweight='bold'
-    )
-
-    ax.set_xlabel("Số buổi nghỉ học")
-    ax.set_ylabel("GPA")
-
-    ax.grid(
-        alpha=0.3,
-        linestyle="--"
-    )
-
-    st.pyplot(fig)
+ax.grid(
+    alpha=0.3,
+    linestyle="--"
+)
+st.pyplot(fig)
 
 
 # GROUP ANALYSIS
