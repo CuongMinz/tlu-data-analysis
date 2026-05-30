@@ -4,9 +4,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import statsmodels.api as sm
 
-# ======================
+
 # CONFIG + STYLE
-# ======================
 st.set_page_config(
     page_title="Student GPA Analysis",
     page_icon="📊",
@@ -59,9 +58,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# ======================
+
 # LOAD DATA
-# ======================
 try:
     df_raw = pd.read_csv("data.csv")
 
@@ -69,17 +67,12 @@ except:
     st.error("❌ Không tìm thấy file data.csv")
     st.stop()
 
-# ======================
+
 # CLEAN DATA
-# ======================
 df = df_raw.copy()
 
-# Remove spaces in column names
 df.columns = df.columns.str.strip()
 
-# ======================
-# DROP UNUSED COLUMNS
-# ======================
 if "Age" in df.columns:
     df = df.drop(columns=["Age"])
 
@@ -89,19 +82,12 @@ if "Ethnicity" in df.columns:
 if "ParentalEducation" in df.columns:
     df = df.drop(columns=["ParentalEducation"])
 
-# ======================
-# REMOVE DUPLICATES
-# ======================
 df = df.drop_duplicates()
 
-# ======================
-# REMOVE NULL VALUES
-# ======================
 df = df.dropna()
 
-# ======================
+
 # CONVERT DATA TYPES
-# ======================
 binary_cols = [
     "Gender",
     "Tutoring",
@@ -115,9 +101,8 @@ for col in binary_cols:
     if col in df.columns:
         df[col] = df[col].astype(int)
 
-# ======================
+
 # SIDEBAR FILTER
-# ======================
 st.sidebar.title("⚙️ Filters")
 
 if st.sidebar.button("🔄 Reset Filters"):
@@ -129,38 +114,28 @@ gender_filter = st.sidebar.multiselect(
     default=[0, 1]
 )
 
-tutoring_filter = st.sidebar.multiselect(
-    "Tutoring",
-    [0, 1],
-    default=[0, 1]
-)
-
 grade_filter = st.sidebar.multiselect(
     "Grade Class",
     sorted(df["GradeClass"].unique()),
     default=sorted(df["GradeClass"].unique())
 )
 
-# ======================
+
 # FILTER DATA
-# ======================
 df_filtered = df[
     (df["Gender"].isin(gender_filter)) &
-    (df["Tutoring"].isin(tutoring_filter)) &
     (df["GradeClass"].isin(grade_filter))
 ]
 
-# ======================
+
 # SESSION DATA
-# ======================
 if "session_df" not in st.session_state:
     st.session_state.session_df = df_filtered.copy()
 else:
     st.session_state.session_df = df_filtered.copy()
 
-# ======================
+
 # CRUD MODULE
-# ======================
 st.markdown(
     '<p class="section-title">🛠️ CRUD Management</p>',
     unsafe_allow_html=True
@@ -168,17 +143,15 @@ st.markdown(
 
 df_work = st.session_state.session_df
 
-# ======================
+
 # CREATE DATA
-# ======================
 with st.form("add_form"):
 
-    st.markdown("### ➕ Add New Student")
+    st.markdown("### ➕ Thêm sinh viên mới")
 
     col1, col2 = st.columns(2)
 
     with col1:
-
         student_id = st.number_input(
             "Student ID",
             min_value=1000,
@@ -211,7 +184,6 @@ with st.form("add_form"):
         )
 
     with col2:
-
         parental_support = st.slider(
             "Parental Support",
             min_value=0,
@@ -250,11 +222,8 @@ with st.form("add_form"):
             "Grade Class",
             [0, 1, 2, 3, 4]
         )
-
-    submit = st.form_submit_button("➕ Add Student")
-
+    submit = st.form_submit_button("➕ Thêm sinh viên")
     if submit:
-
         new_row = pd.DataFrame([{
             "StudentID": student_id,
             "Gender": gender,
@@ -275,12 +244,11 @@ with st.form("add_form"):
             ignore_index=True
         )
 
-        st.success("✔ Student added successfully")
+        st.success("✔ Thêm sinh viên thành công")
 
-# ======================
+
 # UPDATE DATA
-# ======================
-st.markdown("### ✏️ Edit Dataset")
+st.markdown("### ✏️ Chỉnh sửa dữ liệu")
 
 edited_df = st.data_editor(
     st.session_state.session_df,
@@ -290,13 +258,12 @@ edited_df = st.data_editor(
 
 st.session_state.session_df = edited_df
 
-# ======================
+
 # DELETE DATA
-# ======================
-st.markdown("### 🗑️ Delete Row")
+st.markdown("### 🗑️ Xóa hàng")
 
 idx = st.number_input(
-    "Enter row index to delete",
+    "Chọn dòng muốn xóa",
     min_value=0,
     max_value=max(len(st.session_state.session_df)-1, 0),
     step=1
@@ -310,13 +277,12 @@ if st.button("🗑️ Delete"):
         .reset_index(drop=True)
     )
 
-    st.success("✔ Row deleted successfully")
+    st.success("✔ Xóa hàng thành công!")
 
-# ======================
+
 # DATA VIEW
-# ======================
 st.markdown(
-    '<p class="section-title">📂 Current Dataset</p>',
+    '<p class="section-title">📂 Bảng dữ liệu hiện tại</p>',
     unsafe_allow_html=True
 )
 
@@ -325,16 +291,15 @@ st.dataframe(
     use_container_width=True
 )
 
-# ======================
+
 # SEARCH DATA
-# ======================
 st.markdown(
-    '<p class="section-title">🔍 Search Data</p>',
+    '<p class="section-title">🔍 Tìm kiếm dữ liệu</p>',
     unsafe_allow_html=True
 )
 
 keyword = st.text_input(
-    "Search by GPA, study time, absences, activities..."
+    "Tìm kiếm theo GPA, study time, absences, activities..."
 )
 
 search_df = st.session_state.session_df.copy()
@@ -356,11 +321,10 @@ st.dataframe(
     use_container_width=True
 )
 
-# ======================
-# EXPORT DATA
-# ======================
+
+# EXPORT DỮ LIỆU RA FILE CSV
 st.markdown(
-    '<p class="section-title">📤 Export Dataset</p>',
+    '<p class="section-title">📤 Xuấdt dữ liệu</p>',
     unsafe_allow_html=True
 )
 
@@ -371,17 +335,16 @@ csv_data = (
 )
 
 st.download_button(
-    label="📥 Download CSV",
+    label="Download CSV",
     data=csv_data,
     file_name="student_gpa_analysis.csv",
     mime="text/csv"
 )
 
-# ======================
+
 # KPI
-# ======================
 st.markdown(
-    '<p class="section-title">📌 Overview</p>',
+    '<p class="section-title">📌 Tổng quan</p>',
     unsafe_allow_html=True
 )
 
@@ -391,33 +354,31 @@ col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.metric(
-        "👨‍🎓 Students",
+        "👨‍🎓 Số sinh viên",
         len(data)
     )
 
 with col2:
     st.metric(
-        "📊 Average GPA",
+        "📊 Điểm GPA trung bình",
         round(data["GPA"].mean(), 2)
     )
 
 with col3:
     st.metric(
-        "📚 Avg Study Time",
+        "📚 Thời gian học trung bình",
         round(data["StudyTimeWeekly"].mean(), 2)
     )
 
 with col4:
     st.metric(
-        "❌ Avg Absences",
+        "❌ Số buổi nghỉ trung bình",
         round(data["Absences"].mean(), 2)
     )
 
 
-# ======================
-# STEP 1 - TỔNG QUAN GPA
-# ======================
 
+# STEP 1 - TỔNG QUAN GPA
 st.markdown("---")
 
 st.header("📊 Bước 1: Tổng quan phân bố GPA")
@@ -430,10 +391,8 @@ Từ đó có thể đánh giá:
 - Sinh viên đạt GPA cao hay thấp chiếm đa số
 """)
 
-# ======================
-# HISTOGRAM GPA
-# ======================
 
+# HISTOGRAM GPA
 fig, ax = plt.subplots(figsize=(10, 5))
 
 sns.histplot(
@@ -444,7 +403,6 @@ sns.histplot(
     ax=ax
 )
 
-# Format
 ax.set_title(
     "Phân bố GPA của sinh viên",
     fontsize=16,
@@ -454,18 +412,14 @@ ax.set_title(
 ax.set_xlabel("GPA")
 ax.set_ylabel("Số lượng sinh viên")
 
-# Grid
 ax.grid(
     alpha=0.3,
     linestyle="--"
 )
-
 st.pyplot(fig)
 
-# ======================
-# GPA SUMMARY
-# ======================
 
+# GPA SUMMARY
 st.markdown("### 📌 Thống kê GPA")
 
 gpa_data = st.session_state.session_df["GPA"]
@@ -492,10 +446,8 @@ col4.metric(
     round(gpa_data.median(), 2)
 )
 
-# ======================
-# INTERPRETATION
-# ======================
 
+# INTERPRETATION
 st.info("""
 📖 Nhận xét:
 
@@ -511,10 +463,8 @@ không bị lệch mạnh về một phía.
 • Điều này cho thấy phần lớn sinh viên có kết quả học tập ở mức ổn định.
 """)
 
-# ======================
-# STEP 2 - PHÂN LOẠI HỌC LỰC
-# ======================
 
+# STEP 2 - PHÂN LOẠI HỌC LỰC
 st.markdown("---")
 
 st.header("🎓 Bước 2: Phân loại học lực sinh viên")
@@ -527,10 +477,8 @@ Qua đó có thể đánh giá:
 - Tỷ lệ sinh viên học tốt và học yếu
 """)
 
-# ======================
-# CREATE GRADE CATEGORY
-# ======================
 
+# CREATE GRADE CATEGORY
 grade_df = st.session_state.session_df.copy()
 
 def classify_gpa(gpa):
@@ -549,20 +497,16 @@ def classify_gpa(gpa):
 
 grade_df["HocLuc"] = grade_df["GPA"].apply(classify_gpa)
 
-# ======================
-# COUNT DATA
-# ======================
 
+# COUNT DATA
 grade_counts = (
     grade_df["HocLuc"]
     .value_counts()
     .reindex(["Yếu", "Trung bình", "Khá", "Giỏi"])
 )
 
-# ======================
-# PIE CHART
-# ======================
 
+# PIE CHART
 st.markdown("### 🥧 Tỷ lệ học lực sinh viên")
 
 fig, ax = plt.subplots(figsize=(8,8))
@@ -571,10 +515,10 @@ fig, ax = plt.subplots(figsize=(8,8))
 explode = [0.03, 0.05, 0.08, 0.12]
 
 colors = [
-    "#e74c3c",   # đỏ
-    "#f39c12",   # cam
-    "#3498db",   # xanh dương
-    "#2ecc71"    # xanh lá
+    "#e74c3c",  
+    "#f39c12",   
+    "#3498db",   
+    "#2ecc71"    
 ]
 
 ax.pie(
@@ -596,10 +540,8 @@ ax.set_title(
 
 st.pyplot(fig)
 
-# ======================
-# SUMMARY TABLE
-# ======================
 
+# SUMMARY TABLE
 st.markdown("### 📋 Bảng thống kê học lực")
 
 summary_df = pd.DataFrame({
@@ -615,10 +557,8 @@ st.dataframe(
     use_container_width=True
 )
 
-# ======================
-# KPI
-# ======================
 
+# KPI
 col1, col2, col3, col4 = st.columns(4)
 
 col1.metric(
@@ -641,10 +581,8 @@ col4.metric(
     int(grade_counts["Giỏi"])
 )
 
-# ======================
-# INTERPRETATION
-# ======================
 
+# INTERPRETATION
 st.info("""
 📖 Nhận xét:
 
@@ -665,10 +603,8 @@ thời gian tự học, số buổi nghỉ học và hoạt động ngoại khó
 phù hợp cho từng nhóm sinh viên.
 """)
 
-# ======================
-# STEP 3 - PHÂN TÍCH THÓI QUEN HỌC TẬP
-# ======================
 
+# STEP 3 - PHÂN TÍCH THÓI QUEN HỌC TẬP
 st.markdown("---")
 
 st.header("📚 Bước 3: Phân tích thói quen học tập")
@@ -682,17 +618,13 @@ Bước này phân tích thói quen học tập của sinh viên thông qua:
 Từ đó đánh giá ý thức học tập và sự khác biệt giữa các sinh viên.
 """)
 
-# ======================
-# DATA
-# ======================
 
+# DATA
 data = st.session_state.session_df
 
-# ======================
 # KPI
-# ======================
 
-st.markdown("### 📌 Tổng quan thói quen học tập")
+st.markdown("📌 Tổng quan thói quen học tập")
 
 col1, col2, col3, col4 = st.columns(4)
 
@@ -716,11 +648,9 @@ col4.metric(
     round(data["Absences"].max(), 2)
 )
 
-# ======================
-# SUMMARY TABLE
-# ======================
 
-st.markdown("### 📋 Bảng thống kê")
+# SUMMARY TABLE
+st.markdown("📋 Bảng thống kê")
 
 summary_df = pd.DataFrame({
 
@@ -746,10 +676,8 @@ st.dataframe(
     use_container_width=True
 )
 
-# ======================
-# TRANSITION
-# ======================
 
+# TRANSITION
 st.write("""
 Để quan sát rõ hơn mức độ phân tán dữ liệu và phát hiện các giá trị bất thường,
 biểu đồ Boxplot được sử dụng cho:
@@ -757,19 +685,13 @@ biểu đồ Boxplot được sử dụng cho:
 - Số buổi nghỉ học
 """)
 
-# ======================
-# BOXPLOT
-# ======================
 
+# BOXPLOT
 col1, col2 = st.columns(2)
 
-# -------- STUDY TIME --------
 with col1:
-
-    st.markdown("### 📦 Boxplot thời gian tự học")
-
+    st.markdown("📦Thời gian tự học")
     fig, ax = plt.subplots(figsize=(7,3))
-
     sns.boxplot(
         x=data["StudyTimeWeekly"],
         ax=ax
@@ -793,7 +715,7 @@ with col1:
 # -------- ABSENCES --------
 with col2:
 
-    st.markdown("### 📦 Boxplot số buổi nghỉ học")
+    st.markdown("Số buổi nghỉ học")
 
     fig, ax = plt.subplots(figsize=(7,3))
 
@@ -817,10 +739,8 @@ with col2:
 
     st.pyplot(fig)
 
-# ======================
-# INTERPRETATION
-# ======================
 
+# INTERPRETATION
 st.info("""
 📖 Nhận xét:
 
@@ -849,10 +769,8 @@ dữ liệu phản ánh sự chênh lệch rõ rệt về ý thức học tập
 và mức độ tham gia học tập giữa các sinh viên.
 """)
 
-# ======================
-# STEP 4 - THỜI GIAN TỰ HỌC VÀ GPA
-# ======================
 
+# STEP 4 - THỜI GIAN TỰ HỌC VÀ GPA
 st.markdown("---")
 
 st.header("📈 Bước 4: Mối quan hệ giữa thời gian tự học và GPA")
