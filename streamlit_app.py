@@ -1018,8 +1018,9 @@ col3.metric(
     )
 )
 
+col1, col2 = st.columns(2)
 
-with col:
+with col2:
 
     st.markdown("### 📈 Regression Plot")
 
