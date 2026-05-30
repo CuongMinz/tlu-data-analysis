@@ -1245,23 +1245,14 @@ col3.metric(
 )
 
 
-# TABLE
-st.markdown("### 📋 Bảng so sánh")
-
-st.dataframe(
-    activity_df,
-    use_container_width=True
-)
-
-
 # GROUPED BAR CHART
 st.markdown("### 📊 GPA trung bình theo hoạt động")
 
 plot_df = activity_df.melt(
     id_vars="Hoạt động",
     value_vars=[
-        "GPA không tham gia",
-        "GPA tham gia"
+        "Không tham gia",
+        "Tham gia"
     ],
     var_name="Nhóm",
     value_name="GPA"
