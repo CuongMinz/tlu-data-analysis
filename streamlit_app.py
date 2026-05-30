@@ -66,7 +66,7 @@ try:
     df_raw = pd.read_csv("data.csv")
 
 except:
-    st.error("❌ Cannot find data.csv")
+    st.error("❌ Không tìm thấy file data.csv")
     st.stop()
 
 # ======================
