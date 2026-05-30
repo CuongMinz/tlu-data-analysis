@@ -1018,11 +1018,7 @@ col3.metric(
     )
 )
 
-col1, col2 = st.columns(2)
-
-with col2:
-
-    st.markdown("### 📈 Regression Plot")
+    st.markdown("### 📈 Mối quan hệ giữa số buổi nghỉ học và GPA")
 
     fig, ax = plt.subplots(figsize=(6,4))
 
