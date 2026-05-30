@@ -1018,43 +1018,8 @@ col3.metric(
     )
 )
 
-col1, col2 = st.columns(2)
 
-
-# SCATTER PLOT
 with col1:
-
-    st.markdown("### 📉 Scatter Plot: Absences vs GPA")
-
-    fig, ax = plt.subplots(figsize=(6,4))
-
-    sns.scatterplot(
-        data=data,
-        x="Absences",
-        y="GPA",
-        alpha=0.6,
-        ax=ax
-    )
-
-    ax.set_title(
-        "Mối quan hệ giữa nghỉ học và GPA",
-        fontsize=14,
-        fontweight='bold'
-    )
-
-    ax.set_xlabel("Số buổi nghỉ học")
-    ax.set_ylabel("GPA")
-
-    ax.grid(
-        alpha=0.3,
-        linestyle="--"
-    )
-
-    st.pyplot(fig)
-
-
-# REGRESSION PLOT
-with col2:
 
     st.markdown("### 📈 Regression Plot")
 
