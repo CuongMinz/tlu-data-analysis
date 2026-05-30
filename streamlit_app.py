@@ -103,9 +103,9 @@ for col in binary_cols:
 
 
 # SIDEBAR FILTER
-st.sidebar.title("⚙️ Filters")
+st.sidebar.title("⚙️ Lọc dữ liệu")
 
-if st.sidebar.button("🔄 Reset Filters"):
+if st.sidebar.button("🔄 Reset"):
     st.rerun()
 
 gender_filter = st.sidebar.multiselect(
