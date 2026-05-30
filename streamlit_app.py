@@ -624,7 +624,7 @@ data = st.session_state.session_df
 
 # KPI
 
-st.markdown("###📌 Tổng quan thói quen học tập")
+st.markdown("### 📌 Tổng quan thói quen học tập")
 
 col1, col2, col3, col4 = st.columns(4)
 
