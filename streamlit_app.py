@@ -690,7 +690,7 @@ biểu đồ Boxplot được sử dụng cho:
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("###📦Thời gian tự học")
+    st.markdown("### 📦Thời gian tự học")
     fig, ax = plt.subplots(figsize=(7,3))
     sns.boxplot(
         x=data["StudyTimeWeekly"],
@@ -714,7 +714,7 @@ with col1:
 
 with col2:
 
-    st.markdown("###📦Số buổi nghỉ học")
+    st.markdown("### 📦Số buổi nghỉ học")
 
     fig, ax = plt.subplots(figsize=(7,3))
 
