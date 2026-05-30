@@ -1251,12 +1251,17 @@ st.markdown("### 📊 GPA trung bình theo hoạt động")
 plot_df = activity_df.melt(
     id_vars="Hoạt động",
     value_vars=[
-        "Không tham gia",
-        "Tham gia"
+        "GPA không tham gia",
+        "GPA tham gia"
     ],
     var_name="Nhóm",
     value_name="GPA"
 )
+
+plot_df["Nhóm"] = plot_df["Nhóm"].replace({
+    "GPA không tham gia": "Không tham gia",
+    "GPA tham gia": "Tham gia"
+})
 
 fig, ax = plt.subplots(figsize=(10,5))
 
