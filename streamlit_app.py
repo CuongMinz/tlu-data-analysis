@@ -8,7 +8,6 @@ import statsmodels.api as sm
 # CONFIG + STYLE
 st.set_page_config(
     page_title="Student GPA Analysis",
-    page_icon="📊",
     layout="wide"
 )
 
@@ -64,7 +63,7 @@ try:
     df_raw = pd.read_csv("data.csv")
 
 except:
-    st.error("❌ Không tìm thấy file data.csv")
+    st.error("Không tìm thấy file data.csv")
     st.stop()
 
 
@@ -103,9 +102,9 @@ for col in binary_cols:
 
 
 # SIDEBAR FILTER
-st.sidebar.title("⚙️ Lọc dữ liệu")
+st.sidebar.title("Lọc dữ liệu")
 
-if st.sidebar.button("🔄 Reset"):
+if st.sidebar.button("Reset"):
     st.rerun()
 
 gender_filter = st.sidebar.multiselect(
@@ -137,7 +136,7 @@ else:
 
 # CRUD MODULE
 st.markdown(
-    '<p class="section-title">🛠️ CRUD Management</p>',
+    '<p class="section-title">CRUD Management</p>',
     unsafe_allow_html=True
 )
 
@@ -147,7 +146,7 @@ df_work = st.session_state.session_df
 # CREATE DATA
 with st.form("add_form"):
 
-    st.markdown("### ➕ Thêm sinh viên mới")
+    st.markdown("### Thêm sinh viên mới")
 
     col1, col2 = st.columns(2)
 
@@ -222,7 +221,7 @@ with st.form("add_form"):
             "Grade Class",
             [0, 1, 2, 3, 4]
         )
-    submit = st.form_submit_button("➕ Thêm sinh viên")
+    submit = st.form_submit_button("Thêm sinh viên")
     if submit:
         new_row = pd.DataFrame([{
             "StudentID": student_id,
@@ -248,7 +247,7 @@ with st.form("add_form"):
 
 
 # UPDATE DATA
-st.markdown("### ✏️ Chỉnh sửa dữ liệu")
+st.markdown("### Chỉnh sửa dữ liệu")
 
 edited_df = st.data_editor(
     st.session_state.session_df,
@@ -260,7 +259,7 @@ st.session_state.session_df = edited_df
 
 
 # DELETE DATA
-st.markdown("### 🗑️ Xóa hàng")
+st.markdown("### Xóa hàng")
 
 idx = st.number_input(
     "Chọn hàng muốn xóa",
@@ -269,7 +268,7 @@ idx = st.number_input(
     step=1
 )
 
-if st.button("🗑️ Delete"):
+if st.button("Delete"):
 
     st.session_state.session_df = (
         st.session_state.session_df
@@ -282,7 +281,7 @@ if st.button("🗑️ Delete"):
 
 # DATA VIEW
 st.markdown(
-    '<p class="section-title">📂 Bảng dữ liệu hiện tại</p>',
+    '<p class="section-title">Bảng dữ liệu hiện tại</p>',
     unsafe_allow_html=True
 )
 
@@ -294,7 +293,7 @@ st.dataframe(
 
 # SEARCH DATA
 st.markdown(
-    '<p class="section-title">🔍 Tìm kiếm dữ liệu</p>',
+    '<p class="section-title">Tìm kiếm dữ liệu</p>',
     unsafe_allow_html=True
 )
 
@@ -324,7 +323,7 @@ st.dataframe(
 
 # EXPORT DỮ LIỆU RA FILE CSV
 st.markdown(
-    '<p class="section-title">📤 Xuất dữ liệu</p>',
+    '<p class="section-title">Xuất dữ liệu</p>',
     unsafe_allow_html=True
 )
 
@@ -344,7 +343,7 @@ st.download_button(
 
 # KPI
 st.markdown(
-    '<p class="section-title">📌 Tổng quan</p>',
+    '<p class="section-title">Tổng quan</p>',
     unsafe_allow_html=True
 )
 
@@ -354,25 +353,25 @@ col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.metric(
-        "👨‍🎓 Số sinh viên",
+        "Số sinh viên",
         len(data)
     )
 
 with col2:
     st.metric(
-        "📊 Điểm GPA trung bình",
+        "Điểm GPA trung bình",
         round(data["GPA"].mean(), 2)
     )
 
 with col3:
     st.metric(
-        "📚 Thời gian học trung bình",
+        "Thời gian học trung bình",
         round(data["StudyTimeWeekly"].mean(), 2)
     )
 
 with col4:
     st.metric(
-        "❌ Số buổi nghỉ trung bình",
+        "Số buổi nghỉ trung bình",
         round(data["Absences"].mean(), 2)
     )
 
@@ -420,7 +419,7 @@ st.pyplot(fig)
 
 
 # GPA SUMMARY
-st.markdown("### 📌 Thống kê GPA")
+st.markdown("### Thống kê GPA")
 
 gpa_data = st.session_state.session_df["GPA"]
 
@@ -449,7 +448,7 @@ col4.metric(
 
 # INTERPRETATION
 st.info("""
-📖 Nhận xét:
+Nhận xét:
 
 • GPA của sinh viên phân bố chủ yếu trong khoảng từ 1.0 đến 3.0.
 
@@ -542,7 +541,7 @@ st.pyplot(fig)
 
 
 # SUMMARY TABLE
-st.markdown("### 📋 Bảng thống kê học lực")
+st.markdown("### Bảng thống kê học lực")
 
 summary_df = pd.DataFrame({
     "Học lực": grade_counts.index,
@@ -584,7 +583,7 @@ col4.metric(
 
 # INTERPRETATION
 st.info("""
-📖 Nhận xét:
+Nhận xét:
 
 • Nhóm sinh viên có học lực Yếu chiếm tỷ lệ cao nhất,
 cho thấy nhiều sinh viên vẫn gặp khó khăn trong học tập.
@@ -624,33 +623,33 @@ data = st.session_state.session_df
 
 # KPI
 
-st.markdown("### 📌 Tổng quan thói quen học tập")
+st.markdown("### Tổng quan thói quen học tập")
 
 col1, col2, col3, col4 = st.columns(4)
 
 col1.metric(
-    "⏱️ Tự học trung bình",
+    "Tự học trung bình",
     round(data["StudyTimeWeekly"].mean(), 2)
 )
 
 col2.metric(
-    "📈 Tự học cao nhất",
+    "Tự học cao nhất",
     round(data["StudyTimeWeekly"].max(), 2)
 )
 
 col3.metric(
-    "❌ Nghỉ học trung bình",
+    "Nghỉ học trung bình",
     round(data["Absences"].mean(), 2)
 )
 
 col4.metric(
-    "🚫 Nghỉ học cao nhất",
+    "Nghỉ học cao nhất",
     round(data["Absences"].max(), 2)
 )
 
 
 # SUMMARY TABLE
-st.markdown("📋 Bảng thống kê")
+st.markdown("Bảng thống kê")
 
 summary_df = pd.DataFrame({
 
@@ -690,7 +689,7 @@ biểu đồ Boxplot được sử dụng cho:
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("### 📦Thời gian tự học")
+    st.markdown("### Thời gian tự học")
     fig, ax = plt.subplots(figsize=(7,3))
     sns.boxplot(
         x=data["StudyTimeWeekly"],
@@ -714,7 +713,7 @@ with col1:
 
 with col2:
 
-    st.markdown("### 📦Số buổi nghỉ học")
+    st.markdown("### Số buổi nghỉ học")
 
     fig, ax = plt.subplots(figsize=(7,3))
 
@@ -741,7 +740,7 @@ with col2:
 
 # INTERPRETATION
 st.info("""
-📖 Nhận xét:
+Nhận xét:
 
 • Trung bình mỗi sinh viên dành khoảng 9.77 giờ tự học mỗi tuần,
 cho thấy phần lớn sinh viên có đầu tư thời gian cho việc học ngoài giờ lên lớp.
@@ -785,22 +784,22 @@ Mục tiêu:
 
 data = st.session_state.session_df.copy()
 
-st.markdown("### 📌 Tổng quan")
+st.markdown("### Tổng quan")
 
 col1, col2, col3 = st.columns(3)
 
 col1.metric(
-    "⏱️ Tự học trung bình",
+    "Tự học trung bình",
     round(data["StudyTimeWeekly"].mean(), 2)
 )
 
 col2.metric(
-    "📊 GPA trung bình",
+    "GPA trung bình",
     round(data["GPA"].mean(), 2)
 )
 
 col3.metric(
-    "📈 Hệ số tương quan",
+    "Hệ số tương quan",
     round(
         data["StudyTimeWeekly"].corr(data["GPA"]),
         2
@@ -809,7 +808,7 @@ col3.metric(
 
 
 # REGRESSION PLOT
-st.markdown("### 📉 Biểu đồ hồi quy")
+st.markdown("### Biểu đồ hồi quy")
 
 fig, ax = plt.subplots(figsize=(9,5))
 
@@ -842,7 +841,7 @@ ax.grid(
 
 st.pyplot(fig)
 
-st.markdown("### 📊 GPA trung bình theo nhóm thời gian học")
+st.markdown("### GPA trung bình theo nhóm thời gian học")
 
 bins = [0, 5, 10, 15, 20]
 
@@ -903,7 +902,7 @@ st.pyplot(fig)
 
 
 # SUMMARY TABLE
-st.markdown("### 📋 Bảng thống kê")
+st.markdown("### Bảng thống kê")
 
 summary_df = pd.DataFrame({
     "Nhóm thời gian học": group_avg.index,
@@ -917,7 +916,7 @@ st.dataframe(
 
 
 # MINI HEATMAP
-st.markdown("### 🔥 Heatmap tương quan")
+st.markdown("### Heatmap tương quan")
 
 corr_cols = [
     "GPA",
@@ -949,7 +948,7 @@ st.pyplot(fig)
 
 # INTERPRETATION
 st.info("""
-📖 Nhận xét:
+Nhận xét:
 
 • Regression Plot cho thấy GPA có xu hướng tăng khi thời gian tự học tăng.
 
@@ -996,29 +995,29 @@ Mục tiêu:
 
 data = st.session_state.session_df.copy()
 
-st.markdown("### 📌 Tổng quan")
+st.markdown("### Tổng quan")
 
 col1, col2, col3 = st.columns(3)
 
 col1.metric(
-    "📅 Nghỉ học trung bình",
+    "Nghỉ học trung bình",
     round(data["Absences"].mean(), 2)
 )
 
 col2.metric(
-    "📊 GPA trung bình",
+    "GPA trung bình",
     round(data["GPA"].mean(), 2)
 )
 
 col3.metric(
-    "📉 Hệ số tương quan",
+    "Hệ số tương quan",
     round(
         data["Absences"].corr(data["GPA"]),
         2
     )
 )
 
-st.markdown("### 📈 Mối quan hệ giữa số buổi nghỉ học và GPA")
+st.markdown("### Mối quan hệ giữa số buổi nghỉ học và GPA")
 fig, ax = plt.subplots(figsize=(6,4))
 sns.regplot(
     data=data,
@@ -1049,7 +1048,7 @@ st.pyplot(fig)
 
 
 # GROUP ANALYSIS
-st.markdown("### 📊 GPA trung bình theo nhóm nghỉ học")
+st.markdown("### GPA trung bình theo nhóm nghỉ học")
 
 bins = [0, 5, 10, 20, 30]
 
@@ -1110,7 +1109,7 @@ st.pyplot(fig)
 
 
 # SUMMARY TABLE
-st.markdown("### 📋 Bảng thống kê")
+st.markdown("### Bảng thống kê")
 
 summary_df = pd.DataFrame({
     "Nhóm nghỉ học": absence_avg.index,
@@ -1125,7 +1124,7 @@ st.dataframe(
 
 # INTERPRETATION
 st.info("""
-📖 Nhận xét:
+Nhận xét:
 
 • Scatter Plot cho thấy GPA có xu hướng giảm khi số buổi nghỉ học tăng lên.
 
@@ -1217,7 +1216,7 @@ activity_df = pd.DataFrame(
 
 
 # KPI
-st.markdown("### 📌 Tổng quan")
+st.markdown("### Tổng quan")
 
 best_activity = activity_df.loc[
     activity_df["Mức chênh lệch"].idxmax()
@@ -1230,23 +1229,23 @@ positive_count = (
 col1, col2, col3 = st.columns(3)
 
 col1.metric(
-    "🎯 Số hoạt động phân tích",
+    "Số hoạt động phân tích",
     len(activities)
 )
 
 col2.metric(
-    "📈 Hoạt động tác động tích cực",
+    "Hoạt động tác động tích cực",
     positive_count
 )
 
 col3.metric(
-    "🏆 Hoạt động nổi bật",
+    "Hoạt động nổi bật",
     best_activity["Hoạt động"]
 )
 
 
 # GROUPED BAR CHART
-st.markdown("### 📊 GPA trung bình theo hoạt động")
+st.markdown("### GPA trung bình theo hoạt động")
 
 plot_df = activity_df.melt(
     id_vars="Hoạt động",
@@ -1309,7 +1308,7 @@ st.pyplot(fig)
 
 
 # IMPACT CHART
-st.markdown("### 📈 Mức cải thiện GPA theo hoạt động")
+st.markdown("### Mức cải thiện GPA theo hoạt động")
 
 fig, ax = plt.subplots(figsize=(8,5))
 
@@ -1362,7 +1361,7 @@ st.pyplot(fig)
 
 # BEST ACTIVITY
 st.success(f"""
-🏆 Hoạt động có ảnh hưởng tích cực nhất đến GPA là:
+Hoạt động có ảnh hưởng tích cực nhất đến GPA là:
 {best_activity['Hoạt động']}
 với mức tăng GPA trung bình khoảng {best_activity['Mức chênh lệch']} điểm.
 """)
@@ -1370,7 +1369,7 @@ với mức tăng GPA trung bình khoảng {best_activity['Mức chênh lệch']
 
 # INTERPRETATION
 st.info("""
-📖 Nhận xét:
+Nhận xét:
 
 • Hầu hết các hoạt động ngoại khóa đều có ảnh hưởng tích cực đến GPA của sinh viên.
 
@@ -1400,10 +1399,10 @@ và duy trì hiệu quả học tập tốt hơn.
 
 
 # STEP 7 - PHÂN TÍCH ẢNH HƯỞNG CỦA GIA ĐÌNH ĐẾN GPA
-st.markdown(
-    '<p class="section-title">Bước 7: Ảnh hưởng của hỗ trợ gia đình đến GPA</p>',
-    unsafe_allow_html=True
-)
+st.markdown("---")
+
+st.header("Bước 7: Ảnh hưởng của hỗ trợ gia đình đến GPA")
+
 
 st.write("""
 Bước này phân tích ảnh hưởng của mức độ hỗ trợ từ gia đình đến GPA của sinh viên.
@@ -1451,7 +1450,7 @@ support_gpa["GPA"] = (
     .round(2)
 )
 
-st.markdown("### 📌 Tổng quan")
+st.markdown("### Tổng quan")
 
 highest_support = support_gpa.loc[
     support_gpa["GPA"].idxmax()
@@ -1480,7 +1479,7 @@ col3.metric(
 
 
 # BẢNG DỮ LIỆU
-st.markdown("### 📋 GPA theo mức hỗ trợ gia đình")
+st.markdown("### GPA theo mức hỗ trợ gia đình")
 
 st.dataframe(
     support_gpa,
@@ -1493,7 +1492,7 @@ col1, col2 = st.columns(2)
 # BAR CHART
 with col1:
 
-    st.markdown("### 📊 GPA trung bình theo mức hỗ trợ")
+    st.markdown("### GPA trung bình theo mức hỗ trợ")
 
     fig, ax = plt.subplots(figsize=(6,4))
 
@@ -1541,7 +1540,7 @@ with col1:
 # LINE CHART
 with col2:
 
-    st.markdown("### 📈 Xu hướng GPA theo mức hỗ trợ")
+    st.markdown("### Xu hướng GPA theo mức hỗ trợ")
 
     fig, ax = plt.subplots(figsize=(6,4))
 
@@ -1588,7 +1587,7 @@ correlation = round(
 )
 
 st.success(f"""
-📌 Hệ số tương quan giữa Parental Support và GPA: {correlation}
+Hệ số tương quan giữa Parental Support và GPA: {correlation}
 
 Giá trị dương cho thấy khi mức hỗ trợ từ gia đình tăng,
 GPA của sinh viên có xu hướng tăng theo.
@@ -1597,7 +1596,7 @@ GPA của sinh viên có xu hướng tăng theo.
 
 # NHẬN XÉT
 st.info("""
-📖 Nhận xét:
+Nhận xét:
 
 • GPA trung bình có xu hướng tăng khi mức độ hỗ trợ từ gia đình tăng lên.
 
@@ -1616,10 +1615,10 @@ thời gian học tập, số buổi nghỉ học và ý thức cá nhân.
 
 
 # STEP 8 — PHÂN TÍCH TƯƠNG QUAN
-st.markdown(
-    '<p class="section-title">Bước 8: Tương quan giữa các yếu tố học tập</p>',
-    unsafe_allow_html=True
-)
+st.markdown("---")
+
+st.header("Bước 8: Tương quan giữa các yếu tố học tập")
+
 
 st.write("""
 Bước này nhằm phân tích mức độ tương quan giữa các yếu tố học tập
@@ -1647,7 +1646,7 @@ corr_df = data[[
 corr_matrix = corr_df.corr()
 
 # HEATMAP
-st.markdown("### 🔥 Biểu đồ tương quan")
+st.markdown("### Biểu đồ tương quan")
 
 fig, ax = plt.subplots(figsize=(10,7))
 
@@ -1670,7 +1669,7 @@ st.pyplot(fig)
 
 
 # TƯƠNG QUAN VỚI GPA
-st.markdown("### 📊 Mức độ tương quan với GPA")
+st.markdown("### Mức độ tương quan với GPA")
 
 gpa_corr = (
     corr_matrix["GPA"]
@@ -1699,14 +1698,14 @@ highest_negative_value = gpa_corr.min()
 col1, col2 = st.columns(2)
 with col1:
     st.metric(
-        "📈 Yếu tố tích cực mạnh nhất",
+        "Yếu tố tích cực mạnh nhất",
         highest_positive,
         f"{highest_positive_value:.2f}"
     )
 
 with col2:
     st.metric(
-        "📉 Yếu tố tiêu cực mạnh nhất",
+        "Yếu tố tiêu cực mạnh nhất",
         highest_negative,
         f"{highest_negative_value:.2f}"
     )
@@ -1714,7 +1713,7 @@ with col2:
 
 # NHẬN XÉT
 st.info(f"""
-📖 Nhận xét:
+Nhận xét:
 
 • Yếu tố có tương quan dương mạnh nhất với GPA là
 '{highest_positive}' với hệ số khoảng {highest_positive_value:.2f}.
@@ -1747,10 +1746,10 @@ còn Absences làm GPA giảm rõ rệt.
 
 
 # STEP 9 — SO SÁNH CÁC MÔ HÌNH HỌC MÁY
-st.markdown(
-    '<p class="section-title">Bước 9: So sánh các mô hình học máy</p>',
-    unsafe_allow_html=True
-)
+st.markdown("---")
+
+st.header("Bước 9: So sánh các mô hình học máy")
+
 
 st.write("""
 Bước này sử dụng nhiều mô hình học máy khác nhau
@@ -1872,7 +1871,7 @@ logistic_acc = accuracy_score(
 
 
 # BẢNG SO SÁNH
-st.markdown("### 📋 Bảng so sánh mô hình")
+st.markdown("### Bảng so sánh mô hình")
 
 result_df = pd.DataFrame({
 
@@ -1909,7 +1908,7 @@ st.dataframe(
 
 
 # BIỂU ĐỒ SO SÁNH
-st.markdown("### 📊 So sánh độ chính xác mô hình Regression")
+st.markdown("### So sánh độ chính xác mô hình Regression")
 
 regression_df = pd.DataFrame({
 
@@ -1987,7 +1986,7 @@ st.success(f"""
 
 # NHẬN XÉT
 st.info(f"""
-📖 Nhận xét:
+Nhận xét:
 
 • Kết quả cho thấy mô hình OLS Regression đạt giá trị R² cao nhất,
 cho thấy mô hình này phù hợp nhất để dự đoán GPA
@@ -2006,7 +2005,7 @@ mức độ ảnh hưởng của từng yếu tố tới GPA.
 
 
 # PHÂN TÍCH CHI TIẾT OLS
-st.markdown("### 📄 Phân tích chi tiết mô hình OLS")
+st.markdown("### Phân tích chi tiết mô hình OLS")
 
 X = data[[
     "StudyTimeWeekly",
@@ -2025,9 +2024,9 @@ model = sm.OLS(y, X).fit()
 
 
 # MODEL SUMMARY
-st.markdown("### 📋 OLS Regression Summary")
+st.markdown("### OLS Regression Summary")
 st.text(model.summary())
-st.markdown("### 📊 Bảng hệ số hồi quy")
+st.markdown("### Bảng hệ số hồi quy")
 
 coef_df = pd.DataFrame({
     "Yếu tố": model.params.index,
@@ -2041,7 +2040,7 @@ st.dataframe(
 )
 
 
-st.markdown("### 📈 Mức độ ảnh hưởng của các yếu tố")
+st.markdown("### Mức độ ảnh hưởng của các yếu tố")
 
 coef_plot = coef_df[coef_df["Yếu tố"] != "const"]
 
@@ -2078,14 +2077,14 @@ col1, col2 = st.columns(2)
 with col1:
 
     st.metric(
-        "📌 R² Score",
+        "R² Score",
         round(r2, 3)
     )
 
 with col2:
 
     st.metric(
-        "📌 Adjusted R²",
+        "Adjusted R²",
         round(adj_r2, 3)
     )
 
@@ -2100,7 +2099,7 @@ important_feature = (
 
 # NHẬN XÉT CHI TIẾT OLS
 st.info(f"""
-📖 Phân tích chi tiết mô hình OLS:
+Phân tích chi tiết mô hình OLS:
 
 • Mô hình OLS cho thấy mức độ ảnh hưởng của từng yếu tố tới GPA của sinh viên.
 
@@ -2136,10 +2135,9 @@ và sự hỗ trợ từ gia đình.
 
 
 # STEP 10 — HỆ THỐNG GỢI Ý HỌC TẬP
-st.markdown(
-    '<p class="section-title">🎯 Bước 10: Hệ thống gợi ý học tập</p>',
-    unsafe_allow_html=True
-)
+st.markdown("---")
+
+st.header("Bước 10: Hệ thống gợi ý học tập")
 
 st.write("""
 Dựa trên kết quả phân tích dữ liệu và mô hình học máy,
@@ -2161,37 +2159,37 @@ def recommend(row):
         if row["Absences"] > 15:
 
             return (
-                "⚠️ GPA thấp và nghỉ học nhiều. "
+                "GPA thấp và nghỉ học nhiều. "
                 "Cần giảm số buổi nghỉ học, tăng thời gian tự học "
                 "và nên tham gia tutoring để cải thiện kết quả học tập."
             )
         elif row["StudyTimeWeekly"] < 8:
             return (
-                "⚠️ GPA thấp do thời gian tự học chưa đủ. "
+                "GPA thấp do thời gian tự học chưa đủ. "
                 "Nên tăng thời gian học mỗi tuần và xây dựng kế hoạch học tập ổn định."
             )
         else:
             return (
-                "⚠️ GPA còn thấp. "
+                "GPA còn thấp. "
                 "Nên tập trung củng cố kiến thức nền tảng "
                 "và giảm áp lực học phần trong thời gian tới."
             )
     elif row["GPA"] < 3.0:
         return (
-            "📘 Kết quả học tập ở mức trung bình. "
+            "Kết quả học tập ở mức trung bình. "
             "Cần duy trì học tập ổn định và hạn chế nghỉ học "
             "để cải thiện GPA."
         )
     elif row["GPA"] < 3.5:
 
         return (
-            "✅ Kết quả học tập khá tốt. "
+            "Kết quả học tập khá tốt. "
             "Có thể đăng ký thêm học phần phù hợp "
             "hoặc tham gia thêm hoạt động ngoại khóa."
         )
     else:
         return (
-            "🏆 Thành tích học tập rất tốt. "
+            "Thành tích học tập rất tốt. "
             "Có thể cân nhắc học nâng cao, phát triển kỹ năng chuyên môn "
             "hoặc tham gia các dự án thực tế."
         )
@@ -2219,19 +2217,19 @@ recommend_df["Category"] = recommend_df["GPA"].apply(
     classify_recommendation
 )
 
-st.markdown("### 📌 Tổng quan gợi ý học tập")
+st.markdown("### Tổng quan gợi ý học tập")
 
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.metric(
-        "⚠️ Cần hỗ trợ",
+        "Cần hỗ trợ",
         len(recommend_df[recommend_df["GPA"] < 2.0])
     )
 
 with col2:
     st.metric(
-        "📘 Trung bình",
+        "Trung bình",
         len(
             recommend_df[
                 (recommend_df["GPA"] >= 2.0) &
@@ -2242,7 +2240,7 @@ with col2:
 
 with col3:
     st.metric(
-        "✅ Khá",
+        "Khá",
         len(
             recommend_df[
                 (recommend_df["GPA"] >= 3.0) &
@@ -2253,11 +2251,11 @@ with col3:
 
 with col4:
     st.metric(
-        "🏆 Giỏi",
+        "Giỏi",
         len(recommend_df[recommend_df["GPA"] >= 3.5])
     )
 
-st.markdown("### 📋 Gợi ý học tập cho sinh viên")
+st.markdown("### Gợi ý học tập cho sinh viên")
 show_cols = [
     "StudentID",
     "GPA",
@@ -2271,7 +2269,7 @@ st.dataframe(
     use_container_width=True
 )
 
-st.markdown("### 📊 Phân bố nhóm sinh viên")
+st.markdown("### Phân bố nhóm sinh viên")
 
 category_counts = (
     recommend_df["Category"]
@@ -2301,7 +2299,7 @@ st.pyplot(fig)
 
 # NHẬN XÉT
 st.info("""
-📖 Nhận xét:
+Nhận xét:
 
 • Hệ thống gợi ý học tập được xây dựng dựa trên:
 GPA, thời gian tự học và số buổi nghỉ học của sinh viên.
