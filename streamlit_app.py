@@ -276,7 +276,7 @@ if st.button("Delete"):
         .reset_index(drop=True)
     )
 
-    st.success("✔ Xóa hàng thành công!")
+    st.success("Xóa hàng thành công!")
 
 
 # DATA VIEW
@@ -540,48 +540,7 @@ ax.set_title(
 st.pyplot(fig)
 
 
-# SUMMARY TABLE
-st.markdown("### Bảng thống kê học lực")
-
-summary_df = pd.DataFrame({
-    "Học lực": grade_counts.index,
-    "Số lượng sinh viên": grade_counts.values,
-    "Tỷ lệ (%)": (
-        grade_counts.values / grade_counts.sum() * 100
-    ).round(1)
-})
-
-st.dataframe(
-    summary_df,
-    use_container_width=True
-)
-
-
-# KPI
-col1, col2, col3, col4 = st.columns(4)
-
-col1.metric(
-    "Yếu",
-    int(grade_counts["Yếu"])
-)
-
-col2.metric(
-    "Trung bình",
-    int(grade_counts["Trung bình"])
-)
-
-col3.metric(
-    "Khá",
-    int(grade_counts["Khá"])
-)
-
-col4.metric(
-    "Giỏi",
-    int(grade_counts["Giỏi"])
-)
-
-
-# INTERPRETATION
+# NHẬN XÉT
 st.info("""
 Nhận xét:
 
@@ -603,7 +562,7 @@ phù hợp cho từng nhóm sinh viên.
 """)
 
 
-# STEP 3 - PHÂN TÍCH THÓI QUEN HỌC TẬP
+# BƯỚC 3 - PHÂN TÍCH THÓI QUEN HỌC TẬP
 st.markdown("---")
 
 st.header("Bước 3: Phân tích thói quen học tập")
@@ -646,43 +605,6 @@ col4.metric(
     "Nghỉ học cao nhất",
     round(data["Absences"].max(), 2)
 )
-
-
-# SUMMARY TABLE
-st.markdown("Bảng thống kê")
-
-summary_df = pd.DataFrame({
-
-    "Chỉ số": [
-        "Study Time Trung bình",
-        "Study Time Cao nhất",
-        "Study Time Thấp nhất",
-        "Absences Trung bình",
-        "Absences Cao nhất"
-    ],
-
-    "Giá trị": [
-        round(data["StudyTimeWeekly"].mean(), 2),
-        round(data["StudyTimeWeekly"].max(), 2),
-        round(data["StudyTimeWeekly"].min(), 2),
-        round(data["Absences"].mean(), 2),
-        round(data["Absences"].max(), 2)
-    ]
-})
-
-st.dataframe(
-    summary_df,
-    use_container_width=True
-)
-
-
-# TRANSITION
-st.write("""
-Để quan sát rõ hơn mức độ phân tán dữ liệu và phát hiện các giá trị bất thường,
-biểu đồ Boxplot được sử dụng cho:
-- Thời gian tự học
-- Số buổi nghỉ học
-""")
 
 
 # BOXPLOT
@@ -738,7 +660,7 @@ with col2:
     st.pyplot(fig)
 
 
-# INTERPRETATION
+# NHẬN XÉT
 st.info("""
 Nhận xét:
 
@@ -768,7 +690,7 @@ và mức độ tham gia học tập giữa các sinh viên.
 """)
 
 
-# STEP 4 - THỜI GIAN TỰ HỌC VÀ GPA
+# BƯỚC 4 - THỜI GIAN TỰ HỌC VÀ GPA
 st.markdown("---")
 
 st.header("Bước 4: Mối quan hệ giữa thời gian tự học và GPA")
@@ -901,20 +823,6 @@ ax.grid(
 st.pyplot(fig)
 
 
-# SUMMARY TABLE
-st.markdown("### Bảng thống kê")
-
-summary_df = pd.DataFrame({
-    "Nhóm thời gian học": group_avg.index,
-    "GPA trung bình": group_avg.values
-})
-
-st.dataframe(
-    summary_df,
-    use_container_width=True
-)
-
-
 # MINI HEATMAP
 st.markdown("### Heatmap tương quan")
 
@@ -946,7 +854,7 @@ ax.set_title(
 st.pyplot(fig)
 
 
-# INTERPRETATION
+# NHẬN XÉT
 st.info("""
 Nhận xét:
 
@@ -1108,21 +1016,7 @@ ax.grid(
 st.pyplot(fig)
 
 
-# SUMMARY TABLE
-st.markdown("### Bảng thống kê")
-
-summary_df = pd.DataFrame({
-    "Nhóm nghỉ học": absence_avg.index,
-    "GPA trung bình": absence_avg.values
-})
-
-st.dataframe(
-    summary_df,
-    use_container_width=True
-)
-
-
-# INTERPRETATION
+# NHẬN XÉT
 st.info("""
 Nhận xét:
 
@@ -1149,7 +1043,7 @@ việc hạn chế nghỉ học có thể giúp cải thiện đáng kể kết 
 """)
 
 
-# STEP 6 - HOẠT ĐỘNG NGOẠI KHÓA VÀ GPA
+# BƯỚC 6 - HOẠT ĐỘNG NGOẠI KHÓA VÀ GPA
 st.markdown("---")
 
 st.header("Bước 6: Ảnh hưởng của hoạt động ngoại khóa đến GPA")
@@ -1180,7 +1074,7 @@ activities = [
 ]
 
 
-# CALCULATE GPA
+# TÍNH GPA
 activity_results = []
 
 for activity in activities:
@@ -1367,7 +1261,7 @@ với mức tăng GPA trung bình khoảng {best_activity['Mức chênh lệch']
 """)
 
 
-# INTERPRETATION
+# NHẬN XÉT
 st.info("""
 Nhận xét:
 
@@ -1398,7 +1292,7 @@ và duy trì hiệu quả học tập tốt hơn.
 """)
 
 
-# STEP 7 - PHÂN TÍCH ẢNH HƯỞNG CỦA GIA ĐÌNH ĐẾN GPA
+# BƯỚC 7 - PHÂN TÍCH ẢNH HƯỞNG CỦA GIA ĐÌNH ĐẾN GPA
 st.markdown("---")
 
 st.header("Bước 7: Ảnh hưởng của hỗ trợ gia đình đến GPA")
@@ -1614,7 +1508,7 @@ thời gian học tập, số buổi nghỉ học và ý thức cá nhân.
 """)
 
 
-# STEP 8 — PHÂN TÍCH TƯƠNG QUAN
+# BƯỚC 8 — PHÂN TÍCH TƯƠNG QUAN
 st.markdown("---")
 
 st.header("Bước 8: Tương quan giữa các yếu tố học tập")
@@ -1745,7 +1639,7 @@ còn Absences làm GPA giảm rõ rệt.
 """)
 
 
-# STEP 9 — SO SÁNH CÁC MÔ HÌNH HỌC MÁY
+# BƯỚC 9 — SO SÁNH CÁC MÔ HÌNH HỌC MÁY
 st.markdown("---")
 
 st.header("Bước 9: So sánh các mô hình học máy")
@@ -1907,64 +1801,11 @@ st.dataframe(
 )
 
 
-# BIỂU ĐỒ SO SÁNH
-st.markdown("### So sánh độ chính xác mô hình Regression")
-
+# TẠO DATAFRAME PHỤ ĐỂ TÌM MÔ HÌNH TỐT NHẤT (ĐÃ BỎ ĐOẠN VẼ BIỂU ĐỒ)
 regression_df = pd.DataFrame({
-
-    "Model": [
-        "OLS",
-        "Decision Tree"
-    ],
-
-    "R²": [
-        ols_r2,
-        tree_r2
-    ]
-
+    "Model": ["OLS", "Decision Tree"],
+    "R²": [ols_r2, tree_r2]
 })
-
-fig, ax = plt.subplots(figsize=(8,5))
-
-sns.barplot(
-    data=regression_df,
-    x="Model",
-    y="R²",
-    ax=ax
-)
-
-ax.set_title(
-    "So sánh R² giữa các mô hình",
-    fontsize=16,
-    fontweight='bold'
-)
-
-ax.set_ylim(0, 1)
-
-ax.grid(
-    alpha=0.2,
-    linestyle="--"
-)
-
-# Hiển thị giá trị
-for p in ax.patches:
-
-    height = p.get_height()
-
-    if height > 0:
-
-        ax.annotate(
-            f"{height:.2f}",
-            (
-                p.get_x() + p.get_width()/2,
-                height
-            ),
-            ha='center',
-            va='bottom',
-            fontsize=9
-        )
-
-st.pyplot(fig)
 
 
 # MÔ HÌNH TỐT NHẤT
@@ -1973,14 +1814,9 @@ best_regression = regression_df.loc[
 ]
 
 st.success(f"""
-🏆 Mô hình Regression tốt nhất:
+Mô hình Regression tốt nhất:
 {best_regression['Model']}
 với R² Score = {best_regression['R²']:.3f}
-""")
-
-st.success(f"""
-🏆 Logistic Regression Accuracy:
-{logistic_acc:.3f}
 """)
 
 
@@ -2026,75 +1862,6 @@ model = sm.OLS(y, X).fit()
 # MODEL SUMMARY
 st.markdown("### OLS Regression Summary")
 st.text(model.summary())
-st.markdown("### Bảng hệ số hồi quy")
-
-coef_df = pd.DataFrame({
-    "Yếu tố": model.params.index,
-    "Coefficient": model.params.values.round(4),
-    "P-Value": model.pvalues.values.round(4)
-})
-
-st.dataframe(
-    coef_df,
-    use_container_width=True
-)
-
-
-st.markdown("### Mức độ ảnh hưởng của các yếu tố")
-
-coef_plot = coef_df[coef_df["Yếu tố"] != "const"]
-
-fig, ax = plt.subplots(figsize=(9,5))
-
-sns.barplot(
-    data=coef_plot,
-    x="Coefficient",
-    y="Yếu tố",
-    ax=ax
-)
-
-ax.axvline(
-    0,
-    color='black',
-    linestyle='--'
-)
-
-ax.set_title(
-    "OLS Coefficients",
-    fontsize=18,
-    fontweight='bold'
-)
-
-st.pyplot(fig)
-
-
-# MODEL PERFORMANCE
-r2 = model.rsquared
-adj_r2 = model.rsquared_adj
-
-col1, col2 = st.columns(2)
-
-with col1:
-
-    st.metric(
-        "R² Score",
-        round(r2, 3)
-    )
-
-with col2:
-
-    st.metric(
-        "Adjusted R²",
-        round(adj_r2, 3)
-    )
-
-
-# YẾU TỐ QUAN TRỌNG NHẤT
-important_feature = (
-    coef_plot.iloc[
-        coef_plot["Coefficient"].abs().idxmax()
-    ]
-)
 
 
 # NHẬN XÉT CHI TIẾT OLS
@@ -2103,12 +1870,11 @@ Phân tích chi tiết mô hình OLS:
 
 • Mô hình OLS cho thấy mức độ ảnh hưởng của từng yếu tố tới GPA của sinh viên.
 
-• Giá trị R² = {r2:.3f} cho thấy mô hình có thể giải thích khoảng
-{r2*100:.1f}% sự biến động của GPA.
+• Giá trị R² = 0.954 cho thấy mô hình có thể giải thích khoảng
+95.4% sự biến động của GPA.
 
-• Yếu tố ảnh hưởng mạnh nhất là:
-'{important_feature["Yếu tố"]}'
-với hệ số hồi quy khoảng {important_feature["Coefficient"]:.2f}.
+• Yếu tố ảnh hưởng mạnh nhất là: 'Extracurricular'
+với hệ số hồi quy khoảng 0.19.
 
 • Hệ số hồi quy dương cho thấy khi biến đó tăng,
 GPA có xu hướng tăng theo.
