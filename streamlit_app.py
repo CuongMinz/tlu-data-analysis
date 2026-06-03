@@ -524,19 +524,8 @@ ax.pie(
     grade_counts,
     labels=grade_counts.index,
     autopct='%.1f%%',
-    explode=explode,
-    shadow=True,
-    startangle=90,
-    colors=colors
+    explode=[0.08, 0.04, 0.04, 0.04]
 )
-
-ax.set_title(
-    "Tỷ lệ học lực của sinh viên",
-    fontsize=16,
-    color="#2c3e50",
-    fontweight="bold"
-)
-
 st.pyplot(fig)
 
 
@@ -1253,14 +1242,6 @@ for p in ax.patches:
 st.pyplot(fig)
 
 
-# BEST ACTIVITY
-st.success(f"""
-Hoạt động có ảnh hưởng tích cực nhất đến GPA là:
-{best_activity['Hoạt động']}
-với mức tăng GPA trung bình khoảng {best_activity['Mức chênh lệch']} điểm.
-""")
-
-
 # NHẬN XÉT
 st.info("""
 Nhận xét:
@@ -1473,20 +1454,6 @@ with col2:
     st.pyplot(fig)
 
 
-# CORRELATION
-correlation = round(
-    data["ParentalSupport"]
-    .corr(data["GPA"]),
-    2
-)
-
-st.success(f"""
-Hệ số tương quan giữa Parental Support và GPA: {correlation}
-
-Giá trị dương cho thấy khi mức hỗ trợ từ gia đình tăng,
-GPA của sinh viên có xu hướng tăng theo.
-""")
-
 
 # NHẬN XÉT
 st.info("""
@@ -1582,43 +1549,20 @@ st.dataframe(
 )
 
 
-# THỐNG KÊ YẾU TỐ MẠNH NHẤT
-highest_positive = gpa_corr.idxmax()
-highest_positive_value = gpa_corr.max()
-
-highest_negative = gpa_corr.idxmin()
-highest_negative_value = gpa_corr.min()
-
-col1, col2 = st.columns(2)
-with col1:
-    st.metric(
-        "Yếu tố tích cực mạnh nhất",
-        highest_positive,
-        f"{highest_positive_value:.2f}"
-    )
-
-with col2:
-    st.metric(
-        "Yếu tố tiêu cực mạnh nhất",
-        highest_negative,
-        f"{highest_negative_value:.2f}"
-    )
-
-
 # NHẬN XÉT
 st.info(f"""
 Nhận xét:
 
 • Yếu tố có tương quan dương mạnh nhất với GPA là
-'{highest_positive}' với hệ số khoảng {highest_positive_value:.2f}.
+'ParentalSupport' với hệ số khoảng 0.19.
 
-• Điều này cho thấy khi '{highest_positive}' tăng,
+• Điều này cho thấy khi 'ParentalSupport' tăng,
 GPA của sinh viên có xu hướng tăng theo.
 
 • Yếu tố có tương quan âm mạnh nhất là
-'{highest_negative}' với hệ số khoảng {highest_negative_value:.2f}.
+'Absences' với hệ số khoảng -0.92.
 
-• Điều này cho thấy khi '{highest_negative}' tăng,
+• Điều này cho thấy khi 'Absences' tăng,
 GPA thường giảm xuống đáng kể.
 
 • Heatmap cho thấy số buổi nghỉ học (Absences)
@@ -1639,209 +1583,21 @@ còn Absences làm GPA giảm rõ rệt.
 """)
 
 
-# BƯỚC 9 — SO SÁNH CÁC MÔ HÌNH HỌC MÁY
+# BƯỚC 9 — PHÂN TÍCH CHI TIẾT MÔ HÌNH OLS
 st.markdown("---")
 
-st.header("Bước 9: So sánh các mô hình học máy")
+st.header("Bước 9: Phân tích chi tiết mô hình OLS")
 
 
 st.write("""
-Bước này sử dụng nhiều mô hình học máy khác nhau
-để dự đoán GPA của sinh viên.
-
-Các mô hình được sử dụng:
-- OLS Regression
-- Decision Tree
-- Logistic Regression
+Bước này sử dụng mô hình OLS Regression (Bình phương tối thiểu) 
+để dự đoán GPA của sinh viên dựa trên các biến độc lập.
 
 Mục tiêu:
-- So sánh hiệu quả của các mô hình
-- Đánh giá khả năng dự đoán GPA
-- Chọn mô hình phù hợp nhất cho bài toán
+- Đánh giá khả năng giải thích và dự đoán GPA của mô hình.
+- Đo lường mức độ sai số của mô hình trên tập dữ liệu kiểm tra (Test set).
 """)
 
-
-# IMPORT THƯ VIỆN
-from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeRegressor
-from sklearn.metrics import (
-    r2_score,
-    mean_absolute_error,
-    accuracy_score
-)
-
-X = data[[
-    "StudyTimeWeekly",
-    "Absences",
-    "ParentalSupport",
-    "Tutoring",
-    "Extracurricular",
-    "Sports",
-    "Music",
-    "Volunteering"
-]]
-
-# GPA cho regression
-y_reg = data["GPA"]
-
-# GradeClass cho classification
-y_clf = data["GradeClass"]
-
-# CHIA DỮ LIỆU
-split_index = int(len(X) * 0.8)
-
-X_train = X.iloc[:split_index]
-X_test = X.iloc[split_index:]
-
-y_train_reg = y_reg.iloc[:split_index]
-y_test_reg = y_reg.iloc[split_index:]
-
-y_train_clf = y_clf.iloc[:split_index]
-y_test_clf = y_clf.iloc[split_index:]
-
-
-# 1. OLS REGRESSION
-X_train_ols = sm.add_constant(X_train)
-X_test_ols = sm.add_constant(X_test)
-
-ols_model = sm.OLS(
-    y_train_reg,
-    X_train_ols
-).fit()
-
-ols_pred = ols_model.predict(X_test_ols)
-
-ols_r2 = r2_score(
-    y_test_reg,
-    ols_pred
-)
-
-ols_mae = mean_absolute_error(
-    y_test_reg,
-    ols_pred
-)
-
-
-# 2. DECISION TREE
-tree_model = DecisionTreeRegressor(
-    max_depth=5,
-    random_state=42
-)
-
-tree_model.fit(
-    X_train,
-    y_train_reg
-)
-
-tree_pred = tree_model.predict(X_test)
-
-tree_r2 = r2_score(
-    y_test_reg,
-    tree_pred
-)
-
-tree_mae = mean_absolute_error(
-    y_test_reg,
-    tree_pred
-)
-
-
-# 3. LOGISTIC REGRESSION
-logistic_model = LogisticRegression(
-    max_iter=1000
-)
-
-logistic_model.fit(
-    X_train,
-    y_train_clf
-)
-
-logistic_pred = logistic_model.predict(X_test)
-
-logistic_acc = accuracy_score(
-    y_test_clf,
-    logistic_pred
-)
-
-
-# BẢNG SO SÁNH
-st.markdown("### Bảng so sánh mô hình")
-
-result_df = pd.DataFrame({
-
-    "Mô hình": [
-        "OLS Regression",
-        "Decision Tree",
-        "Logistic Regression"
-    ],
-
-    "R² Score": [
-        round(ols_r2, 3),
-        round(tree_r2, 3),
-        "-"
-    ],
-
-    "MAE": [
-        round(ols_mae, 3),
-        round(tree_mae, 3),
-        "-"
-    ],
-
-    "Accuracy": [
-        "-",
-        "-",
-        round(logistic_acc, 3)
-    ]
-
-})
-
-st.dataframe(
-    result_df,
-    use_container_width=True
-)
-
-
-# TẠO DATAFRAME PHỤ ĐỂ TÌM MÔ HÌNH TỐT NHẤT (ĐÃ BỎ ĐOẠN VẼ BIỂU ĐỒ)
-regression_df = pd.DataFrame({
-    "Model": ["OLS", "Decision Tree"],
-    "R²": [ols_r2, tree_r2]
-})
-
-
-# MÔ HÌNH TỐT NHẤT
-best_regression = regression_df.loc[
-    regression_df["R²"].idxmax()
-]
-
-st.success(f"""
-Mô hình Regression tốt nhất:
-{best_regression['Model']}
-với R² Score = {best_regression['R²']:.3f}
-""")
-
-
-# NHẬN XÉT
-st.info(f"""
-Nhận xét:
-
-• Kết quả cho thấy mô hình OLS Regression đạt giá trị R² cao nhất,
-cho thấy mô hình này phù hợp nhất để dự đoán GPA
-trong bộ dữ liệu hiện tại.
-
-• Decision Tree có khả năng xử lý các mối quan hệ phi tuyến,
-tuy nhiên hiệu quả dự đoán chưa vượt qua OLS Regression.
-
-• Logistic Regression được sử dụng để phân loại học lực sinh viên
-và đạt độ chính xác tương đối tốt.
-
-• Từ kết quả trên,
-mô hình OLS sẽ được sử dụng để phân tích chi tiết
-mức độ ảnh hưởng của từng yếu tố tới GPA.
-""")
-
-
-# PHÂN TÍCH CHI TIẾT OLS
-st.markdown("### Phân tích chi tiết mô hình OLS")
 
 X = data[[
     "StudyTimeWeekly",
@@ -1855,18 +1611,17 @@ X = data[[
 ]]
 
 y = data["GPA"]
-X = sm.add_constant(X)
-model = sm.OLS(y, X).fit()
+X_ols = sm.add_constant(X)
+model = sm.OLS(y, X_ols).fit()
 
 
-# MODEL SUMMARY
 st.markdown("### OLS Regression Summary")
 st.text(model.summary())
 
 
-# NHẬN XÉT CHI TIẾT OLS
+# NHẬN XÉT 
 st.info(f"""
-Phân tích chi tiết mô hình OLS:
+Nhận xét:
 
 • Mô hình OLS cho thấy mức độ ảnh hưởng của từng yếu tố tới GPA của sinh viên.
 
@@ -1923,11 +1678,10 @@ recommend_df = data.copy()
 def recommend(row):
     if row["GPA"] < 2.0:
         if row["Absences"] > 15:
-
             return (
                 "GPA thấp và nghỉ học nhiều. "
                 "Cần giảm số buổi nghỉ học, tăng thời gian tự học "
-                "và nên tham gia tutoring để cải thiện kết quả học tập."
+                "và nên tham gia các buổi phụ đạo để cải thiện kết quả học tập."
             )
         elif row["StudyTimeWeekly"] < 8:
             return (
@@ -1947,7 +1701,6 @@ def recommend(row):
             "để cải thiện GPA."
         )
     elif row["GPA"] < 3.5:
-
         return (
             "Kết quả học tập khá tốt. "
             "Có thể đăng ký thêm học phần phù hợp "
@@ -1983,43 +1736,19 @@ recommend_df["Category"] = recommend_df["GPA"].apply(
     classify_recommendation
 )
 
-st.markdown("### Tổng quan gợi ý học tập")
+st.markdown("### Phân bố nhóm sinh viên")
 
-col1, col2, col3, col4 = st.columns(4)
+category_counts = (recommend_df["Category"].value_counts())
 
-with col1:
-    st.metric(
-        "Cần hỗ trợ",
-        len(recommend_df[recommend_df["GPA"] < 2.0])
-    )
+fig, ax = plt.subplots(figsize=(7,7))
+ax.pie(
+    category_counts.values,
+    labels=category_counts.index,
+    autopct='%1.1f%%',
+    explode=[0.08, 0.04, 0.04, 0.04]
+)
+st.pyplot(fig)
 
-with col2:
-    st.metric(
-        "Trung bình",
-        len(
-            recommend_df[
-                (recommend_df["GPA"] >= 2.0) &
-                (recommend_df["GPA"] < 3.0)
-            ]
-        )
-    )
-
-with col3:
-    st.metric(
-        "Khá",
-        len(
-            recommend_df[
-                (recommend_df["GPA"] >= 3.0) &
-                (recommend_df["GPA"] < 3.5)
-            ]
-        )
-    )
-
-with col4:
-    st.metric(
-        "Giỏi",
-        len(recommend_df[recommend_df["GPA"] >= 3.5])
-    )
 
 st.markdown("### Gợi ý học tập cho sinh viên")
 show_cols = [
@@ -2034,33 +1763,6 @@ st.dataframe(
     recommend_df[show_cols],
     use_container_width=True
 )
-
-st.markdown("### Phân bố nhóm sinh viên")
-
-category_counts = (
-    recommend_df["Category"]
-    .value_counts()
-)
-
-explode = [0.08, 0.04, 0.04, 0.04]
-
-fig, ax = plt.subplots(figsize=(7,7))
-
-ax.pie(
-    category_counts.values,
-    labels=category_counts.index,
-    autopct='%1.1f%%',
-    explode=explode,
-    shadow=True
-)
-
-ax.set_title(
-    "Phân loại gợi ý học tập",
-    fontsize=16,
-    fontweight='bold'
-)
-
-st.pyplot(fig)
 
 
 # NHẬN XÉT
