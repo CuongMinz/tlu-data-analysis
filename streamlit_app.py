@@ -377,7 +377,7 @@ with col4:
 
 
 
-# STEP 1 - TỔNG QUAN GPA
+# BƯỚC 1 - TỔNG QUAN GPA
 st.markdown("---")
 
 st.header("Bước 1: Tổng quan phân bố GPA")
@@ -463,7 +463,7 @@ không bị lệch mạnh về một phía.
 """)
 
 
-# STEP 2 - PHÂN LOẠI HỌC LỰC
+# BƯỚC 2 - PHÂN LOẠI HỌC LỰC
 st.markdown("---")
 
 st.header("Bước 2: Phân loại học lực sinh viên")
